@@ -23,7 +23,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
-      projection: 'globe' as any,
       zoom: 2,
       center: [20, 20],
       pitch: 0,
@@ -37,15 +36,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
       'top-right'
     );
 
-    // Add atmosphere and fog effects
+    // Add markers for success stories
     map.current.on('style.load', () => {
-      map.current?.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
-      });
-
-      // Add markers for success stories
       successStories.forEach((story) => {
         if (!map.current) return;
 
@@ -60,19 +52,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-          transition: all 0.3s ease;
         `;
-
-        // Add hover effects
-        markerElement.addEventListener('mouseenter', () => {
-          markerElement.style.transform = 'scale(1.2)';
-          markerElement.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.6)';
-        });
-
-        markerElement.addEventListener('mouseleave', () => {
-          markerElement.style.transform = 'scale(1)';
-          markerElement.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-        });
 
         // Create marker
         const marker = new mapboxgl.Marker(markerElement)
@@ -111,58 +91,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
         });
       });
     });
-
-    // Rotation animation settings
-    const secondsPerRevolution = 300;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
-    let userInteracting = false;
-    let spinEnabled = true;
-
-    // Spin globe function
-    function spinGlobe() {
-      if (!map.current) return;
-      
-      const zoom = map.current.getZoom();
-      if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-        let distancePerSecond = 360 / secondsPerRevolution;
-        if (zoom > slowSpinZoom) {
-          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-          distancePerSecond *= zoomDif;
-        }
-        const center = map.current.getCenter();
-        center.lng -= distancePerSecond;
-        map.current.easeTo({ center, duration: 1000, easing: (n) => n });
-      }
-    }
-
-    // Event listeners for interaction
-    map.current.on('mousedown', () => {
-      userInteracting = true;
-    });
-    
-    map.current.on('dragstart', () => {
-      userInteracting = true;
-    });
-    
-    map.current.on('mouseup', () => {
-      userInteracting = false;
-      setTimeout(spinGlobe, 2000);
-    });
-    
-    map.current.on('touchend', () => {
-      userInteracting = false;
-      setTimeout(spinGlobe, 2000);
-    });
-
-    map.current.on('moveend', () => {
-      if (!userInteracting) {
-        setTimeout(spinGlobe, 2000);
-      }
-    });
-
-    // Start the globe spinning after a delay
-    setTimeout(spinGlobe, 3000);
 
     // Cleanup
     return () => {
