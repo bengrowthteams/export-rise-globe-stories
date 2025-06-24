@@ -15,6 +15,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
   const [mapboxToken, setMapboxToken] = useState('');
 
   useEffect(() => {
+    // Try to load token from localStorage on component mount
+    const savedToken = localStorage.getItem('mapboxToken');
+    if (savedToken) {
+      setMapboxToken(savedToken);
+    }
+  }, []);
+
+  const handleTokenSubmit = (token: string) => {
+    // Save token to localStorage when user enters it
+    localStorage.setItem('mapboxToken', token);
+    setMapboxToken(token);
+  };
+
+  useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
 
     // Initialize map
@@ -113,9 +127,27 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
           <input
             type="text"
             placeholder="Enter your Mapbox public token"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            onChange={(e) => setMapboxToken(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleTokenSubmit(e.currentTarget.value);
+              }
+            }}
           />
+          <button
+            onClick={(e) => {
+              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+              if (input.value) {
+                handleTokenSubmit(input.value);
+              }
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Save Token
+          </button>
+          <p className="text-xs text-gray-500 mt-2">
+            Your token will be saved locally for future visits
+          </p>
         </div>
       </div>
     );
