@@ -1,13 +1,15 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import StatsOverview from '../components/StatsOverview';
 import WorldMap from '../components/WorldMap';
-import StoryPanel from '../components/StoryPanel';
+import StoryCard from '../components/StoryCard';
 import { SuccessStory } from '../types/SuccessStory';
 
 const Index = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
+  const navigate = useNavigate();
 
   const handleCountrySelect = (story: SuccessStory | null) => {
     setSelectedStory(story);
@@ -15,6 +17,10 @@ const Index = () => {
 
   const handleClosePanel = () => {
     setSelectedStory(null);
+  };
+
+  const handleReadMore = (story: SuccessStory) => {
+    navigate(`/case-study/${story.id}`);
   };
 
   return (
@@ -27,7 +33,11 @@ const Index = () => {
           <WorldMap onCountrySelect={handleCountrySelect} />
         </div>
         
-        <StoryPanel story={selectedStory} onClose={handleClosePanel} />
+        <StoryCard 
+          story={selectedStory} 
+          onClose={handleClosePanel}
+          onReadMore={handleReadMore}
+        />
         
         {!selectedStory && (
           <div className="absolute bottom-6 left-6 bg-white p-4 rounded-lg shadow-lg max-w-sm">

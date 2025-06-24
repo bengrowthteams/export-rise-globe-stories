@@ -1,4 +1,3 @@
-
 import { SuccessStory } from '../types/SuccessStory';
 
 export const successStories: SuccessStory[] = [
@@ -24,7 +23,13 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '2.5 million direct jobs',
       economicContribution: '15% of total export revenue'
-    }
+    },
+    globalRanking1995: 44,
+    globalRanking2022: 2,
+    initialExports1995: '$4,018,462,336',
+    initialExports2022: '$61,180,082,835',
+    successfulProduct: 'textile footwear',
+    successStorySummary: 'In the late 1980s, privatization and liberalization reforms and targeted incentives attracted foreign investment in Vietnam\'s textile and footwear sectors. Multinational footwear companies like Nike and Japanese investors invested in textile factories and facilitated technology transfer, creating millions of jobs and driving export growth and industrial upgrading.'
   },
   {
     id: '2',
@@ -48,7 +53,13 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '4 million farmers supported',
       economicContribution: '30% of export earnings'
-    }
+    },
+    globalRanking1995: 1,
+    globalRanking2022: 1,
+    initialExports1995: '$400 million',
+    initialExports2022: '$1.2 billion',
+    successfulProduct: 'specialty coffee beans',
+    successStorySummary: 'Ethiopia leveraged its heritage as the birthplace of coffee to develop premium specialty coffee exports.'
   },
   {
     id: '3',
@@ -72,7 +83,13 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '500,000 direct and indirect jobs',
       economicContribution: '1.2% of GDP'
-    }
+    },
+    globalRanking1995: 45,
+    globalRanking2022: 8,
+    initialExports1995: '$50 million',
+    initialExports2022: '$1.8 billion',
+    successfulProduct: 'generic medicines',
+    successStorySummary: 'Bangladesh built a thriving pharmaceutical industry by focusing on generic drug production and achieving international quality standards.'
   },
   {
     id: '4',
@@ -96,7 +113,13 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '800,000 farming families',
       economicContribution: '20% of export revenue'
-    }
+    },
+    globalRanking1995: 2,
+    globalRanking2022: 2,
+    initialExports1995: '$800 million',
+    initialExports2022: '$2.1 billion',
+    successfulProduct: 'premium cocoa beans',
+    successStorySummary: 'Ghana maintained its position as a leading cocoa producer while adding value through quality premiums and sustainable practices.'
   },
   {
     id: '5',
@@ -120,7 +143,13 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '4.5 million direct jobs',
       economicContribution: '8% of GDP'
-    }
+    },
+    globalRanking1995: 15,
+    globalRanking2022: 1,
+    initialExports1995: '$2 billion',
+    initialExports2022: '$147 billion',
+    successfulProduct: 'software services',
+    successStorySummary: 'India leveraged its English-speaking talent pool and cost advantages to become the world\'s leading IT services exporter.'
   },
   {
     id: '6',
@@ -144,6 +173,12 @@ export const successStories: SuccessStory[] = [
     impact: {
       jobs: '300,000 direct and indirect jobs',
       economicContribution: '14% of GDP'
-    }
+    },
+    globalRanking1995: 50,
+    globalRanking2022: 12,
+    initialExports1995: '$10 million',
+    initialExports2022: '$498 million',
+    successfulProduct: 'eco-tourism services',
+    successStorySummary: 'Rwanda transformed its tourism industry by focusing on high-value eco-tourism and positioning itself as a safe destination.'
   }
 ];
