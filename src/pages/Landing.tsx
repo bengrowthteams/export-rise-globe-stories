@@ -46,12 +46,26 @@ const Landing = () => {
     setSelectedStory(story);
   };
 
+  const handleStartTutorial = () => {
+    // First scroll to map section if not already there
+    if (mapSectionRef.current) {
+      mapSectionRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    // Then start the tutorial
+    setTimeout(() => {
+      startTutorial();
+    }, 500);
+  };
+
   return (
     <div className="min-h-screen">
       <NavigationBar />
       
-      {/* Hero Section */}
-      <div className="min-h-screen relative overflow-hidden">
+      {/* Hero Section - add top padding for fixed nav */}
+      <div className="min-h-screen relative overflow-hidden pt-14">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -96,19 +110,17 @@ const Landing = () => {
           </div>
 
           {/* Tutorial Help Button */}
-          {hasSeenTutorial && (
-            <div className="absolute top-4 right-4 z-20">
-              <Button
-                onClick={startTutorial}
-                variant="outline"
-                size="sm"
-                className="bg-white/90 hover:bg-white"
-              >
-                <HelpCircle size={16} className="mr-1" />
-                Tutorial
-              </Button>
-            </div>
-          )}
+          <div className="absolute top-4 right-4 z-20">
+            <Button
+              onClick={handleStartTutorial}
+              variant="outline"
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <HelpCircle size={16} className="mr-1" />
+              Tutorial
+            </Button>
+          </div>
 
           {/* Map - always full width */}
           <div className="h-full w-full">
@@ -136,7 +148,7 @@ const Landing = () => {
           )}
 
           {/* Tutorial Overlay */}
-          {shouldShowTutorial && (
+          {(shouldShowTutorial || showTutorial) && (
             <MapTutorial
               onClose={closeTutorial}
               onDemoCountrySelect={handleTutorialDemo}

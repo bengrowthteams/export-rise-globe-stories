@@ -35,7 +35,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
     },
     {
       title: "Detailed Country Insights",
-      content: "Country cards reveal export rankings, growth data, and the story behind each transformation.",
+      content: "Country cards reveal export rankings, growth data, and the story behind each transformation. Click 'View Full Case Study' to read comprehensive details about each success story.",
       position: "left",
       highlight: "card"
     }
@@ -43,20 +43,36 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
   const handleNext = () => {
     if (currentStep === 1) {
-      // Trigger demo for dots step
-      const vietnamStory = {
+      // Trigger demo for dots step - create a complete demo story
+      const vietnamStory: SuccessStory = {
         id: 'demo-vietnam',
         country: 'Vietnam',
         flag: '🇻🇳',
         sector: 'Electronics & Textiles',
+        product: 'Smartphones and Garments',
+        description: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies.',
+        growthRate: 7000,
+        timeframe: '1995-2022',
+        exportValue: '$371.8 billion (2022)',
+        keyFactors: [
+          'Strategic FDI attraction',
+          'Trade liberalization',
+          'Skilled workforce development',
+          'Infrastructure investment'
+        ],
         coordinates: { lat: 14.0583, lng: 108.2772 },
-        globalRanking1995: '45',
-        globalRanking2022: '12',
-        initialExports1995: '$5.2B',
-        initialExports2022: '$371.8B',
-        growthRate: '7000',
+        marketDestinations: ['United States', 'European Union', 'Japan', 'South Korea'],
+        challenges: ['Rising labor costs', 'Environmental concerns', 'Competition from Bangladesh'],
+        impact: {
+          jobs: '2.5 million direct jobs',
+          economicContribution: '15% of total export revenue'
+        },
+        globalRanking1995: 45,
+        globalRanking2022: 12,
+        initialExports1995: '$5,200,000,000',
+        initialExports2022: '$371,800,000,000',
         successfulProduct: 'smartphones and textiles',
-        successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies.'
+        successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies, creating millions of jobs and driving remarkable export growth.'
       };
       onDemoCountrySelect(vietnamStory);
     } else if (currentStep === 3) {
