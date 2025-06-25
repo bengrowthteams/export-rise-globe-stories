@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,13 +5,17 @@ import { Map, HelpCircle } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
+import SectorSidebar from '../components/SectorSidebar';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
 import { SuccessStory } from '../types/SuccessStory';
+import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
+  const [selectedCountryStories, setSelectedCountryStories] = useState<CountrySuccessStories | null>(null);
+  const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -55,12 +58,28 @@ const Landing = () => {
     }
   };
 
-  const handleCountrySelect = (story: SuccessStory | null) => {
-    setSelectedStory(story);
+  const handleCountrySelect = (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => {
+    if (countryStories && countryStories.hasMutipleSectors) {
+      // Multi-sector country - show sidebar for sector selection
+      setSelectedCountryStories(countryStories);
+      setSelectedSector(countryStories.primarySector);
+      setSelectedStory(null);
+    } else {
+      // Single-sector country - show story card directly
+      setSelectedStory(story);
+      setSelectedCountryStories(null);
+      setSelectedSector(null);
+    }
+  };
+
+  const handleSectorSelect = (sector: SectorStory) => {
+    setSelectedSector(sector);
   };
 
   const handleClosePanel = () => {
     setSelectedStory(null);
+    setSelectedCountryStories(null);
+    setSelectedSector(null);
   };
 
   const handleReadMore = (story: SuccessStory) => {
@@ -182,8 +201,24 @@ const Landing = () => {
             </Button>
           </div>
 
-          {/* Map - always full width */}
-          <div className="h-full w-full">
+          {/* Sector Sidebar for multi-sector countries */}
+          {selectedCountryStories && selectedCountryStories.hasMutipleSectors && (
+            <div className="absolute left-0 top-0 h-full z-30">
+              <SectorSidebar
+                countryStories={selectedCountryStories}
+                selectedSector={selectedSector}
+                onSectorSelect={handleSectorSelect}
+                onClose={handleClosePanel}
+              />
+            </div>
+          )}
+
+          {/* Map - adjust width based on sidebar */}
+          <div className={`h-full transition-all duration-300 ${
+            selectedCountryStories && selectedCountryStories.hasMutipleSectors 
+              ? 'ml-80 w-[calc(100%-20rem)]' 
+              : 'w-full'
+          }`}>
             <WorldMap 
               ref={worldMapRef}
               onCountrySelect={handleCountrySelect} 
@@ -193,8 +228,8 @@ const Landing = () => {
             />
           </div>
           
-          {/* Story Card Overlay */}
-          {selectedStory && (
+          {/* Story Card Overlay - for single sector and selected multi-sector */}
+          {(selectedStory || (selectedCountryStories && selectedSector)) && (
             <>
               {/* Semi-transparent backdrop */}
               <div 
@@ -203,11 +238,16 @@ const Landing = () => {
               />
               
               {/* Story Card */}
-              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 tutorial-story-card ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 tutorial-story-card ${
+                (selectedStory || selectedSector) ? 'translate-x-0' : 'translate-x-full'
+              }`}>
                 <StoryCard 
                   story={selectedStory} 
+                  countryStories={selectedCountryStories}
+                  selectedSector={selectedSector}
                   onClose={handleClosePanel}
                   onReadMore={handleReadMore}
+                  onSectorChange={handleSectorSelect}
                 />
               </div>
             </>

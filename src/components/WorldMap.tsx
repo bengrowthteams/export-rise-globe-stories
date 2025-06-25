@@ -348,11 +348,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         </div>
       `);
     } else if (story) {
+      // Calculate ranking gain for single-sector countries
+      const rankingGain = story.globalRanking1995 - story.globalRanking2022;
+      const gainText = rankingGain > 0 ? `+${rankingGain}` : `${rankingGain}`;
+      const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+      
       popup.setHTML(`
         <div class="p-3">
           <h3 class="font-semibold text-sm">${country}</h3>
           <p class="text-xs text-gray-600">${story.sector}</p>
-          <p class="text-xs font-medium text-green-600">Rank #${story.globalRanking2022} (2022)</p>
+          <p class="text-xs font-medium ${gainColor}">Ranking gain: ${gainText}</p>
         </div>
       `);
     }
