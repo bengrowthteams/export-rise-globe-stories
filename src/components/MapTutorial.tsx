@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -60,6 +59,10 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.style.background = '';
         storyCard.style.transform = '';
         storyCard.style.zIndex = '';
+        storyCard.style.top = '';
+        storyCard.style.height = '';
+        storyCard.style.right = '';
+        storyCard.style.position = '';
         storyCard.classList.remove('tutorial-card-highlight');
       }
 
@@ -109,10 +112,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           onDemoCountrySelect(vietnamStory);
         }
         
-        // Highlight story card with enhanced effects
+        // Position and highlight story card for better visibility during tutorial
         if (storyCard) {
           storyCard.classList.add('tutorial-card-highlight');
-          storyCard.style.zIndex = '50';
+          storyCard.style.zIndex = '45'; // Higher than tutorial overlay
+          storyCard.style.top = '120px'; // Position below navbar and tutorial
+          storyCard.style.height = 'calc(100vh - 140px)'; // Adjust height to fit screen
+          storyCard.style.right = '0';
+          storyCard.style.position = 'fixed'; // Ensure it's properly positioned
         }
       }
     };
@@ -136,6 +143,10 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.style.background = '';
         storyCard.style.transform = '';
         storyCard.style.zIndex = '';
+        storyCard.style.top = '';
+        storyCard.style.height = '';
+        storyCard.style.right = '';
+        storyCard.style.position = '';
         storyCard.classList.remove('tutorial-card-highlight');
       }
     };
@@ -242,7 +253,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           </div>
           
           <div className="flex space-x-2">
-            {/* Only show Skip Tour button on first slide */}
             {currentStep === 0 && (
               <Button
                 variant="outline"
