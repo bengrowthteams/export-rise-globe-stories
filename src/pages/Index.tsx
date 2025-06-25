@@ -33,18 +33,29 @@ const Index = () => {
           <SearchBar onCountrySelect={handleCountrySelect} />
         </div>
 
-        <div className={`transition-all duration-300 h-full ${selectedStory ? 'mr-96' : 'mr-0'}`}>
+        {/* Map - always full width */}
+        <div className="h-full w-full">
           <WorldMap onCountrySelect={handleCountrySelect} />
         </div>
         
+        {/* Story Card Overlay */}
         {selectedStory && (
-          <div className="absolute right-0 top-0 h-full w-96 z-10">
-            <StoryCard 
-              story={selectedStory} 
-              onClose={handleClosePanel}
-              onReadMore={handleReadMore}
+          <>
+            {/* Semi-transparent backdrop */}
+            <div 
+              className="absolute inset-0 bg-black bg-opacity-20 z-30"
+              onClick={handleClosePanel}
             />
-          </div>
+            
+            {/* Story Card */}
+            <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
+              <StoryCard 
+                story={selectedStory} 
+                onClose={handleClosePanel}
+                onReadMore={handleReadMore}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>
