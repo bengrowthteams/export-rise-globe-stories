@@ -14,6 +14,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
+  const lastSelectedStory = useRef<SuccessStory | null>(null);
 
   useEffect(() => {
     // Try to load token from localStorage on component mount
@@ -113,15 +114,26 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
     };
   }, [mapboxToken]); // Only depend on mapboxToken
 
-  // Separate effect to handle flyTo when story is selected
+  // Separate effect to handle flyTo when story is selected or deselected
   useEffect(() => {
-    if (!map.current || !selectedStory) return;
+    if (!map.current) return;
 
-    map.current.flyTo({
-      center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat],
-      zoom: 5,
-      duration: 2000
-    });
+    if (selectedStory) {
+      // Fly to the selected story with close zoom
+      map.current.flyTo({
+        center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat],
+        zoom: 5,
+        duration: 2000
+      });
+      lastSelectedStory.current = selectedStory;
+    } else if (lastSelectedStory.current) {
+      // Fly out to a regional view when story is deselected
+      map.current.flyTo({
+        center: [lastSelectedStory.current.coordinates.lng, lastSelectedStory.current.coordinates.lat],
+        zoom: 3,
+        duration: 1500
+      });
+    }
   }, [selectedStory]);
 
   if (!mapboxToken) {
