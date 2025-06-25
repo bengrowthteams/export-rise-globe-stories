@@ -33,7 +33,7 @@ const Index = () => {
           <SearchBar onCountrySelect={handleCountrySelect} />
         </div>
 
-        <div className={`transition-all duration-300 h-full ${selectedStory ? 'mr-96' : 'mr-0'}`}>
+        <div className={`transition-all duration-300 h-full ${selectedStory ? 'mr-96' : ''}`}>
           <WorldMap onCountrySelect={handleCountrySelect} />
         </div>
         
