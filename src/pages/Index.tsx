@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import StatsOverview from '../components/StatsOverview';
 import WorldMap from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
+import SearchBar from '../components/SearchBar';
 import { SuccessStory } from '../types/SuccessStory';
 
 const Index = () => {
@@ -29,6 +30,11 @@ const Index = () => {
       <StatsOverview />
       
       <div className="relative h-[calc(100vh-180px)]">
+        {/* Search Bar */}
+        <div className="absolute top-4 left-4 z-20">
+          <SearchBar onCountrySelect={handleCountrySelect} />
+        </div>
+
         <div className={`transition-all duration-300 ${selectedStory ? 'mr-96' : 'mr-0'} h-full`}>
           <WorldMap onCountrySelect={handleCountrySelect} />
         </div>
@@ -43,7 +49,7 @@ const Index = () => {
           <div className="absolute bottom-6 left-6 bg-white p-4 rounded-lg shadow-lg max-w-sm">
             <h3 className="font-semibold mb-2">🌍 Explore Success Stories</h3>
             <p className="text-sm text-gray-600">
-              Click on the green markers to discover how developing countries achieved remarkable export growth in various sectors.
+              Click on the green markers or use the search bar to discover how developing countries achieved remarkable export growth in various sectors.
             </p>
           </div>
         )}
