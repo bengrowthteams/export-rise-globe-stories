@@ -123,9 +123,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       successStories.forEach((story) => {
         if (!map.current) return;
 
-        // Create custom marker element with fixed positioning
+        // Create simple marker element - let Mapbox handle all positioning
         const markerElement = document.createElement('div');
-        markerElement.className = 'custom-marker';
+        markerElement.className = 'map-marker';
         markerElement.setAttribute('data-story-id', story.id);
         markerElement.style.cssText = `
           width: 24px;
@@ -135,12 +135,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-          transition: all 0.3s ease;
-          position: relative;
-          z-index: 1;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
         `;
 
-        // Create marker with fixed positioning
+        // Create marker - Mapbox handles positioning automatically
         const marker = new mapboxgl.Marker({
           element: markerElement,
           anchor: 'center'
@@ -152,6 +150,17 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
         markerElement.addEventListener('click', () => {
           onCountrySelect(story);
+        });
+
+        // Add hover effects
+        markerElement.addEventListener('mouseenter', () => {
+          markerElement.style.transform = 'scale(1.2)';
+          markerElement.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.6)';
+        });
+
+        markerElement.addEventListener('mouseleave', () => {
+          markerElement.style.transform = 'scale(1)';
+          markerElement.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
         });
 
         const popup = new mapboxgl.Popup({

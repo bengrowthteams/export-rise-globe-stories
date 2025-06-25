@@ -45,19 +45,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
   useEffect(() => {
     const applyHighlights = () => {
       // Remove all existing highlights first
-      document.querySelectorAll('.custom-marker').forEach(marker => {
-        const element = marker as HTMLElement;
-        element.classList.remove('tutorial-highlight-marker');
-        // Reset all marker styles to default
-        element.style.width = '24px';
-        element.style.height = '24px';
-        element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-        element.style.border = '3px solid white';
-        element.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-        element.style.animation = '';
-        element.style.zIndex = '1';
-      });
-
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
         searchBar.style.boxShadow = '';
@@ -72,24 +59,12 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.style.border = '';
         storyCard.style.background = '';
         storyCard.style.transform = '';
+        storyCard.style.zIndex = '';
+        storyCard.classList.remove('tutorial-card-highlight');
       }
 
       // Apply highlights based on current step
-      if (currentStep === 1) {
-        // Highlight green dots - make them larger and add pulsing animation
-        document.querySelectorAll('.custom-marker').forEach(marker => {
-          const element = marker as HTMLElement;
-          element.classList.add('tutorial-highlight-marker');
-          // Apply enhanced styling without changing position
-          element.style.width = '32px';
-          element.style.height = '32px';
-          element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-          element.style.border = '4px solid white';
-          element.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), 0 4px 12px rgba(16, 185, 129, 0.4)';
-          element.style.animation = 'tutorial-pulse 2s infinite';
-          element.style.zIndex = '1000';
-        });
-      } else if (currentStep === 2) {
+      if (currentStep === 2) {
         // Highlight search bar
         if (searchBar) {
           searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
@@ -98,12 +73,10 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
       } else if (currentStep === 3 && demoStory) {
-        // Highlight story card with bright effects
+        // Highlight story card with enhanced effects
         if (storyCard) {
-          storyCard.style.boxShadow = '0 0 0 6px rgba(147, 51, 234, 0.6), 0 20px 60px rgba(147, 51, 234, 0.5)';
-          storyCard.style.border = '4px solid #9333ea';
-          storyCard.style.background = 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(147, 51, 234, 0.2))';
-          storyCard.style.transform = 'scale(1.02)';
+          storyCard.classList.add('tutorial-card-highlight');
+          storyCard.style.zIndex = '50';
         }
       }
     };
@@ -112,18 +85,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
     // Cleanup function
     return () => {
-      document.querySelectorAll('.custom-marker').forEach(marker => {
-        const element = marker as HTMLElement;
-        element.classList.remove('tutorial-highlight-marker');
-        element.style.width = '24px';
-        element.style.height = '24px';
-        element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-        element.style.border = '3px solid white';
-        element.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-        element.style.animation = '';
-        element.style.zIndex = '1';
-      });
-
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
         searchBar.style.boxShadow = '';
@@ -138,6 +99,8 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.style.border = '';
         storyCard.style.background = '';
         storyCard.style.transform = '';
+        storyCard.style.zIndex = '';
+        storyCard.classList.remove('tutorial-card-highlight');
       }
     };
   }, [currentStep, demoStory]);
@@ -261,21 +224,30 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         </div>
       </div>
 
-      {/* Add CSS for pulse animation */}
+      {/* Enhanced CSS for story card highlighting */}
       <style>
         {`
-          @keyframes tutorial-pulse {
-            0%, 100% {
-              transform: scale(1);
-              opacity: 1;
-            }
-            50% {
-              transform: scale(1.1);
-              opacity: 0.9;
-            }
+          .tutorial-card-highlight {
+            animation: tutorial-card-glow 2s ease-in-out infinite alternate !important;
+            border: 4px solid #9333ea !important;
+            box-shadow: 0 0 0 6px rgba(147, 51, 234, 0.3), 
+                        0 0 30px rgba(147, 51, 234, 0.5),
+                        0 20px 60px rgba(147, 51, 234, 0.3) !important;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(147, 51, 234, 0.1)) !important;
+            transform: scale(1.02) !important;
           }
-          .tutorial-highlight-marker {
-            position: relative !important;
+          
+          @keyframes tutorial-card-glow {
+            from {
+              box-shadow: 0 0 0 6px rgba(147, 51, 234, 0.3), 
+                          0 0 30px rgba(147, 51, 234, 0.5),
+                          0 20px 60px rgba(147, 51, 234, 0.3);
+            }
+            to {
+              box-shadow: 0 0 0 8px rgba(147, 51, 234, 0.5), 
+                          0 0 40px rgba(147, 51, 234, 0.7),
+                          0 25px 80px rgba(147, 51, 234, 0.4);
+            }
           }
         `}
       </style>

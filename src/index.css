@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,4 +101,19 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Mapbox marker positioning - ensure Mapbox controls positioning */
+.mapboxgl-marker {
+  position: absolute !important;
+}
+
+.map-marker {
+  /* Only visual styles - no positioning overrides */
+  pointer-events: auto;
+}
+
+/* Ensure tutorial highlights don't interfere with positioning */
+.tutorial-card-highlight {
+  position: relative;
 }
