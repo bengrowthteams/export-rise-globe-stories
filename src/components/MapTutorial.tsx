@@ -35,7 +35,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
     },
     {
       title: "Detailed Country Insights",
-      content: "Country cards reveal export rankings, growth data, and the story behind each transformation. Click 'View Full Case Study' to read comprehensive details about each success story.",
+      content: "Country cards reveal export rankings, growth data, and the story behind each transformation. Click 'View Full Case Study' for comprehensive details about each success story.",
       position: "left",
       highlight: "card"
     }
@@ -115,7 +115,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       )}
       
       {currentStepData.highlight === 'search' && (
-        <div className="absolute top-4 left-4 w-80 h-12 border-2 border-blue-400 rounded-lg animate-pulse" />
+        <div className="absolute top-20 left-4 w-80 h-12 border-2 border-blue-400 rounded-lg animate-pulse" />
       )}
 
       {/* Tutorial card */}

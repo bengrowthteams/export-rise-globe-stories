@@ -11,15 +11,7 @@ export const useTutorial = () => {
     const hasSeenBefore = tutorialSeen === 'true';
     
     setHasSeenTutorial(hasSeenBefore);
-    
-    if (!hasSeenBefore) {
-      // Small delay to let the page load
-      const timer = setTimeout(() => {
-        setShowTutorial(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
+    // Remove the automatic timer - let Landing.tsx handle the auto-trigger
   }, []);
 
   const startTutorial = () => {

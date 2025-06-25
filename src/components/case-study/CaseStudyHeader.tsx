@@ -19,7 +19,7 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
     // Navigate to the landing page (which contains the map)
     navigate('/');
     
-    // After navigation, scroll to the map section and restore scroll position
+    // After navigation, scroll to the map section and restore both scroll position and map state
     setTimeout(() => {
       const mapSection = document.getElementById('map-section');
       if (mapSection) {

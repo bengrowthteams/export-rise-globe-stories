@@ -8,9 +8,16 @@ import { successStories } from '../data/successStories';
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null) => void;
   selectedStory?: SuccessStory | null;
+  onMapStateChange?: (center: [number, number], zoom: number) => void;
+  initialMapState?: { center: [number, number]; zoom: number };
 }
 
-const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) => {
+const WorldMap: React.FC<WorldMapProps> = ({ 
+  onCountrySelect, 
+  selectedStory,
+  onMapStateChange,
+  initialMapState
+}) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
@@ -37,11 +44,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
+    const initialCenter = initialMapState?.center || [20, 20];
+    const initialZoom = initialMapState?.zoom || 2;
+    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      zoom: 2,
-      center: [20, 20],
+      zoom: initialZoom,
+      center: initialCenter,
       pitch: 0,
     });
 
@@ -52,6 +62,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
       }),
       'top-right'
     );
+
+    // Track map state changes
+    if (onMapStateChange) {
+      map.current.on('moveend', () => {
+        if (map.current) {
+          const center = map.current.getCenter();
+          const zoom = map.current.getZoom();
+          onMapStateChange([center.lng, center.lat], zoom);
+        }
+      });
+    }
 
     // Add markers for success stories
     map.current.on('style.load', () => {
@@ -112,7 +133,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
         map.current = null;
       }
     };
-  }, [mapboxToken]); // Only depend on mapboxToken
+  }, [mapboxToken, initialMapState]); // Add initialMapState to dependencies
 
   // Separate effect to handle flyTo when story is selected or deselected
   useEffect(() => {

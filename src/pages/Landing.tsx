@@ -14,6 +14,7 @@ import { useScrollTrigger } from '../hooks/useScrollTrigger';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
+  const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   
@@ -22,6 +23,28 @@ const Landing = () => {
 
   // Show tutorial when map section becomes visible for first-time users
   const shouldShowAutoTutorial = mapSectionVisible && !hasSeenTutorial && !showTutorial;
+
+  // Auto-trigger tutorial when map becomes visible for first-time users
+  React.useEffect(() => {
+    if (shouldShowAutoTutorial) {
+      // Start tutorial immediately when map becomes visible
+      startTutorial();
+    }
+  }, [shouldShowAutoTutorial, startTutorial]);
+
+  // Restore map state on page load
+  React.useEffect(() => {
+    const savedMapState = sessionStorage.getItem('mapState');
+    if (savedMapState) {
+      try {
+        const parsedState = JSON.parse(savedMapState);
+        setMapState(parsedState);
+        sessionStorage.removeItem('mapState');
+      } catch (error) {
+        console.error('Failed to parse saved map state:', error);
+      }
+    }
+  }, []);
 
   const handleExploreMap = () => {
     document.getElementById('map-section')?.scrollIntoView({ 
@@ -39,8 +62,11 @@ const Landing = () => {
   };
 
   const handleReadMore = (story: SuccessStory) => {
-    // Save current scroll position before navigating
+    // Save current scroll position and map state before navigating
     sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
+    if (mapState) {
+      sessionStorage.setItem('mapState', JSON.stringify(mapState));
+    }
     navigate(`/case-study/${story.id}`);
   };
 
@@ -62,14 +88,9 @@ const Landing = () => {
     }, 500);
   };
 
-  // Auto-trigger tutorial when map becomes visible for first-time users
-  React.useEffect(() => {
-    if (shouldShowAutoTutorial) {
-      setTimeout(() => {
-        startTutorial();
-      }, 1000);
-    }
-  }, [shouldShowAutoTutorial, startTutorial]);
+  const handleMapStateChange = (center: [number, number], zoom: number) => {
+    setMapState({ center, zoom });
+  };
 
   return (
     <div className="min-h-screen">
@@ -135,7 +156,12 @@ const Landing = () => {
 
           {/* Map - always full width */}
           <div className="h-full w-full">
-            <WorldMap onCountrySelect={handleCountrySelect} selectedStory={selectedStory} />
+            <WorldMap 
+              onCountrySelect={handleCountrySelect} 
+              selectedStory={selectedStory}
+              onMapStateChange={handleMapStateChange}
+              initialMapState={mapState}
+            />
           </div>
           
           {/* Story Card Overlay */}
