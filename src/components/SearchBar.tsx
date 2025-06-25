@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { SuccessStory } from '../types/SuccessStory';
-import { successStories } from '../data/successStories';
+import { fetchSuccessStories } from '../services/countryDataService';
 
 interface SearchBarProps {
   onCountrySelect: (story: SuccessStory) => void;
@@ -13,11 +13,30 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
   const [suggestions, setSuggestions] = useState<SuccessStory[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
+  const [loading, setLoading] = useState(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Load success stories on component mount
   useEffect(() => {
-    if (searchTerm.trim() === '') {
+    const loadSuccessStories = async () => {
+      try {
+        setLoading(true);
+        const stories = await fetchSuccessStories();
+        setSuccessStories(stories);
+      } catch (error) {
+        console.error('Failed to load success stories for search:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSuccessStories();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '' || loading || successStories.length === 0) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
@@ -31,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     setSuggestions(filtered);
     setShowSuggestions(filtered.length > 0);
     setSelectedIndex(-1);
-  }, [searchTerm]);
+  }, [searchTerm, successStories, loading]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,7 +108,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
   };
 
   const handleFocus = () => {
-    if (searchTerm) {
+    if (searchTerm && !loading) {
       const filtered = successStories.filter(story =>
         story.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
         story.sector.toLowerCase().includes(searchTerm.toLowerCase())
@@ -110,10 +129,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
-          placeholder="Search countries..."
-          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
+          placeholder={loading ? "Loading..." : `Search ${successStories.length} countries...`}
+          disabled={loading}
+          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm disabled:bg-gray-100"
         />
-        {searchTerm && (
+        {searchTerm && !loading && (
           <button
             onClick={clearSearch}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"

@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuccessStory } from '../types/SuccessStory';
+import { fetchSuccessStories } from '../services/countryDataService';
 
 interface MapTutorialProps {
   onClose: () => void;
@@ -12,6 +14,7 @@ interface MapTutorialProps {
 const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect, demoStory }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const [demoStoryData, setDemoStoryData] = useState<SuccessStory | null>(null);
 
   const steps = [
     {
@@ -39,6 +42,23 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       highlight: "card"
     }
   ];
+
+  // Load a demo story from the actual data
+  useEffect(() => {
+    const loadDemoStory = async () => {
+      try {
+        const stories = await fetchSuccessStories();
+        // Find Vietnam or use the first available story
+        const vietnamStory = stories.find(story => story.country === 'Vietnam');
+        const fallbackStory = vietnamStory || stories[0];
+        setDemoStoryData(fallbackStory);
+      } catch (error) {
+        console.error('Failed to load demo story:', error);
+      }
+    };
+
+    loadDemoStory();
+  }, []);
 
   // Apply visual effects based on current step
   useEffect(() => {
@@ -77,39 +97,8 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         }
       } else if (currentStep === 3) {
         // Ensure demo story is visible during card step
-        if (!demoStory) {
-          // Create and trigger demo story for card step
-          const vietnamStory: SuccessStory = {
-            id: 'demo-vietnam',
-            country: 'Vietnam',
-            flag: '🇻🇳',
-            sector: 'Electronics & Textiles',
-            product: 'Smartphones and Garments',
-            description: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies.',
-            growthRate: 7000,
-            timeframe: '1995-2022',
-            exportValue: '$371.8 billion (2022)',
-            keyFactors: [
-              'Strategic FDI attraction',
-              'Trade liberalization',
-              'Skilled workforce development',
-              'Infrastructure investment'
-            ],
-            coordinates: { lat: 14.0583, lng: 108.2772 },
-            marketDestinations: ['United States', 'European Union', 'Japan', 'South Korea'],
-            challenges: ['Rising labor costs', 'Environmental concerns', 'Competition from Bangladesh'],
-            impact: {
-              jobs: '2.5 million direct jobs',
-              economicContribution: '15% of total export revenue'
-            },
-            globalRanking1995: 45,
-            globalRanking2022: 12,
-            initialExports1995: '$5,200,000,000',
-            initialExports2022: '$371,800,000,000',
-            successfulProduct: 'smartphones and textiles',
-            successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies, creating millions of jobs and driving remarkable export growth.'
-          };
-          onDemoCountrySelect(vietnamStory);
+        if (!demoStory && demoStoryData) {
+          onDemoCountrySelect(demoStoryData);
         }
         
         // Position and highlight story card for better visibility during tutorial
@@ -150,42 +139,12 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.classList.remove('tutorial-card-highlight');
       }
     };
-  }, [currentStep, demoStory, onDemoCountrySelect]);
+  }, [currentStep, demoStory, demoStoryData, onDemoCountrySelect]);
 
   const handleNext = () => {
-    if (currentStep === 1) {
-      // Trigger demo for dots step - create a complete demo story
-      const vietnamStory: SuccessStory = {
-        id: 'demo-vietnam',
-        country: 'Vietnam',
-        flag: '🇻🇳',
-        sector: 'Electronics & Textiles',
-        product: 'Smartphones and Garments',
-        description: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies.',
-        growthRate: 7000,
-        timeframe: '1995-2022',
-        exportValue: '$371.8 billion (2022)',
-        keyFactors: [
-          'Strategic FDI attraction',
-          'Trade liberalization',
-          'Skilled workforce development',
-          'Infrastructure investment'
-        ],
-        coordinates: { lat: 14.0583, lng: 108.2772 },
-        marketDestinations: ['United States', 'European Union', 'Japan', 'South Korea'],
-        challenges: ['Rising labor costs', 'Environmental concerns', 'Competition from Bangladesh'],
-        impact: {
-          jobs: '2.5 million direct jobs',
-          economicContribution: '15% of total export revenue'
-        },
-        globalRanking1995: 45,
-        globalRanking2022: 12,
-        initialExports1995: '$5,200,000,000',
-        initialExports2022: '$371,800,000,000',
-        successfulProduct: 'smartphones and textiles',
-        successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies, creating millions of jobs and driving remarkable export growth.'
-      };
-      onDemoCountrySelect(vietnamStory);
+    if (currentStep === 1 && demoStoryData) {
+      // Trigger demo for dots step
+      onDemoCountrySelect(demoStoryData);
     }
 
     if (currentStep < steps.length - 1) {

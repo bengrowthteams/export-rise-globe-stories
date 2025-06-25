@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
-import { successStories } from '../data/successStories';
+import { fetchSuccessStories } from '../services/countryDataService';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null) => void;
@@ -27,6 +27,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [mapboxToken, setMapboxToken] = useState('');
   const [mapInitialized, setMapInitialized] = useState(false);
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
+  const [loading, setLoading] = useState(true);
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -38,6 +40,24 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     if (savedToken) {
       setMapboxToken(savedToken);
     }
+  }, []);
+
+  // Fetch success stories on component mount
+  useEffect(() => {
+    const loadSuccessStories = async () => {
+      try {
+        setLoading(true);
+        const stories = await fetchSuccessStories();
+        setSuccessStories(stories);
+        console.log(`Loaded ${stories.length} success stories from Supabase`);
+      } catch (error) {
+        console.error('Failed to load success stories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSuccessStories();
   }, []);
 
   const handleTokenSubmit = (token: string) => {
@@ -78,11 +98,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     resetToInitialPosition
   }));
 
-  // Initialize map only once when token is available
+  // Initialize map only once when token is available and stories are loaded
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current) return;
+    if (!mapContainer.current || !mapboxToken || map.current || loading || successStories.length === 0) return;
 
-    console.log('Initializing map...');
+    console.log('Initializing map with', successStories.length, 'countries...');
     
     mapboxgl.accessToken = mapboxToken;
     
@@ -114,14 +134,14 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     });
 
     map.current.on('style.load', () => {
-      console.log('Map style loaded, adding markers...');
+      console.log('Map style loaded, adding markers for', successStories.length, 'countries...');
       
       // Clear existing markers
       markers.current.forEach(marker => marker.remove());
       markers.current = [];
 
       successStories.forEach((story) => {
-        if (!map.current) return;
+        if (!map.current || !story.coordinates || story.coordinates.lat === 0 && story.coordinates.lng === 0) return;
 
         // Create marker element with minimal styling - let Mapbox handle positioning completely
         const markerElement = document.createElement('div');
@@ -223,7 +243,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         initialMapStateApplied.current = false;
       }
     };
-  }, [mapboxToken]);
+  }, [mapboxToken, successStories, loading]);
 
   // Handle story selection flyTo
   useEffect(() => {
@@ -290,6 +310,28 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           </button>
           <p className="text-xs text-gray-500 mt-2">
             Your token will be saved locally for future visits
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-gray-600">Loading country data...</p>
+      </div>
+    );
+  }
+
+  if (successStories.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-8">
+        <div className="max-w-md text-center">
+          <h3 className="text-lg font-semibold mb-4 text-red-700">No Data Available</h3>
+          <p className="text-red-600">
+            Unable to load country data from Supabase. Please check your database connection.
           </p>
         </div>
       </div>
