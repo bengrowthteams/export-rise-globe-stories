@@ -88,6 +88,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     inputRef.current?.focus();
   };
 
+  const handleFocus = () => {
+    if (searchTerm) {
+      const filtered = successStories.filter(story =>
+        story.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        story.sector.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
+    }
+  };
+
   return (
     <div ref={searchRef} className="relative w-full max-w-sm">
       <div className="relative">
@@ -98,10 +109,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
           value={searchTerm}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => searchTerm && setSuggestions(successStories.filter(story =>
-            story.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            story.sector.toLowerCase().includes(searchTerm.toLowerCase())
-          )) && setShowSuggestions(true)}
+          onFocus={handleFocus}
           placeholder="Search countries..."
           className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
         />

@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import StatsOverview from '../components/StatsOverview';
+import NavigationBar from '../components/NavigationBar';
 import WorldMap from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
 import SearchBar from '../components/SearchBar';
@@ -26,10 +25,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      <StatsOverview />
+      <NavigationBar />
       
-      <div className="relative h-[calc(100vh-180px)]">
+      <div className="relative h-[calc(100vh-56px)]">
         {/* Search Bar */}
         <div className="absolute top-4 left-4 z-20">
           <SearchBar onCountrySelect={handleCountrySelect} />
@@ -44,15 +42,6 @@ const Index = () => {
           onClose={handleClosePanel}
           onReadMore={handleReadMore}
         />
-        
-        {!selectedStory && (
-          <div className="absolute bottom-6 left-6 bg-white p-4 rounded-lg shadow-lg max-w-sm">
-            <h3 className="font-semibold mb-2">🌍 Explore Success Stories</h3>
-            <p className="text-sm text-gray-600">
-              Click on the green markers or use the search bar to discover how developing countries achieved remarkable export growth in various sectors.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
