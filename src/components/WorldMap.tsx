@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
 import { fetchSuccessStories, clearSuccessStoriesCache } from '../services/countryDataService';
+import { successStories as fallbackStories } from '../data/successStories';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null) => void;
@@ -29,6 +30,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dataSource, setDataSource] = useState<'supabase' | 'fallback'>('supabase');
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -54,16 +56,24 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         clearSuccessStoriesCache();
         
         const stories = await fetchSuccessStories();
-        console.log('Received stories:', stories.length);
-        
-        setSuccessStories(stories);
+        console.log('Received stories from Supabase:', stories.length);
         
         if (stories.length === 0) {
-          setError('No countries loaded from database. Check console for details.');
+          console.log('No stories from Supabase, falling back to hardcoded data');
+          setSuccessStories(fallbackStories);
+          setDataSource('fallback');
+          setError('Using fallback data - Supabase connection issue detected');
+        } else {
+          setSuccessStories(stories);
+          setDataSource('supabase');
         }
+        
       } catch (error) {
         console.error('Failed to load success stories:', error);
-        setError(`Failed to load country data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.log('Error occurred, falling back to hardcoded data');
+        setSuccessStories(fallbackStories);
+        setDataSource('fallback');
+        setError(`Supabase error (using fallback data): ${error instanceof Error ? error.message : 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -114,7 +124,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || map.current || loading || successStories.length === 0) return;
 
-    console.log('Initializing map with', successStories.length, 'countries...');
+    console.log('Initializing map with', successStories.length, 'countries from', dataSource);
     
     mapboxgl.accessToken = mapboxToken;
     
@@ -332,36 +342,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <p className="text-gray-600">Loading country data from Supabase...</p>
-        <p className="text-xs text-gray-500 mt-2">Check console for detailed logs</p>
-      </div>
-    );
-  }
-
-  if (error || successStories.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-8">
-        <div className="max-w-md text-center">
-          <h3 className="text-lg font-semibold mb-4 text-red-700">Data Loading Issue</h3>
-          <p className="text-red-600 mb-4">
-            {error || 'Unable to load country data from Supabase.'}
-          </p>
-          <p className="text-sm text-red-500 mb-4">
-            Possible causes:
-          </p>
-          <ul className="text-xs text-red-500 text-left list-disc list-inside space-y-1">
-            <li>Row Level Security policies blocking access</li>
-            <li>Empty or missing table data</li>
-            <li>Database connection issues</li>
-            <li>Incorrect table permissions</li>
-          </ul>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Refresh Page
-          </button>
-        </div>
+        <p className="text-gray-600">Loading country data...</p>
+        <p className="text-xs text-gray-500 mt-2">Attempting to connect to Supabase</p>
       </div>
     );
   }
@@ -370,6 +352,25 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="absolute inset-0 rounded-lg shadow-lg" />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-background/5 rounded-lg" />
+      
+      {/* Data source indicator */}
+      {dataSource === 'fallback' && (
+        <div className="absolute top-4 left-4 z-10 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-2 rounded-lg text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+            Using sample data - Database connection issue
+          </div>
+        </div>
+      )}
+      
+      {dataSource === 'supabase' && (
+        <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-3 py-2 rounded-lg text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            Live data from Supabase ({successStories.length} countries)
+          </div>
+        </div>
+      )}
     </div>
   );
 });

@@ -100,8 +100,53 @@ const transformCountryData = (data: CountryDataRow[]): SuccessStory[] => {
     });
 };
 
+// Test database connectivity and permissions
+const testDatabaseAccess = async (): Promise<void> => {
+  try {
+    console.log('=== TESTING DATABASE ACCESS ===');
+    
+    // Test 1: Check if we can connect to Supabase at all
+    const { data: testData, error: testError } = await supabase
+      .from('Country Data')
+      .select('Country', { count: 'exact', head: true });
+    
+    console.log('Basic connection test:', { 
+      success: !testError, 
+      error: testError?.message,
+      count: testData?.length || 0
+    });
+
+    // Test 2: Try different query approaches
+    const queries = [
+      { name: 'Basic select *', query: supabase.from('Country Data').select('*').limit(1) },
+      { name: 'Select Country only', query: supabase.from('Country Data').select('Country').limit(1) },
+      { name: 'Count query', query: supabase.from('Country Data').select('*', { count: 'exact', head: true }) }
+    ];
+
+    for (const { name, query } of queries) {
+      const { data, error, count } = await query;
+      console.log(`${name}:`, { 
+        success: !error, 
+        error: error?.message, 
+        dataLength: data?.length || 0,
+        count 
+      });
+    }
+
+    // Test 3: Check RLS status
+    const { data: rlsData, error: rlsError } = await supabase
+      .rpc('pg_catalog.current_setting', { setting_name: 'row_security' })
+      .single();
+    
+    console.log('RLS Status Check:', { rlsData, rlsError });
+
+  } catch (error) {
+    console.error('Database access test failed:', error);
+  }
+};
+
 export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
-  // Clear cache for debugging - remove this line once working
+  // Clear cache for fresh data
   cachedSuccessStories = null;
   
   // Return cached data if available
@@ -111,42 +156,56 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
   }
 
   try {
-    console.log('Fetching country data from Supabase...');
+    console.log('=== FETCHING SUCCESS STORIES ===');
     
-    // Try multiple query approaches to debug the issue
-    const { data, error, count } = await supabase
+    // Run database access tests first
+    await testDatabaseAccess();
+    
+    console.log('Attempting main data fetch...');
+    
+    // Main query with extensive logging
+    const { data, error, count, status, statusText } = await supabase
       .from('Country Data')
       .select('*', { count: 'exact' })
       .order('Country');
 
-    console.log('Supabase query response:');
-    console.log('- Error:', error);
-    console.log('- Data length:', data?.length || 0);
-    console.log('- Count:', count);
-    console.log('- First few rows:', data?.slice(0, 3));
+    console.log('=== MAIN QUERY RESULTS ===');
+    console.log('Status:', status);
+    console.log('Status Text:', statusText);
+    console.log('Error:', error);
+    console.log('Data length:', data?.length || 0);
+    console.log('Count:', count);
+    console.log('Raw data preview:', data?.slice(0, 2));
 
     if (error) {
-      console.error('Supabase error details:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      });
-      throw error;
+      console.error('=== SUPABASE ERROR DETAILS ===');
+      console.error('Message:', error.message);
+      console.error('Details:', error.details);
+      console.error('Hint:', error.hint);
+      console.error('Code:', error.code);
+      throw new Error(`Supabase query failed: ${error.message}`);
     }
 
     if (!data || data.length === 0) {
-      console.warn('No data returned from Supabase. This might be due to:');
-      console.warn('1. Row Level Security policies blocking access');
-      console.warn('2. Empty table');
-      console.warn('3. Incorrect table permissions');
+      console.warn('=== NO DATA RETURNED ===');
+      console.warn('This could be due to:');
+      console.warn('1. Empty table');
+      console.warn('2. Row Level Security blocking access');
+      console.warn('3. Incorrect table name or permissions');
+      console.warn('4. Database connectivity issues');
       
-      // Try a simple count query to test table access
-      const { count: tableCount, error: countError } = await supabase
-        .from('Country Data')
-        .select('*', { count: 'exact', head: true });
-      
-      console.log('Table count test:', { count: tableCount, error: countError });
+      // Try a direct table existence check
+      try {
+        const { data: tableCheck } = await supabase
+          .from('information_schema.tables')
+          .select('table_name')
+          .eq('table_name', 'Country Data')
+          .eq('table_schema', 'public');
+        
+        console.log('Table existence check:', tableCheck?.length ? 'Table exists' : 'Table not found');
+      } catch (tableError) {
+        console.log('Could not check table existence:', tableError);
+      }
       
       return [];
     }
@@ -154,12 +213,16 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
     const transformedData = transformCountryData(data);
     cachedSuccessStories = transformedData;
     
+    console.log(`=== SUCCESS ===`);
     console.log(`Successfully loaded and transformed ${transformedData.length} countries from Supabase`);
     return transformedData;
+    
   } catch (error) {
-    console.error('Failed to fetch success stories:', error);
+    console.error('=== FETCH FAILED ===');
     console.error('Error type:', typeof error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
+    console.error('Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Full error object:', error);
     
     // Return empty array on error - components should handle this gracefully
     return [];
