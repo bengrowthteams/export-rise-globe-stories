@@ -25,7 +25,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, onClose, onReadMore }) => 
   };
 
   return (
-    <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-2xl z-10 overflow-y-auto">
+    <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

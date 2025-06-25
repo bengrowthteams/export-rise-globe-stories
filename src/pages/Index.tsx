@@ -33,16 +33,18 @@ const Index = () => {
           <SearchBar onCountrySelect={handleCountrySelect} />
         </div>
 
-        <div className={`transition-all duration-300 h-full ${selectedStory ? 'mr-96' : ''}`}>
+        <div className={`transition-all duration-300 h-full ${selectedStory ? 'mr-96' : 'mr-0'}`}>
           <WorldMap onCountrySelect={handleCountrySelect} />
         </div>
         
         {selectedStory && (
-          <StoryCard 
-            story={selectedStory} 
-            onClose={handleClosePanel}
-            onReadMore={handleReadMore}
-          />
+          <div className="absolute right-0 top-0 h-full w-96 z-10">
+            <StoryCard 
+              story={selectedStory} 
+              onClose={handleClosePanel}
+              onReadMore={handleReadMore}
+            />
+          </div>
         )}
       </div>
     </div>
