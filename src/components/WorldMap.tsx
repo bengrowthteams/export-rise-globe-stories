@@ -1,9 +1,8 @@
-
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
-import { fetchSuccessStories } from '../services/countryDataService';
+import { fetchSuccessStories, clearSuccessStoriesCache } from '../services/countryDataService';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null) => void;
@@ -29,6 +28,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [mapInitialized, setMapInitialized] = useState(false);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -47,11 +47,23 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     const loadSuccessStories = async () => {
       try {
         setLoading(true);
+        setError(null);
+        console.log('Starting to load success stories...');
+        
+        // Clear cache to ensure fresh data
+        clearSuccessStoriesCache();
+        
         const stories = await fetchSuccessStories();
+        console.log('Received stories:', stories.length);
+        
         setSuccessStories(stories);
-        console.log(`Loaded ${stories.length} success stories from Supabase`);
+        
+        if (stories.length === 0) {
+          setError('No countries loaded from database. Check console for details.');
+        }
       } catch (error) {
         console.error('Failed to load success stories:', error);
+        setError(`Failed to load country data: ${error instanceof Error ? error.message : 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -320,19 +332,35 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <p className="text-gray-600">Loading country data...</p>
+        <p className="text-gray-600">Loading country data from Supabase...</p>
+        <p className="text-xs text-gray-500 mt-2">Check console for detailed logs</p>
       </div>
     );
   }
 
-  if (successStories.length === 0) {
+  if (error || successStories.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-8">
         <div className="max-w-md text-center">
-          <h3 className="text-lg font-semibold mb-4 text-red-700">No Data Available</h3>
-          <p className="text-red-600">
-            Unable to load country data from Supabase. Please check your database connection.
+          <h3 className="text-lg font-semibold mb-4 text-red-700">Data Loading Issue</h3>
+          <p className="text-red-600 mb-4">
+            {error || 'Unable to load country data from Supabase.'}
           </p>
+          <p className="text-sm text-red-500 mb-4">
+            Possible causes:
+          </p>
+          <ul className="text-xs text-red-500 text-left list-disc list-inside space-y-1">
+            <li>Row Level Security policies blocking access</li>
+            <li>Empty or missing table data</li>
+            <li>Database connection issues</li>
+            <li>Incorrect table permissions</li>
+          </ul>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Refresh Page
+          </button>
         </div>
       </div>
     );

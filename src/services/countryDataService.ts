@@ -46,8 +46,17 @@ const generateSuccessStorySummary = (country: string, sector: string, product: s
 };
 
 const transformCountryData = (data: CountryDataRow[]): SuccessStory[] => {
+  console.log('Transforming country data, received rows:', data.length);
+  console.log('Sample row structure:', data[0]);
+  
   return data
-    .filter(row => row.Country && row.Sector) // Only include rows with required data
+    .filter(row => {
+      const hasRequiredData = row.Country && row.Sector;
+      if (!hasRequiredData) {
+        console.log('Filtering out row with missing required data:', row);
+      }
+      return hasRequiredData;
+    })
     .map(row => {
       const country = row.Country!;
       const sector = row.Sector!;
@@ -92,33 +101,66 @@ const transformCountryData = (data: CountryDataRow[]): SuccessStory[] => {
 };
 
 export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
+  // Clear cache for debugging - remove this line once working
+  cachedSuccessStories = null;
+  
   // Return cached data if available
   if (cachedSuccessStories) {
+    console.log('Returning cached success stories:', cachedSuccessStories.length);
     return cachedSuccessStories;
   }
 
   try {
-    const { data, error } = await supabase
+    console.log('Fetching country data from Supabase...');
+    
+    // Try multiple query approaches to debug the issue
+    const { data, error, count } = await supabase
       .from('Country Data')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('Country');
 
+    console.log('Supabase query response:');
+    console.log('- Error:', error);
+    console.log('- Data length:', data?.length || 0);
+    console.log('- Count:', count);
+    console.log('- First few rows:', data?.slice(0, 3));
+
     if (error) {
-      console.error('Error fetching country data:', error);
+      console.error('Supabase error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       throw error;
     }
 
-    if (!data) {
+    if (!data || data.length === 0) {
+      console.warn('No data returned from Supabase. This might be due to:');
+      console.warn('1. Row Level Security policies blocking access');
+      console.warn('2. Empty table');
+      console.warn('3. Incorrect table permissions');
+      
+      // Try a simple count query to test table access
+      const { count: tableCount, error: countError } = await supabase
+        .from('Country Data')
+        .select('*', { count: 'exact', head: true });
+      
+      console.log('Table count test:', { count: tableCount, error: countError });
+      
       return [];
     }
 
     const transformedData = transformCountryData(data);
     cachedSuccessStories = transformedData;
     
-    console.log(`Loaded ${transformedData.length} countries from Supabase`);
+    console.log(`Successfully loaded and transformed ${transformedData.length} countries from Supabase`);
     return transformedData;
   } catch (error) {
     console.error('Failed to fetch success stories:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    
     // Return empty array on error - components should handle this gracefully
     return [];
   }
@@ -126,5 +168,6 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
 
 // Clear cache function for future use
 export const clearSuccessStoriesCache = () => {
+  console.log('Clearing success stories cache');
   cachedSuccessStories = null;
 };
