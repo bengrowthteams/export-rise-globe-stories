@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
@@ -54,6 +53,8 @@ const transformToSectorStory = (row: CountryDataRow): SectorStory => {
   const rank2022 = row['Rank (2022)'] || 50;
   const initial = row['Initial Exports - 1995 (USD)'] || 0;
   const current = row['Current Exports - 2022 (USD)'] || 0;
+  const globalShare1995 = row['Global Share 1995 - %'] || 0;
+  const globalShare2022 = row['Global Share 2022 - %'] || 0;
   const growthRate = calculateGrowthRate(initial, current);
 
   return {
@@ -79,7 +80,9 @@ const transformToSectorStory = (row: CountryDataRow): SectorStory => {
     initialExports1995: formatCurrency(initial),
     initialExports2022: formatCurrency(current),
     successfulProduct: product.toLowerCase(),
-    successStorySummary: generateSuccessStorySummary(row.Country!, sector, product, growthRate)
+    successStorySummary: generateSuccessStorySummary(row.Country!, sector, product, growthRate),
+    globalShare1995,
+    globalShare2022
   };
 };
 

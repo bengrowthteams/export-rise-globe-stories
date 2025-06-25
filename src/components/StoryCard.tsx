@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
+import { X, TrendingUp, ArrowRight, Building2, Globe } from 'lucide-react';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
@@ -59,6 +59,10 @@ const LegacyStoryCard: React.FC<{
     return amount;
   };
 
+  const formatPercentage = (value: number): string => {
+    return `${value.toFixed(2)}%`;
+  };
+
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
       <div className="p-6">
@@ -114,7 +118,7 @@ const LegacyStoryCard: React.FC<{
 
         {/* Successful Product */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Example Product</h3>
+          <h3 className="text-lg font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
             <p className="font-medium text-purple-800 capitalize">{story.successfulProduct}</p>
           </div>
@@ -156,6 +160,10 @@ const MultiSectorStoryCard: React.FC<{
       return `$${(numAmount / 1000000).toFixed(1)}M`;
     }
     return amount;
+  };
+
+  const formatPercentage = (value: number): string => {
+    return `${value.toFixed(2)}%`;
   };
 
   // Convert to legacy format for onReadMore
@@ -240,6 +248,24 @@ const MultiSectorStoryCard: React.FC<{
           </div>
         </div>
 
+        {/* Global Market Share */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <Globe size={18} className="mr-2 text-blue-600" />
+            Global Market Share
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg text-center">
+              <p className="text-lg font-bold text-gray-700">{formatPercentage(selectedSector.globalShare1995)}</p>
+              <p className="text-sm text-gray-600">1995</p>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg text-center">
+              <p className="text-lg font-bold text-blue-600">{formatPercentage(selectedSector.globalShare2022)}</p>
+              <p className="text-sm text-blue-700">2022</p>
+            </div>
+          </div>
+        </div>
+
         {/* Export Value Comparison */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Export Value Growth</h3>
@@ -260,7 +286,7 @@ const MultiSectorStoryCard: React.FC<{
 
         {/* Successful Product */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Example Product</h3>
+          <h3 className="text-lg font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
             <p className="font-medium text-purple-800 capitalize">{selectedSector.successfulProduct}</p>
           </div>

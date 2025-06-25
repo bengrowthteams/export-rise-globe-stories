@@ -5,7 +5,7 @@ import { Map, HelpCircle } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
-import SectorSidebar from '../components/SectorSidebar';
+import SectorSelectionModal from '../components/SectorSelectionModal';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
 import { SuccessStory } from '../types/SuccessStory';
@@ -16,6 +16,7 @@ const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
   const [selectedCountryStories, setSelectedCountryStories] = useState<CountrySuccessStories | null>(null);
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
+  const [showSectorModal, setShowSectorModal] = useState(false);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -60,16 +61,24 @@ const Landing = () => {
 
   const handleCountrySelect = (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => {
     if (countryStories && countryStories.hasMutipleSectors) {
-      // Multi-sector country - show sidebar for sector selection
+      // Multi-sector country - show modal for sector selection
       setSelectedCountryStories(countryStories);
-      setSelectedSector(countryStories.primarySector);
+      setShowSectorModal(true);
       setSelectedStory(null);
+      setSelectedSector(null);
     } else {
       // Single-sector country - show story card directly
       setSelectedStory(story);
       setSelectedCountryStories(null);
       setSelectedSector(null);
+      setShowSectorModal(false);
     }
+  };
+
+  const handleSectorSelectFromModal = (sector: SectorStory) => {
+    setSelectedSector(sector);
+    setShowSectorModal(false);
+    // Keep the country stories for the "other sectors" functionality
   };
 
   const handleSectorSelect = (sector: SectorStory) => {
@@ -80,6 +89,12 @@ const Landing = () => {
     setSelectedStory(null);
     setSelectedCountryStories(null);
     setSelectedSector(null);
+    setShowSectorModal(false);
+  };
+
+  const handleCloseSectorModal = () => {
+    setShowSectorModal(false);
+    setSelectedCountryStories(null);
   };
 
   const handleReadMore = (story: SuccessStory) => {
@@ -201,24 +216,8 @@ const Landing = () => {
             </Button>
           </div>
 
-          {/* Sector Sidebar for multi-sector countries */}
-          {selectedCountryStories && selectedCountryStories.hasMutipleSectors && (
-            <div className="absolute left-0 top-0 h-full z-30">
-              <SectorSidebar
-                countryStories={selectedCountryStories}
-                selectedSector={selectedSector}
-                onSectorSelect={handleSectorSelect}
-                onClose={handleClosePanel}
-              />
-            </div>
-          )}
-
-          {/* Map - adjust width based on sidebar */}
-          <div className={`h-full transition-all duration-300 ${
-            selectedCountryStories && selectedCountryStories.hasMutipleSectors 
-              ? 'ml-80 w-[calc(100%-20rem)]' 
-              : 'w-full'
-          }`}>
+          {/* Map - full width now since no sidebar */}
+          <div className="h-full w-full">
             <WorldMap 
               ref={worldMapRef}
               onCountrySelect={handleCountrySelect} 
@@ -251,6 +250,15 @@ const Landing = () => {
                 />
               </div>
             </>
+          )}
+
+          {/* Sector Selection Modal */}
+          {showSectorModal && selectedCountryStories && (
+            <SectorSelectionModal
+              countryStories={selectedCountryStories}
+              onSectorSelect={handleSectorSelectFromModal}
+              onClose={handleCloseSectorModal}
+            />
           )}
 
           {/* Tutorial Overlay */}
