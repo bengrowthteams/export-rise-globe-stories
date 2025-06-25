@@ -48,9 +48,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       document.querySelectorAll('.custom-marker').forEach(marker => {
         const element = marker as HTMLElement;
         element.classList.remove('tutorial-highlight-marker');
-        element.style.transform = '';
-        element.style.boxShadow = '';
+        // Reset all marker styles to default
+        element.style.width = '24px';
+        element.style.height = '24px';
+        element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        element.style.border = '3px solid white';
+        element.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
         element.style.animation = '';
+        element.style.zIndex = '1';
       });
 
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
@@ -75,9 +80,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         document.querySelectorAll('.custom-marker').forEach(marker => {
           const element = marker as HTMLElement;
           element.classList.add('tutorial-highlight-marker');
-          element.style.transform = 'scale(1.5)';
-          element.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.4)';
+          // Apply enhanced styling without changing position
+          element.style.width = '32px';
+          element.style.height = '32px';
+          element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          element.style.border = '4px solid white';
+          element.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), 0 4px 12px rgba(16, 185, 129, 0.4)';
           element.style.animation = 'tutorial-pulse 2s infinite';
+          element.style.zIndex = '1000';
         });
       } else if (currentStep === 2) {
         // Highlight search bar
@@ -105,9 +115,13 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       document.querySelectorAll('.custom-marker').forEach(marker => {
         const element = marker as HTMLElement;
         element.classList.remove('tutorial-highlight-marker');
-        element.style.transform = '';
-        element.style.boxShadow = '';
+        element.style.width = '24px';
+        element.style.height = '24px';
+        element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        element.style.border = '3px solid white';
+        element.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
         element.style.animation = '';
+        element.style.zIndex = '1';
       });
 
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
@@ -248,22 +262,23 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       </div>
 
       {/* Add CSS for pulse animation */}
-      <style>{`
-        @keyframes tutorial-pulse {
-          0%, 100% {
-            transform: scale(1.5);
-            opacity: 1;
+      <style>
+        {`
+          @keyframes tutorial-pulse {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.1);
+              opacity: 0.9;
+            }
           }
-          50% {
-            transform: scale(1.7);
-            opacity: 0.8;
+          .tutorial-highlight-marker {
+            position: relative !important;
           }
-        }
-        .tutorial-highlight-marker {
-          z-index: 1000 !important;
-          position: relative;
-        }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

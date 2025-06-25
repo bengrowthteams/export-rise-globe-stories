@@ -24,15 +24,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const markers = useRef<mapboxgl.Marker[]>([]);
   const [mapboxToken, setMapboxToken] = useState('');
   const [mapInitialized, setMapInitialized] = useState(false);
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
   const mapStateInitialized = useRef(false);
+  const initialMapStateApplied = useRef(false);
 
   useEffect(() => {
-    // Try to load token from localStorage on component mount
     const savedToken = localStorage.getItem('mapboxToken');
     if (savedToken) {
       setMapboxToken(savedToken);
@@ -40,12 +41,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   }, []);
 
   const handleTokenSubmit = (token: string) => {
-    // Save token to localStorage when user enters it
     localStorage.setItem('mapboxToken', token);
     setMapboxToken(token);
   };
 
-  // Debounced map state change handler
   const handleMapStateChange = () => {
     if (stateChangeTimeout.current) {
       clearTimeout(stateChangeTimeout.current);
@@ -60,7 +59,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     }, 200);
   };
 
-  // Public method to reset map to initial position
   const resetToInitialPosition = () => {
     if (map.current && mapInitialized) {
       console.log('Resetting map to initial position');
@@ -70,14 +68,12 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         zoom: 2,
         duration: 1500
       });
-      // Reset the flag after animation
       setTimeout(() => {
         isFlying.current = false;
       }, 1500);
     }
   };
 
-  // Expose reset method to parent component
   useImperativeHandle(ref, () => ({
     resetToInitialPosition
   }));
@@ -88,7 +84,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     console.log('Initializing map...');
     
-    // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
     const initialCenter = [20, 20] as [number, number];
@@ -102,7 +97,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       pitch: 0,
     });
 
-    // Add navigation controls
     map.current.addControl(
       new mapboxgl.NavigationControl({
         visualizePitch: true,
@@ -110,7 +104,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       'top-right'
     );
 
-    // Track map state changes with debouncing
     map.current.on('movestart', () => {
       isFlying.current = true;
     });
@@ -120,15 +113,20 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       handleMapStateChange();
     });
 
-    // Add markers for success stories
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
+      
+      // Clear existing markers
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
+
       successStories.forEach((story) => {
         if (!map.current) return;
 
-        // Create custom marker element
+        // Create custom marker element with fixed positioning
         const markerElement = document.createElement('div');
         markerElement.className = 'custom-marker';
+        markerElement.setAttribute('data-story-id', story.id);
         markerElement.style.cssText = `
           width: 24px;
           height: 24px;
@@ -138,19 +136,24 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           cursor: pointer;
           box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
           transition: all 0.3s ease;
+          position: relative;
+          z-index: 1;
         `;
 
-        // Create marker
-        const marker = new mapboxgl.Marker(markerElement)
+        // Create marker with fixed positioning
+        const marker = new mapboxgl.Marker({
+          element: markerElement,
+          anchor: 'center'
+        })
           .setLngLat([story.coordinates.lng, story.coordinates.lat])
           .addTo(map.current);
 
-        // Add click handler
+        markers.current.push(marker);
+
         markerElement.addEventListener('click', () => {
           onCountrySelect(story);
         });
 
-        // Add popup on hover
         const popup = new mapboxgl.Popup({
           offset: 25,
           closeButton: false,
@@ -174,24 +177,34 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       
       setMapInitialized(true);
       
-      // Apply initial map state if provided, after a short delay to ensure everything is loaded
-      setTimeout(() => {
-        if (initialMapState && map.current) {
-          console.log('Applying initial map state:', initialMapState);
-          map.current.setCenter(initialMapState.center);
-          map.current.setZoom(initialMapState.zoom);
-        }
-        mapStateInitialized.current = true;
-      }, 500);
+      // Apply initial map state only once after a delay
+      if (initialMapState && !initialMapStateApplied.current) {
+        setTimeout(() => {
+          if (map.current) {
+            console.log('Applying initial map state:', initialMapState);
+            map.current.setCenter(initialMapState.center);
+            map.current.setZoom(initialMapState.zoom);
+            initialMapStateApplied.current = true;
+          }
+          mapStateInitialized.current = true;
+        }, 500);
+      } else {
+        setTimeout(() => {
+          mapStateInitialized.current = true;
+        }, 500);
+      }
     });
 
     // Cleanup
     return () => {
       if (map.current) {
+        markers.current.forEach(marker => marker.remove());
+        markers.current = [];
         map.current.remove();
         map.current = null;
         setMapInitialized(false);
         mapStateInitialized.current = false;
+        initialMapStateApplied.current = false;
       }
     };
   }, [mapboxToken]);
@@ -201,7 +214,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     if (!map.current || !mapInitialized) return;
 
     if (selectedStory) {
-      // Fly to the selected story with close zoom
       isFlying.current = true;
       map.current.flyTo({
         center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat],
@@ -210,12 +222,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       });
       lastSelectedStory.current = selectedStory;
       
-      // Reset the flag after animation
       setTimeout(() => {
         isFlying.current = false;
       }, 2000);
     } else if (lastSelectedStory.current) {
-      // Fly out to a regional view when story is deselected
       isFlying.current = true;
       map.current.flyTo({
         center: [lastSelectedStory.current.coordinates.lng, lastSelectedStory.current.coordinates.lat],
@@ -223,7 +233,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         duration: 1500
       });
       
-      // Reset the flag after animation
       setTimeout(() => {
         isFlying.current = false;
       }, 1500);
