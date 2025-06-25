@@ -9,7 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      "Country Data": {
+        Row: {
+          Country: string | null
+          "Current Export (2022)": number | null
+          "Global Share (1995)": number | null
+          "Global Share (2022)": number | null
+          "Initial Export (1995)": number | null
+          "Rank (1995)": number | null
+          "Rank (2022)": number | null
+          "Ranks Change (absolute)": number | null
+          Sector: string | null
+          "Successful product": string | null
+        }
+        Insert: {
+          Country?: string | null
+          "Current Export (2022)"?: number | null
+          "Global Share (1995)"?: number | null
+          "Global Share (2022)"?: number | null
+          "Initial Export (1995)"?: number | null
+          "Rank (1995)"?: number | null
+          "Rank (2022)"?: number | null
+          "Ranks Change (absolute)"?: number | null
+          Sector?: string | null
+          "Successful product"?: string | null
+        }
+        Update: {
+          Country?: string | null
+          "Current Export (2022)"?: number | null
+          "Global Share (1995)"?: number | null
+          "Global Share (2022)"?: number | null
+          "Initial Export (1995)"?: number | null
+          "Rank (1995)"?: number | null
+          "Rank (2022)"?: number | null
+          "Ranks Change (absolute)"?: number | null
+          Sector?: string | null
+          "Successful product"?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

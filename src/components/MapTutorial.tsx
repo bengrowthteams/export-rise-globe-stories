@@ -44,65 +44,56 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
   // Apply visual effects based on current step
   useEffect(() => {
     const applyHighlights = () => {
-      // Remove all existing highlights
+      // Remove all existing highlights first
       document.querySelectorAll('.custom-marker').forEach(marker => {
-        (marker as HTMLElement).style.cssText = `
-          width: 24px;
-          height: 24px;
-          background: linear-gradient(135deg, #10b981, #059669);
-          border: 3px solid white;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-          transition: all 0.3s ease;
-        `;
+        const element = marker as HTMLElement;
+        element.classList.remove('tutorial-highlight-marker');
+        element.style.transform = '';
+        element.style.boxShadow = '';
+        element.style.animation = '';
       });
 
-      // Remove search bar highlights
-      const searchBar = document.querySelector('.tutorial-search-bar');
+      const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
-        (searchBar as HTMLElement).style.boxShadow = '';
-        (searchBar as HTMLElement).style.border = '';
-        (searchBar as HTMLElement).style.borderRadius = '';
+        searchBar.style.boxShadow = '';
+        searchBar.style.border = '';
+        searchBar.style.borderRadius = '';
+        searchBar.style.background = '';
       }
 
-      // Remove story card highlights
-      const storyCard = document.querySelector('.tutorial-story-card');
+      const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
       if (storyCard) {
-        (storyCard as HTMLElement).style.boxShadow = '';
-        (storyCard as HTMLElement).style.border = '';
-        (storyCard as HTMLElement).style.background = '';
+        storyCard.style.boxShadow = '';
+        storyCard.style.border = '';
+        storyCard.style.background = '';
+        storyCard.style.transform = '';
       }
 
       // Apply highlights based on current step
       if (currentStep === 1) {
-        // Highlight dots - make them larger and brighter
+        // Highlight green dots - make them larger and add pulsing animation
         document.querySelectorAll('.custom-marker').forEach(marker => {
-          (marker as HTMLElement).style.cssText = `
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: 4px solid white;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.8), 0 0 0 8px rgba(16, 185, 129, 0.2);
-            transition: all 0.3s ease;
-            animation: pulse 2s infinite;
-          `;
+          const element = marker as HTMLElement;
+          element.classList.add('tutorial-highlight-marker');
+          element.style.transform = 'scale(1.5)';
+          element.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.4)';
+          element.style.animation = 'tutorial-pulse 2s infinite';
         });
       } else if (currentStep === 2) {
         // Highlight search bar
         if (searchBar) {
-          (searchBar as HTMLElement).style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.3)';
-          (searchBar as HTMLElement).style.border = '2px solid #3b82f6';
-          (searchBar as HTMLElement).style.borderRadius = '8px';
+          searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
+          searchBar.style.border = '2px solid #3b82f6';
+          searchBar.style.borderRadius = '12px';
+          searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
       } else if (currentStep === 3 && demoStory) {
-        // Highlight story card with bright border and glow
+        // Highlight story card with bright effects
         if (storyCard) {
-          (storyCard as HTMLElement).style.boxShadow = '0 0 0 4px rgba(147, 51, 234, 0.5), 0 16px 48px rgba(147, 51, 234, 0.4)';
-          (storyCard as HTMLElement).style.border = '3px solid #9333ea';
-          (storyCard as HTMLElement).style.background = 'linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(147, 51, 234, 0.1))';
+          storyCard.style.boxShadow = '0 0 0 6px rgba(147, 51, 234, 0.6), 0 20px 60px rgba(147, 51, 234, 0.5)';
+          storyCard.style.border = '4px solid #9333ea';
+          storyCard.style.background = 'linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(147, 51, 234, 0.2))';
+          storyCard.style.transform = 'scale(1.02)';
         }
       }
     };
@@ -111,32 +102,28 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
     // Cleanup function
     return () => {
-      // Remove all highlights when component unmounts or step changes
       document.querySelectorAll('.custom-marker').forEach(marker => {
-        (marker as HTMLElement).style.cssText = `
-          width: 24px;
-          height: 24px;
-          background: linear-gradient(135deg, #10b981, #059669);
-          border: 3px solid white;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-          transition: all 0.3s ease;
-        `;
+        const element = marker as HTMLElement;
+        element.classList.remove('tutorial-highlight-marker');
+        element.style.transform = '';
+        element.style.boxShadow = '';
+        element.style.animation = '';
       });
 
-      const searchBar = document.querySelector('.tutorial-search-bar');
+      const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
-        (searchBar as HTMLElement).style.boxShadow = '';
-        (searchBar as HTMLElement).style.border = '';
-        (searchBar as HTMLElement).style.borderRadius = '';
+        searchBar.style.boxShadow = '';
+        searchBar.style.border = '';
+        searchBar.style.borderRadius = '';
+        searchBar.style.background = '';
       }
 
-      const storyCard = document.querySelector('.tutorial-story-card');
+      const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
       if (storyCard) {
-        (storyCard as HTMLElement).style.boxShadow = '';
-        (storyCard as HTMLElement).style.border = '';
-        (storyCard as HTMLElement).style.background = '';
+        storyCard.style.boxShadow = '';
+        storyCard.style.border = '';
+        storyCard.style.background = '';
+        storyCard.style.transform = '';
       }
     };
   }, [currentStep, demoStory]);
@@ -261,16 +248,20 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       </div>
 
       {/* Add CSS for pulse animation */}
-      <style jsx>{`
-        @keyframes pulse {
+      <style>{`
+        @keyframes tutorial-pulse {
           0%, 100% {
-            transform: scale(1);
+            transform: scale(1.5);
             opacity: 1;
           }
           50% {
-            transform: scale(1.1);
+            transform: scale(1.7);
             opacity: 0.8;
           }
+        }
+        .tutorial-highlight-marker {
+          z-index: 1000 !important;
+          position: relative;
         }
       `}</style>
     </div>

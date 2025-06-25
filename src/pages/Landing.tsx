@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Map, HelpCircle } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
-import WorldMap from '../components/WorldMap';
+import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
@@ -16,9 +16,9 @@ const Landing = () => {
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
-  const worldMapRef = useRef<any>(null);
+  const worldMapRef = useRef<WorldMapRef>(null);
   
-  const { showTutorial, hasSeenTutorial, triggerTutorialIfNeeded, startTutorial, closeTutorial } = useTutorial();
+  const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
   // Restore map state on page load
   React.useEffect(() => {
@@ -42,10 +42,13 @@ const Landing = () => {
       block: 'start'
     });
 
-    // Then check if we should trigger tutorial for first-time users
-    setTimeout(() => {
-      triggerTutorialIfNeeded();
-    }, 1000);
+    // If user hasn't seen tutorial, start it after scrolling
+    if (!hasSeenTutorial) {
+      setTimeout(() => {
+        console.log('Auto-starting tutorial for first-time user');
+        startTutorial();
+      }, 1000);
+    }
   };
 
   const handleCountrySelect = (story: SuccessStory | null) => {
@@ -92,7 +95,7 @@ const Landing = () => {
 
   const handleTutorialClose = () => {
     // Reset map to initial position when tutorial closes
-    if (worldMapRef.current && worldMapRef.current.resetToInitialPosition) {
+    if (worldMapRef.current) {
       worldMapRef.current.resetToInitialPosition();
     }
     // Clear any demo story

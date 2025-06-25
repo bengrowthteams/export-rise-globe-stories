@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
@@ -12,12 +12,16 @@ interface WorldMapProps {
   initialMapState?: { center: [number, number]; zoom: number };
 }
 
-const WorldMap: React.FC<WorldMapProps> = ({ 
+export interface WorldMapRef {
+  resetToInitialPosition: () => void;
+}
+
+const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({ 
   onCountrySelect, 
   selectedStory,
   onMapStateChange,
   initialMapState
-}) => {
+}, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
@@ -25,6 +29,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const mapStateInitialized = useRef(false);
 
   useEffect(() => {
     // Try to load token from localStorage on component mount
@@ -47,13 +52,35 @@ const WorldMap: React.FC<WorldMapProps> = ({
     }
     
     stateChangeTimeout.current = setTimeout(() => {
-      if (map.current && onMapStateChange && !isFlying.current) {
+      if (map.current && onMapStateChange && !isFlying.current && mapStateInitialized.current) {
         const center = map.current.getCenter();
         const zoom = map.current.getZoom();
         onMapStateChange([center.lng, center.lat], zoom);
       }
-    }, 100);
+    }, 200);
   };
+
+  // Public method to reset map to initial position
+  const resetToInitialPosition = () => {
+    if (map.current && mapInitialized) {
+      console.log('Resetting map to initial position');
+      isFlying.current = true;
+      map.current.flyTo({
+        center: [20, 20],
+        zoom: 2,
+        duration: 1500
+      });
+      // Reset the flag after animation
+      setTimeout(() => {
+        isFlying.current = false;
+      }, 1500);
+    }
+  };
+
+  // Expose reset method to parent component
+  useImperativeHandle(ref, () => ({
+    resetToInitialPosition
+  }));
 
   // Initialize map only once when token is available
   useEffect(() => {
@@ -146,6 +173,16 @@ const WorldMap: React.FC<WorldMapProps> = ({
       });
       
       setMapInitialized(true);
+      
+      // Apply initial map state if provided, after a short delay to ensure everything is loaded
+      setTimeout(() => {
+        if (initialMapState && map.current) {
+          console.log('Applying initial map state:', initialMapState);
+          map.current.setCenter(initialMapState.center);
+          map.current.setZoom(initialMapState.zoom);
+        }
+        mapStateInitialized.current = true;
+      }, 500);
     });
 
     // Cleanup
@@ -154,21 +191,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
         map.current.remove();
         map.current = null;
         setMapInitialized(false);
+        mapStateInitialized.current = false;
       }
     };
   }, [mapboxToken]);
-
-  // Handle initial map state restoration after map is initialized
-  useEffect(() => {
-    if (!map.current || !mapInitialized || !initialMapState) return;
-    
-    console.log('Restoring map state:', initialMapState);
-    
-    // Use setCenter and setZoom instead of flyTo to avoid conflicts
-    map.current.setCenter(initialMapState.center);
-    map.current.setZoom(initialMapState.zoom);
-    
-  }, [mapInitialized, initialMapState]);
 
   // Handle story selection flyTo
   useEffect(() => {
@@ -183,6 +209,11 @@ const WorldMap: React.FC<WorldMapProps> = ({
         duration: 2000
       });
       lastSelectedStory.current = selectedStory;
+      
+      // Reset the flag after animation
+      setTimeout(() => {
+        isFlying.current = false;
+      }, 2000);
     } else if (lastSelectedStory.current) {
       // Fly out to a regional view when story is deselected
       isFlying.current = true;
@@ -191,28 +222,13 @@ const WorldMap: React.FC<WorldMapProps> = ({
         zoom: 2,
         duration: 1500
       });
+      
+      // Reset the flag after animation
+      setTimeout(() => {
+        isFlying.current = false;
+      }, 1500);
     }
   }, [selectedStory, mapInitialized]);
-
-  // Public method to reset map to initial position
-  const resetToInitialPosition = () => {
-    if (map.current && mapInitialized) {
-      console.log('Resetting map to initial position');
-      isFlying.current = true;
-      map.current.flyTo({
-        center: [20, 20],
-        zoom: 2,
-        duration: 1500
-      });
-    }
-  };
-
-  // Expose reset method to parent component
-  useEffect(() => {
-    if (mapInitialized && map.current) {
-      (map.current as any).resetToInitialPosition = resetToInitialPosition;
-    }
-  }, [mapInitialized]);
 
   if (!mapboxToken) {
     return (
@@ -261,6 +277,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-background/5 rounded-lg" />
     </div>
   );
-};
+});
+
+WorldMap.displayName = 'WorldMap';
 
 export default WorldMap;
