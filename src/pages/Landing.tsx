@@ -10,26 +10,15 @@ import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
 import { SuccessStory } from '../types/SuccessStory';
 import { useTutorial } from '../hooks/useTutorial';
-import { useScrollTrigger } from '../hooks/useScrollTrigger';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
+  const worldMapRef = useRef<any>(null);
   
-  const { showTutorial, hasSeenTutorial, shouldAutoTrigger, startTutorial, closeTutorial } = useTutorial();
-  const { isVisible: mapSectionVisible } = useScrollTrigger(mapSectionRef, 0.3);
-
-  // Auto-trigger tutorial when map becomes visible for first-time users
-  React.useEffect(() => {
-    console.log('Map section visible:', mapSectionVisible, 'Should auto trigger:', shouldAutoTrigger);
-    
-    if (mapSectionVisible && shouldAutoTrigger && !showTutorial) {
-      console.log('Auto-triggering tutorial');
-      startTutorial();
-    }
-  }, [mapSectionVisible, shouldAutoTrigger, showTutorial, startTutorial]);
+  const { showTutorial, hasSeenTutorial, triggerTutorialIfNeeded, startTutorial, closeTutorial } = useTutorial();
 
   // Restore map state on page load
   React.useEffect(() => {
@@ -47,10 +36,16 @@ const Landing = () => {
   }, []);
 
   const handleExploreMap = () => {
+    // First scroll to map section
     document.getElementById('map-section')?.scrollIntoView({ 
       behavior: 'smooth',
       block: 'start'
     });
+
+    // Then check if we should trigger tutorial for first-time users
+    setTimeout(() => {
+      triggerTutorialIfNeeded();
+    }, 1000);
   };
 
   const handleCountrySelect = (story: SuccessStory | null) => {
@@ -93,6 +88,16 @@ const Landing = () => {
     const newMapState = { center, zoom };
     setMapState(newMapState);
     console.log('Map state changed:', newMapState);
+  };
+
+  const handleTutorialClose = () => {
+    // Reset map to initial position when tutorial closes
+    if (worldMapRef.current && worldMapRef.current.resetToInitialPosition) {
+      worldMapRef.current.resetToInitialPosition();
+    }
+    // Clear any demo story
+    setSelectedStory(null);
+    closeTutorial();
   };
 
   return (
@@ -140,7 +145,7 @@ const Landing = () => {
       <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
           {/* Search Bar - positioned below fixed navbar */}
-          <div className="absolute top-20 left-4 z-20 search-container">
+          <div className="absolute top-20 left-4 z-20 tutorial-search-bar">
             <SearchBar onCountrySelect={handleCountrySelect} />
           </div>
 
@@ -160,6 +165,7 @@ const Landing = () => {
           {/* Map - always full width */}
           <div className="h-full w-full">
             <WorldMap 
+              ref={worldMapRef}
               onCountrySelect={handleCountrySelect} 
               selectedStory={selectedStory}
               onMapStateChange={handleMapStateChange}
@@ -177,7 +183,7 @@ const Landing = () => {
               />
               
               {/* Story Card */}
-              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 story-card-container ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 tutorial-story-card ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
                 <StoryCard 
                   story={selectedStory} 
                   onClose={handleClosePanel}
@@ -190,7 +196,7 @@ const Landing = () => {
           {/* Tutorial Overlay */}
           {showTutorial && (
             <MapTutorial
-              onClose={closeTutorial}
+              onClose={handleTutorialClose}
               onDemoCountrySelect={handleTutorialDemo}
               demoStory={selectedStory}
             />

@@ -1,10 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const useTutorial = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const [hasSeenTutorial, setHasSeenTutorial] = useState(true);
   const [shouldAutoTrigger, setShouldAutoTrigger] = useState(false);
+  const hasAutoTriggered = useRef(false);
 
   useEffect(() => {
     // Check if user has seen tutorial before
@@ -21,6 +22,18 @@ export const useTutorial = () => {
     console.log('Starting tutorial');
     setShowTutorial(true);
     setShouldAutoTrigger(false);
+    hasAutoTriggered.current = true;
+  };
+
+  const triggerTutorialIfNeeded = () => {
+    console.log('Trigger tutorial if needed - shouldAutoTrigger:', shouldAutoTrigger, 'hasAutoTriggered:', hasAutoTriggered.current);
+    
+    if (shouldAutoTrigger && !hasAutoTriggered.current && !showTutorial) {
+      console.log('Auto-triggering tutorial');
+      startTutorial();
+      return true;
+    }
+    return false;
   };
 
   const closeTutorial = () => {
@@ -29,12 +42,14 @@ export const useTutorial = () => {
     localStorage.setItem('map-tutorial-seen', 'true');
     setHasSeenTutorial(true);
     setShouldAutoTrigger(false);
+    hasAutoTriggered.current = true;
   };
 
   const resetTutorial = () => {
     localStorage.removeItem('map-tutorial-seen');
     setHasSeenTutorial(false);
     setShouldAutoTrigger(true);
+    hasAutoTriggered.current = false;
   };
 
   return {
@@ -43,6 +58,7 @@ export const useTutorial = () => {
     shouldAutoTrigger,
     startTutorial,
     closeTutorial,
-    resetTutorial
+    resetTutorial,
+    triggerTutorialIfNeeded
   };
 };

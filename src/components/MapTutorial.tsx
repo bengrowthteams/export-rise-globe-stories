@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, ArrowRight, Search, MapPin } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuccessStory } from '../types/SuccessStory';
-import { useElementHighlight } from '../hooks/useElementHighlight';
 
 interface MapTutorialProps {
   onClose: () => void;
@@ -14,11 +13,6 @@ interface MapTutorialProps {
 const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect, demoStory }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-
-  // Dynamic highlights for different elements
-  const searchBounds = useElementHighlight(undefined, '.search-container');
-  const mapDotBounds = useElementHighlight(undefined, '.custom-marker');
-  const storyCardBounds = useElementHighlight(undefined, '.story-card-container');
 
   const steps = [
     {
@@ -46,6 +40,106 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
       highlight: "card"
     }
   ];
+
+  // Apply visual effects based on current step
+  useEffect(() => {
+    const applyHighlights = () => {
+      // Remove all existing highlights
+      document.querySelectorAll('.custom-marker').forEach(marker => {
+        (marker as HTMLElement).style.cssText = `
+          width: 24px;
+          height: 24px;
+          background: linear-gradient(135deg, #10b981, #059669);
+          border: 3px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+          transition: all 0.3s ease;
+        `;
+      });
+
+      // Remove search bar highlights
+      const searchBar = document.querySelector('.tutorial-search-bar');
+      if (searchBar) {
+        (searchBar as HTMLElement).style.boxShadow = '';
+        (searchBar as HTMLElement).style.border = '';
+        (searchBar as HTMLElement).style.borderRadius = '';
+      }
+
+      // Remove story card highlights
+      const storyCard = document.querySelector('.tutorial-story-card');
+      if (storyCard) {
+        (storyCard as HTMLElement).style.boxShadow = '';
+        (storyCard as HTMLElement).style.border = '';
+        (storyCard as HTMLElement).style.background = '';
+      }
+
+      // Apply highlights based on current step
+      if (currentStep === 1) {
+        // Highlight dots - make them larger and brighter
+        document.querySelectorAll('.custom-marker').forEach(marker => {
+          (marker as HTMLElement).style.cssText = `
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: 4px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.8), 0 0 0 8px rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+          `;
+        });
+      } else if (currentStep === 2) {
+        // Highlight search bar
+        if (searchBar) {
+          (searchBar as HTMLElement).style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.3)';
+          (searchBar as HTMLElement).style.border = '2px solid #3b82f6';
+          (searchBar as HTMLElement).style.borderRadius = '8px';
+        }
+      } else if (currentStep === 3 && demoStory) {
+        // Highlight story card with bright border and glow
+        if (storyCard) {
+          (storyCard as HTMLElement).style.boxShadow = '0 0 0 4px rgba(147, 51, 234, 0.5), 0 16px 48px rgba(147, 51, 234, 0.4)';
+          (storyCard as HTMLElement).style.border = '3px solid #9333ea';
+          (storyCard as HTMLElement).style.background = 'linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(147, 51, 234, 0.1))';
+        }
+      }
+    };
+
+    applyHighlights();
+
+    // Cleanup function
+    return () => {
+      // Remove all highlights when component unmounts or step changes
+      document.querySelectorAll('.custom-marker').forEach(marker => {
+        (marker as HTMLElement).style.cssText = `
+          width: 24px;
+          height: 24px;
+          background: linear-gradient(135deg, #10b981, #059669);
+          border: 3px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+          transition: all 0.3s ease;
+        `;
+      });
+
+      const searchBar = document.querySelector('.tutorial-search-bar');
+      if (searchBar) {
+        (searchBar as HTMLElement).style.boxShadow = '';
+        (searchBar as HTMLElement).style.border = '';
+        (searchBar as HTMLElement).style.borderRadius = '';
+      }
+
+      const storyCard = document.querySelector('.tutorial-story-card');
+      if (storyCard) {
+        (storyCard as HTMLElement).style.boxShadow = '';
+        (storyCard as HTMLElement).style.border = '';
+        (storyCard as HTMLElement).style.background = '';
+      }
+    };
+  }, [currentStep, demoStory]);
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -81,9 +175,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies, creating millions of jobs and driving remarkable export growth.'
       };
       onDemoCountrySelect(vietnamStory);
-    } else if (currentStep === 3) {
-      // Close demo story for final step
-      onDemoCountrySelect(null);
     }
 
     if (currentStep < steps.length - 1) {
@@ -107,56 +198,10 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
   const currentStepData = steps[currentStep];
 
-  const renderHighlight = () => {
-    if (currentStepData.highlight === 'search' && searchBounds) {
-      return (
-        <div 
-          className="absolute border-4 border-blue-400 rounded-lg animate-pulse z-30 bg-blue-400 bg-opacity-10"
-          style={{
-            top: searchBounds.top - 4,
-            left: searchBounds.left - 4,
-            width: searchBounds.width + 8,
-            height: searchBounds.height + 8,
-          }}
-        />
-      );
-    }
-
-    if (currentStepData.highlight === 'dots') {
-      return (
-        <div className="absolute inset-0 pointer-events-none z-30">
-          {/* Multiple pulsing circles to highlight map dots */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-green-400 bg-opacity-20 rounded-full animate-pulse" />
-          <div className="absolute top-1/3 left-1/3 w-24 h-24 bg-green-400 bg-opacity-15 rounded-full animate-pulse animation-delay-300" />
-          <div className="absolute top-2/3 left-2/3 w-28 h-28 bg-green-400 bg-opacity-15 rounded-full animate-pulse animation-delay-600" />
-        </div>
-      );
-    }
-
-    if (currentStepData.highlight === 'card' && storyCardBounds) {
-      return (
-        <div 
-          className="absolute border-4 border-purple-400 rounded-lg animate-pulse z-30 bg-purple-400 bg-opacity-10"
-          style={{
-            top: storyCardBounds.top - 4,
-            left: storyCardBounds.left - 4,
-            width: storyCardBounds.width + 8,
-            height: storyCardBounds.height + 8,
-          }}
-        />
-      );
-    }
-
-    return null;
-  };
-
   return (
     <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black bg-opacity-50" />
-      
-      {/* Dynamic highlights */}
-      {renderHighlight()}
 
       {/* Tutorial card */}
       <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 z-40 ${
@@ -214,6 +259,20 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           </div>
         </div>
       </div>
+
+      {/* Add CSS for pulse animation */}
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+          }
+        }
+      `}</style>
     </div>
   );
 };
