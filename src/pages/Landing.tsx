@@ -1,17 +1,27 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Map } from 'lucide-react';
+import { Map, HelpCircle } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
 import SearchBar from '../components/SearchBar';
+import MapTutorial from '../components/MapTutorial';
 import { SuccessStory } from '../types/SuccessStory';
+import { useTutorial } from '../hooks/useTutorial';
+import { useScrollTrigger } from '../hooks/useScrollTrigger';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
   const navigate = useNavigate();
+  const mapSectionRef = useRef<HTMLDivElement>(null);
+  
+  const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
+  const { isVisible: mapSectionVisible } = useScrollTrigger(mapSectionRef, 0.3);
+
+  // Show tutorial when map section becomes visible for first-time users
+  const shouldShowTutorial = showTutorial && mapSectionVisible && !hasSeenTutorial;
 
   const handleExploreMap = () => {
     document.getElementById('map-section')?.scrollIntoView({ 
@@ -30,6 +40,10 @@ const Landing = () => {
 
   const handleReadMore = (story: SuccessStory) => {
     navigate(`/case-study/${story.id}`);
+  };
+
+  const handleTutorialDemo = (story: SuccessStory | null) => {
+    setSelectedStory(story);
   };
 
   return (
@@ -74,12 +88,27 @@ const Landing = () => {
       </div>
 
       {/* Map Section */}
-      <div id="map-section" className="min-h-screen bg-gray-50">
+      <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
           {/* Search Bar */}
           <div className="absolute top-4 left-4 z-20">
             <SearchBar onCountrySelect={handleCountrySelect} />
           </div>
+
+          {/* Tutorial Help Button */}
+          {hasSeenTutorial && (
+            <div className="absolute top-4 right-4 z-20">
+              <Button
+                onClick={startTutorial}
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white"
+              >
+                <HelpCircle size={16} className="mr-1" />
+                Tutorial
+              </Button>
+            </div>
+          )}
 
           {/* Map - always full width */}
           <div className="h-full w-full">
@@ -104,6 +133,15 @@ const Landing = () => {
                 />
               </div>
             </>
+          )}
+
+          {/* Tutorial Overlay */}
+          {shouldShowTutorial && (
+            <MapTutorial
+              onClose={closeTutorial}
+              onDemoCountrySelect={handleTutorialDemo}
+              demoStory={selectedStory}
+            />
           )}
         </div>
       </div>
