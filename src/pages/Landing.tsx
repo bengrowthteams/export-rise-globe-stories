@@ -21,7 +21,7 @@ const Landing = () => {
   const { isVisible: mapSectionVisible } = useScrollTrigger(mapSectionRef, 0.3);
 
   // Show tutorial when map section becomes visible for first-time users
-  const shouldShowTutorial = showTutorial && mapSectionVisible && !hasSeenTutorial;
+  const shouldShowAutoTutorial = mapSectionVisible && !hasSeenTutorial && !showTutorial;
 
   const handleExploreMap = () => {
     document.getElementById('map-section')?.scrollIntoView({ 
@@ -39,6 +39,8 @@ const Landing = () => {
   };
 
   const handleReadMore = (story: SuccessStory) => {
+    // Save current scroll position before navigating
+    sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
     navigate(`/case-study/${story.id}`);
   };
 
@@ -59,6 +61,15 @@ const Landing = () => {
       startTutorial();
     }, 500);
   };
+
+  // Auto-trigger tutorial when map becomes visible for first-time users
+  React.useEffect(() => {
+    if (shouldShowAutoTutorial) {
+      setTimeout(() => {
+        startTutorial();
+      }, 1000);
+    }
+  }, [shouldShowAutoTutorial, startTutorial]);
 
   return (
     <div className="min-h-screen">
@@ -104,13 +115,13 @@ const Landing = () => {
       {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
-          {/* Search Bar */}
-          <div className="absolute top-4 left-4 z-20">
+          {/* Search Bar - positioned below fixed navbar */}
+          <div className="absolute top-20 left-4 z-20">
             <SearchBar onCountrySelect={handleCountrySelect} />
           </div>
 
-          {/* Tutorial Help Button */}
-          <div className="absolute top-4 right-4 z-20">
+          {/* Tutorial Help Button - positioned below fixed navbar */}
+          <div className="absolute top-20 right-4 z-20">
             <Button
               onClick={handleStartTutorial}
               variant="outline"
@@ -148,7 +159,7 @@ const Landing = () => {
           )}
 
           {/* Tutorial Overlay */}
-          {(shouldShowTutorial || showTutorial) && (
+          {(showTutorial || shouldShowAutoTutorial) && (
             <MapTutorial
               onClose={closeTutorial}
               onDemoCountrySelect={handleTutorialDemo}

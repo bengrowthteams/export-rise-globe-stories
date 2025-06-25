@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface CaseStudyHeaderProps {
   flag: string;
@@ -12,12 +13,33 @@ interface CaseStudyHeaderProps {
 }
 
 const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateBack }: CaseStudyHeaderProps) => {
+  const navigate = useNavigate();
+
+  const handleReturnToMap = () => {
+    // Navigate to the landing page (which contains the map)
+    navigate('/');
+    
+    // After navigation, scroll to the map section and restore scroll position
+    setTimeout(() => {
+      const mapSection = document.getElementById('map-section');
+      if (mapSection) {
+        const savedPosition = sessionStorage.getItem('mapScrollPosition');
+        if (savedPosition) {
+          window.scrollTo(0, parseInt(savedPosition));
+          sessionStorage.removeItem('mapScrollPosition');
+        } else {
+          mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }, 100);
+  };
+
   return (
     <div className="bg-white shadow-sm border-b sticky top-0 z-10">
       <div className="max-w-6xl mx-auto px-6 py-4">
         <Button 
           variant="ghost" 
-          onClick={onNavigateBack}
+          onClick={handleReturnToMap}
           className="mb-4"
         >
           <ArrowLeft className="mr-2" size={16} />
