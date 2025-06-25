@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
-import { fetchSuccessStories, clearSuccessStoriesCache } from '../services/countryDataService';
+import { CountrySuccessStories } from '../types/CountrySuccessStories';
+import { fetchSuccessStories, fetchCountryStories, clearSuccessStoriesCache } from '../services/countryDataService';
 import { successStories as fallbackStories } from '../data/successStories';
 
 interface WorldMapProps {
-  onCountrySelect: (story: SuccessStory | null) => void;
+  onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void;
   selectedStory?: SuccessStory | null;
   onMapStateChange?: (center: [number, number], zoom: number) => void;
   initialMapState?: { center: [number, number]; zoom: number };
@@ -28,6 +29,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [mapboxToken, setMapboxToken] = useState('');
   const [mapInitialized, setMapInitialized] = useState(false);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
+  const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'supabase' | 'fallback'>('supabase');
@@ -55,16 +57,22 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         // Clear cache to ensure fresh data
         clearSuccessStoriesCache();
         
-        const stories = await fetchSuccessStories();
-        console.log('Received stories from Supabase:', stories.length);
+        const [stories, multiSectorStories] = await Promise.all([
+          fetchSuccessStories(),
+          fetchCountryStories()
+        ]);
         
-        if (stories.length === 0) {
+        console.log('Received stories from Supabase:', stories.length, 'single-sector and', multiSectorStories.length, 'multi-sector');
+        
+        if (stories.length === 0 && multiSectorStories.length === 0) {
           console.log('No stories from Supabase, falling back to hardcoded data');
           setSuccessStories(fallbackStories);
+          setCountryStories([]);
           setDataSource('fallback');
           setError('Using fallback data - Supabase connection issue detected');
         } else {
           setSuccessStories(stories);
+          setCountryStories(multiSectorStories);
           setDataSource('supabase');
         }
         
@@ -72,6 +80,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         console.error('Failed to load success stories:', error);
         console.log('Error occurred, falling back to hardcoded data');
         setSuccessStories(fallbackStories);
+        setCountryStories([]);
         setDataSource('fallback');
         setError(`Supabase error (using fallback data): ${error instanceof Error ? error.message : 'Unknown error'}`);
       } finally {
@@ -122,9 +131,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   // Initialize map only once when token is available and stories are loaded
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current || loading || successStories.length === 0) return;
+    if (!mapContainer.current || !mapboxToken || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
-    console.log('Initializing map with', successStories.length, 'countries from', dataSource);
+    console.log('Initializing map with', successStories.length, 'single-sector and', countryStories.length, 'multi-sector countries from', dataSource);
     
     mapboxgl.accessToken = mapboxToken;
     
@@ -156,81 +165,24 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     });
 
     map.current.on('style.load', () => {
-      console.log('Map style loaded, adding markers for', successStories.length, 'countries...');
+      console.log('Map style loaded, adding markers...');
       
       // Clear existing markers
       markers.current.forEach(marker => marker.remove());
       markers.current = [];
 
+      // Add markers for single-sector countries
       successStories.forEach((story) => {
         if (!map.current || !story.coordinates || story.coordinates.lat === 0 && story.coordinates.lng === 0) return;
-
-        // Create marker element with minimal styling - let Mapbox handle positioning completely
-        const markerElement = document.createElement('div');
-        markerElement.className = 'mapbox-marker';
-        markerElement.setAttribute('data-story-id', story.id);
         
-        // Apply styles directly to avoid CSS conflicts
-        markerElement.style.width = '20px';
-        markerElement.style.height = '20px';
-        markerElement.style.backgroundColor = '#10b981';
-        markerElement.style.border = '2px solid white';
-        markerElement.style.borderRadius = '50%';
-        markerElement.style.cursor = 'pointer';
-        markerElement.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.4)';
-        markerElement.style.transition = 'all 0.2s ease';
+        addMarker(story, null, false);
+      });
 
-        // Create Mapbox marker with proper anchor
-        const marker = new mapboxgl.Marker({
-          element: markerElement,
-          anchor: 'center'
-        })
-          .setLngLat([story.coordinates.lng, story.coordinates.lat])
-          .addTo(map.current);
-
-        markers.current.push(marker);
-
-        // Add click handler
-        markerElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          onCountrySelect(story);
-        });
-
-        // Add hover effects without transforms that could affect positioning
-        markerElement.addEventListener('mouseenter', () => {
-          markerElement.style.backgroundColor = '#059669';
-          markerElement.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.6)';
-          markerElement.style.width = '24px';
-          markerElement.style.height = '24px';
-        });
-
-        markerElement.addEventListener('mouseleave', () => {
-          markerElement.style.backgroundColor = '#10b981';
-          markerElement.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.4)';
-          markerElement.style.width = '20px';
-          markerElement.style.height = '20px';
-        });
-
-        // Create popup
-        const popup = new mapboxgl.Popup({
-          offset: 25,
-          closeButton: false,
-          closeOnClick: false
-        }).setHTML(`
-          <div class="p-3">
-            <h3 class="font-semibold text-sm">${story.country}</h3>
-            <p class="text-xs text-gray-600">${story.sector}</p>
-            <p class="text-xs font-medium text-green-600">+${story.growthRate}% growth</p>
-          </div>
-        `);
-
-        markerElement.addEventListener('mouseenter', () => {
-          popup.setLngLat([story.coordinates.lng, story.coordinates.lat]).addTo(map.current!);
-        });
-
-        markerElement.addEventListener('mouseleave', () => {
-          popup.remove();
-        });
+      // Add markers for multi-sector countries
+      countryStories.forEach((countryStory) => {
+        if (!map.current || !countryStory.coordinates || countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0) return;
+        
+        addMarker(null, countryStory, true);
       });
       
       setMapInitialized(true);
@@ -265,7 +217,154 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         initialMapStateApplied.current = false;
       }
     };
-  }, [mapboxToken, successStories, loading]);
+  }, [mapboxToken, successStories, countryStories, loading]);
+
+  const addMarker = (story: SuccessStory | null, countryStory: CountrySuccessStories | null, isMultiSector: boolean) => {
+    if (!map.current) return;
+
+    const coordinates = story?.coordinates || countryStory?.coordinates;
+    const country = story?.country || countryStory?.country;
+    const flag = story?.flag || countryStory?.flag;
+    
+    if (!coordinates || !country) return;
+
+    // Create marker element with different styling for multi-sector countries
+    const markerElement = document.createElement('div');
+    markerElement.className = 'mapbox-marker';
+    markerElement.setAttribute('data-story-id', story?.id || countryStory?.id || '');
+    
+    // Apply styles directly to avoid CSS conflicts
+    markerElement.style.width = isMultiSector ? '24px' : '20px';
+    markerElement.style.height = isMultiSector ? '24px' : '20px';
+    markerElement.style.backgroundColor = isMultiSector ? '#8b5cf6' : '#10b981';
+    markerElement.style.border = isMultiSector ? '3px solid white' : '2px solid white';
+    markerElement.style.borderRadius = '50%';
+    markerElement.style.cursor = 'pointer';
+    markerElement.style.boxShadow = isMultiSector 
+      ? '0 3px 10px rgba(139, 92, 246, 0.5)' 
+      : '0 2px 8px rgba(16, 185, 129, 0.4)';
+    markerElement.style.transition = 'all 0.2s ease';
+
+    // Add multi-sector indicator
+    if (isMultiSector) {
+      const indicator = document.createElement('div');
+      indicator.style.position = 'absolute';
+      indicator.style.top = '-2px';
+      indicator.style.right = '-2px';
+      indicator.style.width = '8px';
+      indicator.style.height = '8px';
+      indicator.style.backgroundColor = '#f59e0b';
+      indicator.style.border = '1px solid white';
+      indicator.style.borderRadius = '50%';
+      markerElement.appendChild(indicator);
+    }
+
+    // Create Mapbox marker with proper anchor
+    const marker = new mapboxgl.Marker({
+      element: markerElement,
+      anchor: 'center'
+    })
+      .setLngLat([coordinates.lng, coordinates.lat])
+      .addTo(map.current);
+
+    markers.current.push(marker);
+
+    // Add click handler
+    markerElement.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (story) {
+        onCountrySelect(story, null);
+      } else if (countryStory) {
+        // For multi-sector, pass the primary sector as a legacy story
+        const primaryStory: SuccessStory = {
+          id: `${countryStory.id}-${countryStory.primarySector.sector}`,
+          country: countryStory.country,
+          sector: countryStory.primarySector.sector,
+          product: countryStory.primarySector.product,
+          description: countryStory.primarySector.description,
+          growthRate: countryStory.primarySector.growthRate,
+          timeframe: countryStory.timeframe,
+          exportValue: countryStory.primarySector.exportValue,
+          keyFactors: countryStory.primarySector.keyFactors,
+          coordinates: countryStory.coordinates,
+          flag: countryStory.flag,
+          marketDestinations: countryStory.primarySector.marketDestinations,
+          challenges: countryStory.primarySector.challenges,
+          impact: countryStory.primarySector.impact,
+          globalRanking1995: countryStory.primarySector.globalRanking1995,
+          globalRanking2022: countryStory.primarySector.globalRanking2022,
+          initialExports1995: countryStory.primarySector.initialExports1995,
+          initialExports2022: countryStory.primarySector.initialExports2022,
+          successfulProduct: countryStory.primarySector.successfulProduct,
+          successStorySummary: countryStory.primarySector.successStorySummary
+        };
+        onCountrySelect(primaryStory, countryStory);
+      }
+    });
+
+    // Add hover effects
+    markerElement.addEventListener('mouseenter', () => {
+      markerElement.style.backgroundColor = isMultiSector ? '#7c3aed' : '#059669';
+      markerElement.style.boxShadow = isMultiSector 
+        ? '0 4px 12px rgba(139, 92, 246, 0.7)' 
+        : '0 4px 12px rgba(16, 185, 129, 0.6)';
+      markerElement.style.width = isMultiSector ? '28px' : '24px';
+      markerElement.style.height = isMultiSector ? '28px' : '24px';
+    });
+
+    markerElement.addEventListener('mouseleave', () => {
+      markerElement.style.backgroundColor = isMultiSector ? '#8b5cf6' : '#10b981';
+      markerElement.style.boxShadow = isMultiSector 
+        ? '0 3px 10px rgba(139, 92, 246, 0.5)' 
+        : '0 2px 8px rgba(16, 185, 129, 0.4)';
+      markerElement.style.width = isMultiSector ? '24px' : '20px';
+      markerElement.style.height = isMultiSector ? '24px' : '20px';
+    });
+
+    // Create enhanced popup for multi-sector countries
+    const popup = new mapboxgl.Popup({
+      offset: 25,
+      closeButton: false,
+      closeOnClick: false
+    });
+
+    if (isMultiSector && countryStory) {
+      popup.setHTML(`
+        <div class="p-3 max-w-xs">
+          <div class="flex items-center mb-2">
+            <span class="text-lg mr-2">${flag}</span>
+            <h3 class="font-semibold text-sm">${country}</h3>
+          </div>
+          <p class="text-xs text-purple-600 font-medium mb-2">${countryStory.sectors.length} Success Stories</p>
+          <div class="space-y-1">
+            ${countryStory.sectors.slice(0, 3).map(sector => 
+              `<div class="text-xs text-gray-600">• ${sector.sector}</div>`
+            ).join('')}
+            ${countryStory.sectors.length > 3 ? 
+              `<div class="text-xs text-gray-500">+${countryStory.sectors.length - 3} more</div>` : 
+              ''
+            }
+          </div>
+        </div>
+      `);
+    } else if (story) {
+      popup.setHTML(`
+        <div class="p-3">
+          <h3 class="font-semibold text-sm">${country}</h3>
+          <p class="text-xs text-gray-600">${story.sector}</p>
+          <p class="text-xs font-medium text-green-600">Rank #${story.globalRanking2022} (2022)</p>
+        </div>
+      `);
+    }
+
+    markerElement.addEventListener('mouseenter', () => {
+      popup.setLngLat([coordinates.lng, coordinates.lat]).addTo(map.current!);
+    });
+
+    markerElement.addEventListener('mouseleave', () => {
+      popup.remove();
+    });
+  };
 
   // Handle story selection flyTo
   useEffect(() => {
@@ -348,6 +447,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     );
   }
 
+  const totalCountries = successStories.length + countryStories.length;
+
   return (
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="absolute inset-0 rounded-lg shadow-lg" />
@@ -367,7 +468,26 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-3 py-2 rounded-lg text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            Live data from Supabase ({successStories.length} countries)
+            Live data from Supabase ({totalCountries} countries)
+          </div>
+        </div>
+      )}
+
+      {/* Legend for multi-sector countries */}
+      {countryStories.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+              <span>Single Sector</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <div className="w-4 h-4 bg-purple-500 rounded-full border-2 border-white shadow-sm"></div>
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
+              </div>
+              <span>Multiple Sectors</span>
+            </div>
           </div>
         </div>
       )}

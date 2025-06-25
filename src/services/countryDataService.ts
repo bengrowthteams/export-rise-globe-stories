@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { SuccessStory } from '../types/SuccessStory';
+import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { countryCoordinates } from '../data/countryCoordinates';
 import { countryFlags } from '../data/countryFlags';
 
@@ -19,6 +20,7 @@ interface CountryDataRow {
 
 // Cache for the transformed data
 let cachedSuccessStories: SuccessStory[] | null = null;
+let cachedCountryStories: CountrySuccessStories[] | null = null;
 
 const formatCurrency = (amount: number): string => {
   if (amount >= 1000000000) {
@@ -45,59 +47,120 @@ const generateSuccessStorySummary = (country: string, sector: string, product: s
   return templates[Math.floor(Math.random() * templates.length)];
 };
 
-const transformCountryData = (data: CountryDataRow[]): SuccessStory[] => {
-  console.log('Transforming country data, received rows:', data.length);
-  console.log('Sample row structure:', data[0]);
-  
-  return data
-    .filter(row => {
-      const hasRequiredData = row.Country && row.Sector;
-      if (!hasRequiredData) {
-        console.log('Filtering out row with missing required data:', row);
-      }
-      return hasRequiredData;
-    })
-    .map(row => {
-      const country = row.Country!;
-      const sector = row.Sector!;
-      const product = row['Successful product'] || 'specialized products';
-      const rank1995 = row['Rank (1995)'] || 50;
-      const rank2022 = row['Rank (2022)'] || 50;
-      const initial = row['Initial Exports - 1995 (USD)'] || 0;
-      const current = row['Current Exports - 2022 (USD)'] || 0;
-      const growthRate = calculateGrowthRate(initial, current);
+const transformToSectorStory = (row: CountryDataRow): SectorStory => {
+  const sector = row.Sector!;
+  const product = row['Successful product'] || 'specialized products';
+  const rank1995 = row['Rank (1995)'] || 50;
+  const rank2022 = row['Rank (2022)'] || 50;
+  const initial = row['Initial Exports - 1995 (USD)'] || 0;
+  const current = row['Current Exports - 2022 (USD)'] || 0;
+  const growthRate = calculateGrowthRate(initial, current);
 
-      return {
+  return {
+    sector,
+    product,
+    description: `Strategic development in ${sector} through export-oriented growth and specialization in ${product}.`,
+    growthRate,
+    exportValue: formatCurrency(current),
+    keyFactors: [
+      'Strategic sector development',
+      'Export market expansion', 
+      'Product specialization',
+      'Global value chain integration'
+    ],
+    marketDestinations: ['Global Markets', 'Regional Partners', 'Emerging Economies'],
+    challenges: ['Market competition', 'Economic volatility', 'Trade policy changes'],
+    impact: {
+      jobs: 'Significant employment creation',
+      economicContribution: `${((current / 1000000000) * 0.1).toFixed(1)}% of export economy`
+    },
+    globalRanking1995: rank1995,
+    globalRanking2022: rank2022,
+    initialExports1995: formatCurrency(initial),
+    initialExports2022: formatCurrency(current),
+    successfulProduct: product.toLowerCase(),
+    successStorySummary: generateSuccessStorySummary(row.Country!, sector, product, growthRate)
+  };
+};
+
+const transformCountryData = (data: CountryDataRow[]): { 
+  legacyStories: SuccessStory[], 
+  countryStories: CountrySuccessStories[] 
+} => {
+  console.log('Transforming country data, received rows:', data.length);
+  
+  const filteredData = data.filter(row => {
+    const hasRequiredData = row.Country && row.Sector;
+    if (!hasRequiredData) {
+      console.log('Filtering out row with missing required data:', row);
+    }
+    return hasRequiredData;
+  });
+
+  // Group by country
+  const countryGroups = new Map<string, CountryDataRow[]>();
+  filteredData.forEach(row => {
+    const country = row.Country!;
+    if (!countryGroups.has(country)) {
+      countryGroups.set(country, []);
+    }
+    countryGroups.get(country)!.push(row);
+  });
+
+  const legacyStories: SuccessStory[] = [];
+  const countryStories: CountrySuccessStories[] = [];
+
+  countryGroups.forEach((rows, country) => {
+    const sectors = rows.map(transformToSectorStory);
+    const firstRow = rows[0];
+    
+    if (sectors.length === 1) {
+      // Single sector - create legacy story
+      const sectorStory = sectors[0];
+      const legacyStory: SuccessStory = {
         id: country.toLowerCase().replace(/\s+/g, '-'),
         country,
-        sector,
-        product,
-        description: `${country} transformed its ${sector} sector through strategic development and export orientation, leveraging ${product} to achieve significant growth in global markets.`,
-        growthRate,
+        sector: sectorStory.sector,
+        product: sectorStory.product,
+        description: sectorStory.description,
+        growthRate: sectorStory.growthRate,
         timeframe: '1995-2022',
-        exportValue: formatCurrency(current),
-        keyFactors: [
-          'Strategic sector development',
-          'Export market expansion', 
-          'Product specialization',
-          'Global value chain integration'
-        ],
+        exportValue: sectorStory.exportValue,
+        keyFactors: sectorStory.keyFactors,
         coordinates: countryCoordinates[country] || { lat: 0, lng: 0 },
         flag: countryFlags[country] || '🌍',
-        marketDestinations: ['Global Markets', 'Regional Partners', 'Emerging Economies'],
-        challenges: ['Market competition', 'Economic volatility', 'Trade policy changes'],
-        impact: {
-          jobs: 'Significant employment creation',
-          economicContribution: `${((current / 1000000000) * 0.1).toFixed(1)}% of export economy`
-        },
-        globalRanking1995: rank1995,
-        globalRanking2022: rank2022,
-        initialExports1995: formatCurrency(initial),
-        initialExports2022: formatCurrency(current),
-        successfulProduct: product.toLowerCase(),
-        successStorySummary: generateSuccessStorySummary(country, sector, product, growthRate)
+        marketDestinations: sectorStory.marketDestinations,
+        challenges: sectorStory.challenges,
+        impact: sectorStory.impact,
+        globalRanking1995: sectorStory.globalRanking1995,
+        globalRanking2022: sectorStory.globalRanking2022,
+        initialExports1995: sectorStory.initialExports1995,
+        initialExports2022: sectorStory.initialExports2022,
+        successfulProduct: sectorStory.successfulProduct,
+        successStorySummary: sectorStory.successStorySummary
       };
-    });
+      legacyStories.push(legacyStory);
+    } else {
+      // Multiple sectors - create country story
+      const primarySector = sectors.reduce((prev, current) => 
+        (current.globalRanking2022 < prev.globalRanking2022) ? current : prev
+      );
+
+      const countryStory: CountrySuccessStories = {
+        id: country.toLowerCase().replace(/\s+/g, '-'),
+        country,
+        flag: countryFlags[country] || '🌍',
+        coordinates: countryCoordinates[country] || { lat: 0, lng: 0 },
+        timeframe: '1995-2022',
+        sectors: sectors.sort((a, b) => a.globalRanking2022 - b.globalRanking2022), // Sort by best ranking
+        hasMutipleSectors: true,
+        primarySector
+      };
+      countryStories.push(countryStory);
+    }
+  });
+
+  return { legacyStories, countryStories };
 };
 
 // Test database connectivity and permissions
@@ -141,6 +204,7 @@ const testDatabaseAccess = async (): Promise<void> => {
 export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
   // Clear cache for fresh data
   cachedSuccessStories = null;
+  cachedCountryStories = null;
   
   // Return cached data if available
   if (cachedSuccessStories) {
@@ -190,12 +254,13 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
       return [];
     }
 
-    const transformedData = transformCountryData(data);
-    cachedSuccessStories = transformedData;
+    const { legacyStories, countryStories } = transformCountryData(data);
+    cachedSuccessStories = legacyStories;
+    cachedCountryStories = countryStories;
     
     console.log(`=== SUCCESS ===`);
-    console.log(`Successfully loaded and transformed ${transformedData.length} countries from Supabase`);
-    return transformedData;
+    console.log(`Successfully loaded ${legacyStories.length} single-sector and ${countryStories.length} multi-sector countries from Supabase`);
+    return legacyStories;
     
   } catch (error) {
     console.error('=== FETCH FAILED ===');
@@ -209,8 +274,18 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
   }
 };
 
+export const fetchCountryStories = async (): Promise<CountrySuccessStories[]> => {
+  // Trigger fetch if not cached
+  if (!cachedCountryStories) {
+    await fetchSuccessStories();
+  }
+  
+  return cachedCountryStories || [];
+};
+
 // Clear cache function for future use
 export const clearSuccessStoriesCache = () => {
   console.log('Clearing success stories cache');
   cachedSuccessStories = null;
+  cachedCountryStories = null;
 };
