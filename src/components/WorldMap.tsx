@@ -228,24 +228,24 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
     if (!coordinates || !country) return;
 
-    // Create marker element with different styling for multi-sector countries
+    // Create marker element - now both single and multi-sector are green
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
     markerElement.setAttribute('data-story-id', story?.id || countryStory?.id || '');
     
-    // Apply styles directly to avoid CSS conflicts
+    // Apply styles directly to avoid CSS conflicts - both green now
     markerElement.style.width = isMultiSector ? '24px' : '20px';
     markerElement.style.height = isMultiSector ? '24px' : '20px';
-    markerElement.style.backgroundColor = isMultiSector ? '#8b5cf6' : '#10b981';
+    markerElement.style.backgroundColor = '#10b981'; // Both are now green
     markerElement.style.border = isMultiSector ? '3px solid white' : '2px solid white';
     markerElement.style.borderRadius = '50%';
     markerElement.style.cursor = 'pointer';
     markerElement.style.boxShadow = isMultiSector 
-      ? '0 3px 10px rgba(139, 92, 246, 0.5)' 
+      ? '0 3px 10px rgba(16, 185, 129, 0.5)' 
       : '0 2px 8px rgba(16, 185, 129, 0.4)';
     markerElement.style.transition = 'all 0.2s ease';
 
-    // Add multi-sector indicator
+    // Add multi-sector indicator - keep the orange dot
     if (isMultiSector) {
       const indicator = document.createElement('div');
       indicator.style.position = 'absolute';
@@ -259,7 +259,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       markerElement.appendChild(indicator);
     }
 
-    // Create Mapbox marker with proper anchor
     const marker = new mapboxgl.Marker({
       element: markerElement,
       anchor: 'center'
@@ -282,14 +281,14 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           sector: countryStory.primarySector.sector,
           product: countryStory.primarySector.product,
           description: countryStory.primarySector.description,
-          growthRate: countryStory.primarySector.growthRate,
+          growthRate: countryStory.growthRate,
           timeframe: countryStory.timeframe,
           exportValue: countryStory.primarySector.exportValue,
           keyFactors: countryStory.primarySector.keyFactors,
           coordinates: countryStory.coordinates,
           flag: countryStory.flag,
           marketDestinations: countryStory.primarySector.marketDestinations,
-          challenges: countryStory.primarySector.challenges,
+          challenges: countryStory.challenges,
           impact: countryStory.primarySector.impact,
           globalRanking1995: countryStory.primarySector.globalRanking1995,
           globalRanking2022: countryStory.primarySector.globalRanking2022,
@@ -302,26 +301,25 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }
     });
 
-    // Add hover effects
+    // Add hover effects - both green now
     markerElement.addEventListener('mouseenter', () => {
-      markerElement.style.backgroundColor = isMultiSector ? '#7c3aed' : '#059669';
+      markerElement.style.backgroundColor = '#059669'; // Darker green for both
       markerElement.style.boxShadow = isMultiSector 
-        ? '0 4px 12px rgba(139, 92, 246, 0.7)' 
+        ? '0 4px 12px rgba(16, 185, 129, 0.7)' 
         : '0 4px 12px rgba(16, 185, 129, 0.6)';
       markerElement.style.width = isMultiSector ? '28px' : '24px';
       markerElement.style.height = isMultiSector ? '28px' : '24px';
     });
 
     markerElement.addEventListener('mouseleave', () => {
-      markerElement.style.backgroundColor = isMultiSector ? '#8b5cf6' : '#10b981';
+      markerElement.style.backgroundColor = '#10b981'; // Back to green for both
       markerElement.style.boxShadow = isMultiSector 
-        ? '0 3px 10px rgba(139, 92, 246, 0.5)' 
+        ? '0 3px 10px rgba(16, 185, 129, 0.5)' 
         : '0 2px 8px rgba(16, 185, 129, 0.4)';
       markerElement.style.width = isMultiSector ? '24px' : '20px';
       markerElement.style.height = isMultiSector ? '24px' : '20px';
     });
 
-    // Create enhanced popup for multi-sector countries
     const popup = new mapboxgl.Popup({
       offset: 25,
       closeButton: false,
@@ -371,7 +369,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     });
   };
 
-  // Handle story selection flyTo
+  // Handle story selection flyTo - now handles both single and multi-sector
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
@@ -388,12 +386,14 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         isFlying.current = false;
       }, 2000);
     } else if (lastSelectedStory.current) {
+      // When closing (selectedStory becomes null), zoom out
       isFlying.current = true;
       map.current.flyTo({
-        center: [lastSelectedStory.current.coordinates.lng, lastSelectedStory.current.coordinates.lat],
+        center: [20, 20], // Return to world view
         zoom: 2,
         duration: 1500
       });
+      lastSelectedStory.current = null;
       
       setTimeout(() => {
         isFlying.current = false;
@@ -488,7 +488,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
-                <div className="w-4 h-4 bg-purple-500 rounded-full border-2 border-white shadow-sm"></div>
+                <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
                 <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
               </div>
               <span>Multiple Sectors</span>

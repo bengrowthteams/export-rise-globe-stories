@@ -66,6 +66,31 @@ const Landing = () => {
       setShowSectorModal(true);
       setSelectedStory(null);
       setSelectedSector(null);
+      
+      // Set a temporary story for zoom purposes (using primary sector)
+      const tempStory: SuccessStory = {
+        id: `${countryStories.id}-${countryStories.primarySector.sector}`,
+        country: countryStories.country,
+        sector: countryStories.primarySector.sector,
+        product: countryStories.primarySector.product,
+        description: countryStories.primarySector.description,
+        growthRate: countryStories.primarySector.growthRate,
+        timeframe: countryStories.timeframe,
+        exportValue: countryStories.primarySector.exportValue,
+        keyFactors: countryStories.primarySector.keyFactors,
+        coordinates: countryStories.coordinates,
+        flag: countryStories.flag,
+        marketDestinations: countryStories.primarySector.marketDestinations,
+        challenges: countryStories.primarySector.challenges,
+        impact: countryStories.primarySector.impact,
+        globalRanking1995: countryStories.primarySector.globalRanking1995,
+        globalRanking2022: countryStories.primarySector.globalRanking2022,
+        initialExports1995: countryStories.primarySector.initialExports1995,
+        initialExports2022: countryStories.primarySector.initialExports2022,
+        successfulProduct: countryStories.primarySector.successfulProduct,
+        successStorySummary: countryStories.primarySector.successStorySummary
+      };
+      setSelectedStory(tempStory); // This will trigger the zoom
     } else {
       // Single-sector country - show story card directly
       setSelectedStory(story);
@@ -79,6 +104,7 @@ const Landing = () => {
     setSelectedSector(sector);
     setShowSectorModal(false);
     // Keep the country stories for the "other sectors" functionality
+    // Keep the selectedStory for zoom (it's already set from handleCountrySelect)
   };
 
   const handleSectorSelect = (sector: SectorStory) => {
@@ -95,6 +121,8 @@ const Landing = () => {
   const handleCloseSectorModal = () => {
     setShowSectorModal(false);
     setSelectedCountryStories(null);
+    // Clear the temporary story to zoom out
+    setSelectedStory(null);
   };
 
   const handleReadMore = (story: SuccessStory) => {

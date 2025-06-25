@@ -70,20 +70,12 @@ const SectorSelectionModal: React.FC<SectorSelectionModalProps> = ({
                           <strong>Successful Product:</strong> {sector.successfulProduct}
                         </p>
                         
-                        {/* Key Metrics */}
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div className="flex items-center space-x-2">
-                            <TrendingUp size={16} className="text-blue-600" />
-                            <span className="text-gray-700">
-                              Current Rank: #{sector.globalRanking2022}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Trophy size={16} className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} />
-                            <span className={`text-sm font-medium ${gainColor}`}>
-                              Global Ranking Gain 1995-2022: {gainPrefix}{rankingGain}
-                            </span>
-                          </div>
+                        {/* Simplified Ranking Gain */}
+                        <div className="flex items-center space-x-2">
+                          <TrendingUp size={16} className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} />
+                          <span className={`text-sm font-medium ${gainColor}`}>
+                            Ranking Gain: {gainPrefix}{rankingGain}
+                          </span>
                         </div>
                       </div>
                       

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { SuccessStory } from '../types/SuccessStory';
@@ -60,10 +59,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
 
     const searchResults: SearchResult[] = [];
 
-    // Search single-sector countries
+    // Search single-sector countries by country name only
     successStories.forEach(story => {
-      if (story.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          story.sector.toLowerCase().includes(searchTerm.toLowerCase())) {
+      if (story.country.toLowerCase().includes(searchTerm.toLowerCase())) {
         searchResults.push({
           type: 'single',
           country: story.country,
@@ -74,14 +72,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
       }
     });
 
-    // Search multi-sector countries
+    // Search multi-sector countries by country name only
     countryStories.forEach(countryStory => {
-      const countryMatch = countryStory.country.toLowerCase().includes(searchTerm.toLowerCase());
-      const sectorMatch = countryStory.sectors.some(sector => 
-        sector.sector.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      if (countryMatch || sectorMatch) {
+      if (countryStory.country.toLowerCase().includes(searchTerm.toLowerCase())) {
         searchResults.push({
           type: 'multi',
           country: countryStory.country,
@@ -184,10 +177,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     if (searchTerm && !loading) {
       const searchResults: SearchResult[] = [];
 
-      // Search single-sector countries
+      // Search single-sector countries by country name only
       successStories.forEach(story => {
-        if (story.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            story.sector.toLowerCase().includes(searchTerm.toLowerCase())) {
+        if (story.country.toLowerCase().includes(searchTerm.toLowerCase())) {
           searchResults.push({
             type: 'single',
             country: story.country,
@@ -198,14 +190,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
         }
       });
 
-      // Search multi-sector countries
+      // Search multi-sector countries by country name only
       countryStories.forEach(countryStory => {
-        const countryMatch = countryStory.country.toLowerCase().includes(searchTerm.toLowerCase());
-        const sectorMatch = countryStory.sectors.some(sector => 
-          sector.sector.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-        if (countryMatch || sectorMatch) {
+        if (countryStory.country.toLowerCase().includes(searchTerm.toLowerCase())) {
           searchResults.push({
             type: 'multi',
             country: countryStory.country,
