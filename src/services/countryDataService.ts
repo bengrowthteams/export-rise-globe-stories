@@ -133,13 +133,6 @@ const testDatabaseAccess = async (): Promise<void> => {
       });
     }
 
-    // Test 3: Check RLS status
-    const { data: rlsData, error: rlsError } = await supabase
-      .rpc('pg_catalog.current_setting', { setting_name: 'row_security' })
-      .single();
-    
-    console.log('RLS Status Check:', { rlsData, rlsError });
-
   } catch (error) {
     console.error('Database access test failed:', error);
   }
@@ -193,19 +186,6 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
       console.warn('2. Row Level Security blocking access');
       console.warn('3. Incorrect table name or permissions');
       console.warn('4. Database connectivity issues');
-      
-      // Try a direct table existence check
-      try {
-        const { data: tableCheck } = await supabase
-          .from('information_schema.tables')
-          .select('table_name')
-          .eq('table_name', 'Country Data')
-          .eq('table_schema', 'public');
-        
-        console.log('Table existence check:', tableCheck?.length ? 'Table exists' : 'Table not found');
-      } catch (tableError) {
-        console.log('Could not check table existence:', tableError);
-      }
       
       return [];
     }
