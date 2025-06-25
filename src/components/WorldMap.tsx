@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -28,8 +29,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
     setMapboxToken(token);
   };
 
+  // Initialize map only once when token is available
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken) return;
+    if (!mapContainer.current || !mapboxToken || map.current) return;
 
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
@@ -76,11 +78,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
         // Add click handler
         markerElement.addEventListener('click', () => {
           onCountrySelect(story);
-          map.current?.flyTo({
-            center: [story.coordinates.lng, story.coordinates.lat],
-            zoom: 5,
-            duration: 2000
-          });
+          // Don't call flyTo here - handle it in separate effect
         });
 
         // Add popup on hover
@@ -108,9 +106,23 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
 
     // Cleanup
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
-  }, [mapboxToken, onCountrySelect]);
+  }, [mapboxToken]); // Only depend on mapboxToken
+
+  // Separate effect to handle flyTo when story is selected
+  useEffect(() => {
+    if (!map.current || !selectedStory) return;
+
+    map.current.flyTo({
+      center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat],
+      zoom: 5,
+      duration: 2000
+    });
+  }, [selectedStory]);
 
   if (!mapboxToken) {
     return (
