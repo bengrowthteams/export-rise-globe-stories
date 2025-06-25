@@ -24,6 +24,11 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
       const mapSection = document.getElementById('map-section');
       if (mapSection) {
         const savedPosition = sessionStorage.getItem('mapScrollPosition');
+        const savedMapState = sessionStorage.getItem('mapState');
+        
+        console.log('Restoring scroll position:', savedPosition);
+        console.log('Map state available:', !!savedMapState);
+        
         if (savedPosition) {
           window.scrollTo(0, parseInt(savedPosition));
           sessionStorage.removeItem('mapScrollPosition');

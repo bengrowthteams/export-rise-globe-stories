@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ArrowRight, Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuccessStory } from '../types/SuccessStory';
+import { useElementHighlight } from '../hooks/useElementHighlight';
 
 interface MapTutorialProps {
   onClose: () => void;
@@ -13,6 +14,11 @@ interface MapTutorialProps {
 const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect, demoStory }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+
+  // Dynamic highlights for different elements
+  const searchBounds = useElementHighlight(undefined, '.search-container');
+  const mapDotBounds = useElementHighlight(undefined, '.custom-marker');
+  const storyCardBounds = useElementHighlight(undefined, '.story-card-container');
 
   const steps = [
     {
@@ -101,25 +107,59 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
   const currentStepData = steps[currentStep];
 
+  const renderHighlight = () => {
+    if (currentStepData.highlight === 'search' && searchBounds) {
+      return (
+        <div 
+          className="absolute border-4 border-blue-400 rounded-lg animate-pulse z-30 bg-blue-400 bg-opacity-10"
+          style={{
+            top: searchBounds.top - 4,
+            left: searchBounds.left - 4,
+            width: searchBounds.width + 8,
+            height: searchBounds.height + 8,
+          }}
+        />
+      );
+    }
+
+    if (currentStepData.highlight === 'dots') {
+      return (
+        <div className="absolute inset-0 pointer-events-none z-30">
+          {/* Multiple pulsing circles to highlight map dots */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-green-400 bg-opacity-20 rounded-full animate-pulse" />
+          <div className="absolute top-1/3 left-1/3 w-24 h-24 bg-green-400 bg-opacity-15 rounded-full animate-pulse animation-delay-300" />
+          <div className="absolute top-2/3 left-2/3 w-28 h-28 bg-green-400 bg-opacity-15 rounded-full animate-pulse animation-delay-600" />
+        </div>
+      );
+    }
+
+    if (currentStepData.highlight === 'card' && storyCardBounds) {
+      return (
+        <div 
+          className="absolute border-4 border-purple-400 rounded-lg animate-pulse z-30 bg-purple-400 bg-opacity-10"
+          style={{
+            top: storyCardBounds.top - 4,
+            left: storyCardBounds.left - 4,
+            width: storyCardBounds.width + 8,
+            height: storyCardBounds.height + 8,
+          }}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black bg-opacity-50" />
       
-      {/* Highlight overlays */}
-      {currentStepData.highlight === 'dots' && (
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Spotlight effect for map dots */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white bg-opacity-20 rounded-full animate-pulse" />
-        </div>
-      )}
-      
-      {currentStepData.highlight === 'search' && (
-        <div className="absolute top-20 left-4 w-80 h-12 border-2 border-blue-400 rounded-lg animate-pulse" />
-      )}
+      {/* Dynamic highlights */}
+      {renderHighlight()}
 
       {/* Tutorial card */}
-      <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 ${
+      <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 z-40 ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
         currentStepData.position === 'bottom-right' ? 'bottom-8 right-8' :

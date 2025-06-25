@@ -21,6 +21,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
+  const [mapInitialized, setMapInitialized] = useState(false);
   const lastSelectedStory = useRef<SuccessStory | null>(null);
 
   useEffect(() => {
@@ -41,11 +42,13 @@ const WorldMap: React.FC<WorldMapProps> = ({
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || map.current) return;
 
+    console.log('Initializing map...');
+    
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
-    const initialCenter = initialMapState?.center || [20, 20];
-    const initialZoom = initialMapState?.zoom || 2;
+    const initialCenter = [20, 20] as [number, number];
+    const initialZoom = 2;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -76,6 +79,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
 
     // Add markers for success stories
     map.current.on('style.load', () => {
+      console.log('Map style loaded, adding markers...');
       successStories.forEach((story) => {
         if (!map.current) return;
 
@@ -100,7 +104,6 @@ const WorldMap: React.FC<WorldMapProps> = ({
         // Add click handler
         markerElement.addEventListener('click', () => {
           onCountrySelect(story);
-          // Don't call flyTo here - handle it in separate effect
         });
 
         // Add popup on hover
@@ -124,6 +127,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
           popup.remove();
         });
       });
+      
+      setMapInitialized(true);
     });
 
     // Cleanup
@@ -131,13 +136,29 @@ const WorldMap: React.FC<WorldMapProps> = ({
       if (map.current) {
         map.current.remove();
         map.current = null;
+        setMapInitialized(false);
       }
     };
-  }, [mapboxToken, initialMapState]); // Add initialMapState to dependencies
+  }, [mapboxToken]); // Remove initialMapState from dependencies
+
+  // Handle initial map state restoration after map is initialized
+  useEffect(() => {
+    if (!map.current || !mapInitialized || !initialMapState) return;
+    
+    console.log('Restoring map state:', initialMapState);
+    
+    // Use flyTo to smoothly transition to the saved state
+    map.current.flyTo({
+      center: initialMapState.center,
+      zoom: initialMapState.zoom,
+      duration: 1000
+    });
+    
+  }, [mapInitialized, initialMapState]);
 
   // Separate effect to handle flyTo when story is selected or deselected
   useEffect(() => {
-    if (!map.current) return;
+    if (!map.current || !mapInitialized) return;
 
     if (selectedStory) {
       // Fly to the selected story with close zoom
@@ -155,7 +176,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         duration: 1500
       });
     }
-  }, [selectedStory]);
+  }, [selectedStory, mapInitialized]);
 
   if (!mapboxToken) {
     return (

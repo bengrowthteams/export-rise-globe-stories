@@ -18,19 +18,18 @@ const Landing = () => {
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   
-  const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
+  const { showTutorial, hasSeenTutorial, shouldAutoTrigger, startTutorial, closeTutorial } = useTutorial();
   const { isVisible: mapSectionVisible } = useScrollTrigger(mapSectionRef, 0.3);
-
-  // Show tutorial when map section becomes visible for first-time users
-  const shouldShowAutoTutorial = mapSectionVisible && !hasSeenTutorial && !showTutorial;
 
   // Auto-trigger tutorial when map becomes visible for first-time users
   React.useEffect(() => {
-    if (shouldShowAutoTutorial) {
-      // Start tutorial immediately when map becomes visible
+    console.log('Map section visible:', mapSectionVisible, 'Should auto trigger:', shouldAutoTrigger);
+    
+    if (mapSectionVisible && shouldAutoTrigger && !showTutorial) {
+      console.log('Auto-triggering tutorial');
       startTutorial();
     }
-  }, [shouldShowAutoTutorial, startTutorial]);
+  }, [mapSectionVisible, shouldAutoTrigger, showTutorial, startTutorial]);
 
   // Restore map state on page load
   React.useEffect(() => {
@@ -38,6 +37,7 @@ const Landing = () => {
     if (savedMapState) {
       try {
         const parsedState = JSON.parse(savedMapState);
+        console.log('Restoring saved map state:', parsedState);
         setMapState(parsedState);
         sessionStorage.removeItem('mapState');
       } catch (error) {
@@ -66,6 +66,7 @@ const Landing = () => {
     sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
     if (mapState) {
       sessionStorage.setItem('mapState', JSON.stringify(mapState));
+      console.log('Saving map state before navigation:', mapState);
     }
     navigate(`/case-study/${story.id}`);
   };
@@ -89,7 +90,9 @@ const Landing = () => {
   };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
-    setMapState({ center, zoom });
+    const newMapState = { center, zoom };
+    setMapState(newMapState);
+    console.log('Map state changed:', newMapState);
   };
 
   return (
@@ -137,7 +140,7 @@ const Landing = () => {
       <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
           {/* Search Bar - positioned below fixed navbar */}
-          <div className="absolute top-20 left-4 z-20">
+          <div className="absolute top-20 left-4 z-20 search-container">
             <SearchBar onCountrySelect={handleCountrySelect} />
           </div>
 
@@ -174,7 +177,7 @@ const Landing = () => {
               />
               
               {/* Story Card */}
-              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className={`absolute right-0 top-0 h-full w-96 z-40 transform transition-transform duration-300 story-card-container ${selectedStory ? 'translate-x-0' : 'translate-x-full'}`}>
                 <StoryCard 
                   story={selectedStory} 
                   onClose={handleClosePanel}
@@ -185,7 +188,7 @@ const Landing = () => {
           )}
 
           {/* Tutorial Overlay */}
-          {(showTutorial || shouldShowAutoTutorial) && (
+          {showTutorial && (
             <MapTutorial
               onClose={closeTutorial}
               onDemoCountrySelect={handleTutorialDemo}
