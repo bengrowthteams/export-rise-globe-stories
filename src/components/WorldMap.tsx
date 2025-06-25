@@ -130,7 +130,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) =
       // Fly out to a regional view when story is deselected
       map.current.flyTo({
         center: [lastSelectedStory.current.coordinates.lng, lastSelectedStory.current.coordinates.lat],
-        zoom: 3,
+        zoom: 2,
         duration: 1500
       });
     }
