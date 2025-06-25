@@ -35,7 +35,7 @@ const Index = () => {
 
         {/* Map - always full width */}
         <div className="h-full w-full">
-          <WorldMap onCountrySelect={handleCountrySelect} />
+          <WorldMap onCountrySelect={handleCountrySelect} selectedStory={selectedStory} />
         </div>
         
         {/* Story Card Overlay */}

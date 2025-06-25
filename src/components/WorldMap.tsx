@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -7,12 +6,14 @@ import { successStories } from '../data/successStories';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null) => void;
+  selectedStory?: SuccessStory | null;
 }
 
-const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
+const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect, selectedStory }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
+  const previousPosition = useRef<{ center: [number, number]; zoom: number } | null>(null);
 
   useEffect(() => {
     // Try to load token from localStorage on component mount
@@ -21,6 +22,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
       setMapboxToken(savedToken);
     }
   }, []);
+
+  // Effect to handle returning to previous position when story is closed
+  useEffect(() => {
+    if (!map.current || !previousPosition.current) return;
+    
+    // If selectedStory becomes null and we have a previous position, return to it
+    if (!selectedStory && previousPosition.current) {
+      map.current.flyTo({
+        center: previousPosition.current.center,
+        zoom: previousPosition.current.zoom,
+        duration: 1500
+      });
+      previousPosition.current = null;
+    }
+  }, [selectedStory]);
 
   const handleTokenSubmit = (token: string) => {
     // Save token to localStorage when user enters it
@@ -75,6 +91,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountrySelect }) => {
 
         // Add click handler
         markerElement.addEventListener('click', () => {
+          // Store current position before flying to new location
+          if (map.current) {
+            previousPosition.current = {
+              center: [map.current.getCenter().lng, map.current.getCenter().lat],
+              zoom: map.current.getZoom()
+            };
+          }
+          
           onCountrySelect(story);
           map.current?.flyTo({
             center: [story.coordinates.lng, story.coordinates.lat],
