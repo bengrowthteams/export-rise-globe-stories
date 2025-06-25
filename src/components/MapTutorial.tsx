@@ -72,7 +72,43 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           searchBar.style.borderRadius = '12px';
           searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
-      } else if (currentStep === 3 && demoStory) {
+      } else if (currentStep === 3) {
+        // Ensure demo story is visible during card step
+        if (!demoStory) {
+          // Create and trigger demo story for card step
+          const vietnamStory: SuccessStory = {
+            id: 'demo-vietnam',
+            country: 'Vietnam',
+            flag: '🇻🇳',
+            sector: 'Electronics & Textiles',
+            product: 'Smartphones and Garments',
+            description: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies.',
+            growthRate: 7000,
+            timeframe: '1995-2022',
+            exportValue: '$371.8 billion (2022)',
+            keyFactors: [
+              'Strategic FDI attraction',
+              'Trade liberalization',
+              'Skilled workforce development',
+              'Infrastructure investment'
+            ],
+            coordinates: { lat: 14.0583, lng: 108.2772 },
+            marketDestinations: ['United States', 'European Union', 'Japan', 'South Korea'],
+            challenges: ['Rising labor costs', 'Environmental concerns', 'Competition from Bangladesh'],
+            impact: {
+              jobs: '2.5 million direct jobs',
+              economicContribution: '15% of total export revenue'
+            },
+            globalRanking1995: 45,
+            globalRanking2022: 12,
+            initialExports1995: '$5,200,000,000',
+            initialExports2022: '$371,800,000,000',
+            successfulProduct: 'smartphones and textiles',
+            successStorySummary: 'Vietnam transformed from an agricultural economy to a global manufacturing hub through strategic foreign investment and export-oriented policies, creating millions of jobs and driving remarkable export growth.'
+          };
+          onDemoCountrySelect(vietnamStory);
+        }
+        
         // Highlight story card with enhanced effects
         if (storyCard) {
           storyCard.classList.add('tutorial-card-highlight');
@@ -103,7 +139,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         storyCard.classList.remove('tutorial-card-highlight');
       }
     };
-  }, [currentStep, demoStory]);
+  }, [currentStep, demoStory, onDemoCountrySelect]);
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -206,13 +242,16 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           </div>
           
           <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={handleSkip}
-              className="text-gray-600"
-            >
-              Skip Tour
-            </Button>
+            {/* Only show Skip Tour button on first slide */}
+            {currentStep === 0 && (
+              <Button
+                variant="outline"
+                onClick={handleSkip}
+                className="text-gray-600"
+              >
+                Skip Tour
+              </Button>
+            )}
             <Button
               onClick={handleNext}
               className="bg-blue-600 hover:bg-blue-700"

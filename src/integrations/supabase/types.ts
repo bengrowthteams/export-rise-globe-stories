@@ -12,10 +12,10 @@ export type Database = {
       "Country Data": {
         Row: {
           Country: string | null
-          "Current Export (2022)": number | null
-          "Global Share (1995)": number | null
-          "Global Share (2022)": number | null
-          "Initial Export (1995)": number | null
+          "Current Exports - 2022 (USD)": number | null
+          "Global Share 1995 - %": number | null
+          "Global Share 2022 - %": number | null
+          "Initial Exports - 1995 (USD)": number | null
           "Rank (1995)": number | null
           "Rank (2022)": number | null
           "Ranks Change (absolute)": number | null
@@ -24,10 +24,10 @@ export type Database = {
         }
         Insert: {
           Country?: string | null
-          "Current Export (2022)"?: number | null
-          "Global Share (1995)"?: number | null
-          "Global Share (2022)"?: number | null
-          "Initial Export (1995)"?: number | null
+          "Current Exports - 2022 (USD)"?: number | null
+          "Global Share 1995 - %"?: number | null
+          "Global Share 2022 - %"?: number | null
+          "Initial Exports - 1995 (USD)"?: number | null
           "Rank (1995)"?: number | null
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null
@@ -36,10 +36,10 @@ export type Database = {
         }
         Update: {
           Country?: string | null
-          "Current Export (2022)"?: number | null
-          "Global Share (1995)"?: number | null
-          "Global Share (2022)"?: number | null
-          "Initial Export (1995)"?: number | null
+          "Current Exports - 2022 (USD)"?: number | null
+          "Global Share 1995 - %"?: number | null
+          "Global Share 2022 - %"?: number | null
+          "Initial Exports - 1995 (USD)"?: number | null
           "Rank (1995)"?: number | null
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null

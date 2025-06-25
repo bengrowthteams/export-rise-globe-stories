@@ -27,6 +27,10 @@ const Landing = () => {
       try {
         const parsedState = JSON.parse(savedMapState);
         console.log('Restoring saved map state:', parsedState);
+        // Adjust zoom to be more zoomed out for better return view
+        if (parsedState.zoom > 4) {
+          parsedState.zoom = 4; // Set to a more reasonable zoom level
+        }
         setMapState(parsedState);
         sessionStorage.removeItem('mapState');
       } catch (error) {
@@ -63,8 +67,21 @@ const Landing = () => {
     // Save current scroll position and map state before navigating
     sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
     if (mapState) {
-      sessionStorage.setItem('mapState', JSON.stringify(mapState));
-      console.log('Saving map state before navigation:', mapState);
+      // Save map state with adjusted zoom for better return experience
+      const adjustedMapState = {
+        ...mapState,
+        zoom: Math.min(mapState.zoom, 4) // Ensure zoom doesn't exceed 4 for return
+      };
+      sessionStorage.setItem('mapState', JSON.stringify(adjustedMapState));
+      console.log('Saving adjusted map state before navigation:', adjustedMapState);
+    } else if (selectedStory) {
+      // If no current map state, create one based on selected story with moderate zoom
+      const fallbackMapState = {
+        center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat] as [number, number],
+        zoom: 4
+      };
+      sessionStorage.setItem('mapState', JSON.stringify(fallbackMapState));
+      console.log('Saving fallback map state based on selected story:', fallbackMapState);
     }
     navigate(`/case-study/${story.id}`);
   };
