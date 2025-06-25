@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -281,14 +282,14 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           sector: countryStory.primarySector.sector,
           product: countryStory.primarySector.product,
           description: countryStory.primarySector.description,
-          growthRate: countryStory.growthRate,
+          growthRate: countryStory.primarySector.growthRate,
           timeframe: countryStory.timeframe,
           exportValue: countryStory.primarySector.exportValue,
           keyFactors: countryStory.primarySector.keyFactors,
           coordinates: countryStory.coordinates,
           flag: countryStory.flag,
           marketDestinations: countryStory.primarySector.marketDestinations,
-          challenges: countryStory.challenges,
+          challenges: countryStory.primarySector.challenges,
           impact: countryStory.primarySector.impact,
           globalRanking1995: countryStory.primarySector.globalRanking1995,
           globalRanking2022: countryStory.primarySector.globalRanking2022,
