@@ -123,22 +123,22 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       successStories.forEach((story) => {
         if (!map.current) return;
 
-        // Create simple marker element - let Mapbox handle all positioning
+        // Create marker element with minimal styling - let Mapbox handle positioning completely
         const markerElement = document.createElement('div');
-        markerElement.className = 'map-marker';
+        markerElement.className = 'mapbox-marker';
         markerElement.setAttribute('data-story-id', story.id);
-        markerElement.style.cssText = `
-          width: 24px;
-          height: 24px;
-          background: linear-gradient(135deg, #10b981, #059669);
-          border: 3px solid white;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        `;
+        
+        // Apply styles directly to avoid CSS conflicts
+        markerElement.style.width = '20px';
+        markerElement.style.height = '20px';
+        markerElement.style.backgroundColor = '#10b981';
+        markerElement.style.border = '2px solid white';
+        markerElement.style.borderRadius = '50%';
+        markerElement.style.cursor = 'pointer';
+        markerElement.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.4)';
+        markerElement.style.transition = 'all 0.2s ease';
 
-        // Create marker - Mapbox handles positioning automatically
+        // Create Mapbox marker with proper anchor
         const marker = new mapboxgl.Marker({
           element: markerElement,
           anchor: 'center'
@@ -148,21 +148,28 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
         markers.current.push(marker);
 
-        markerElement.addEventListener('click', () => {
+        // Add click handler
+        markerElement.addEventListener('click', (e) => {
+          e.stopPropagation();
           onCountrySelect(story);
         });
 
-        // Add hover effects
+        // Add hover effects without transforms that could affect positioning
         markerElement.addEventListener('mouseenter', () => {
-          markerElement.style.transform = 'scale(1.2)';
-          markerElement.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.6)';
+          markerElement.style.backgroundColor = '#059669';
+          markerElement.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.6)';
+          markerElement.style.width = '24px';
+          markerElement.style.height = '24px';
         });
 
         markerElement.addEventListener('mouseleave', () => {
-          markerElement.style.transform = 'scale(1)';
-          markerElement.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+          markerElement.style.backgroundColor = '#10b981';
+          markerElement.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.4)';
+          markerElement.style.width = '20px';
+          markerElement.style.height = '20px';
         });
 
+        // Create popup
         const popup = new mapboxgl.Popup({
           offset: 25,
           closeButton: false,

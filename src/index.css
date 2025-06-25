@@ -103,17 +103,17 @@
   }
 }
 
-/* Mapbox marker positioning - ensure Mapbox controls positioning */
+/* Ensure Mapbox markers have proper positioning - no overrides */
 .mapboxgl-marker {
-  position: absolute !important;
+  /* Let Mapbox handle all positioning */
 }
 
-.map-marker {
-  /* Only visual styles - no positioning overrides */
-  pointer-events: auto;
+/* Mapbox marker styles - visual only, no positioning */
+.mapbox-marker {
+  /* Only visual styles applied via JavaScript - no CSS positioning overrides */
 }
 
-/* Ensure tutorial highlights don't interfere with positioning */
+/* Tutorial card highlighting */
 .tutorial-card-highlight {
   position: relative;
 }
