@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, TrendingUp, Globe } from 'lucide-react';
+import { X, TrendingUp, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 
@@ -15,8 +15,8 @@ const SectorSelectionModal: React.FC<SectorSelectionModalProps> = ({
   onSectorSelect,
   onClose
 }) => {
-  const formatPercentage = (value: number): string => {
-    return `${value.toFixed(2)}%`;
+  const calculateRankingGain = (rank1995: number, rank2022: number): number => {
+    return rank1995 - rank2022;
   };
 
   return (
@@ -50,52 +50,58 @@ const SectorSelectionModal: React.FC<SectorSelectionModalProps> = ({
           {/* Sectors Grid */}
           <div className="p-6">
             <div className="grid gap-4">
-              {countryStories.sectors.map((sector, index) => (
-                <div
-                  key={index}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => onSectorSelect(sector)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {sector.sector}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-3 capitalize">
-                        <strong>Successful Product:</strong> {sector.successfulProduct}
-                      </p>
-                      
-                      {/* Key Metrics */}
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center space-x-2">
-                          <TrendingUp size={16} className="text-green-600" />
-                          <span className="text-gray-700">
-                            Rank: #{sector.globalRanking2022} (2022)
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Globe size={16} className="text-blue-600" />
-                          <span className="text-gray-700">
-                            Share: {formatPercentage(sector.globalShare2022)}
-                          </span>
+              {countryStories.sectors.map((sector, index) => {
+                const rankingGain = calculateRankingGain(sector.globalRanking1995, sector.globalRanking2022);
+                const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+                const gainPrefix = rankingGain > 0 ? '+' : '';
+                
+                return (
+                  <div
+                    key={index}
+                    className="border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => onSectorSelect(sector)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          {sector.sector}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3 capitalize">
+                          <strong>Successful Product:</strong> {sector.successfulProduct}
+                        </p>
+                        
+                        {/* Key Metrics */}
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="flex items-center space-x-2">
+                            <TrendingUp size={16} className="text-blue-600" />
+                            <span className="text-gray-700">
+                              Current Rank: #{sector.globalRanking2022}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Trophy size={16} className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} />
+                            <span className={`text-sm font-medium ${gainColor}`}>
+                              Global Ranking Gain 1995-2022: {gainPrefix}{rankingGain}
+                            </span>
+                          </div>
                         </div>
                       </div>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-4"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSectorSelect(sector);
+                        }}
+                      >
+                        Explore
+                      </Button>
                     </div>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-4"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSectorSelect(sector);
-                      }}
-                    >
-                      Explore
-                    </Button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

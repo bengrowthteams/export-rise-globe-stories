@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { X, TrendingUp, ArrowRight, Building2, Globe } from 'lucide-react';
+import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
@@ -59,9 +58,13 @@ const LegacyStoryCard: React.FC<{
     return amount;
   };
 
-  const formatPercentage = (value: number): string => {
-    return `${value.toFixed(2)}%`;
+  const calculateRankingGain = (rank1995: number, rank2022: number): number => {
+    return rank1995 - rank2022;
   };
+
+  const rankingGain = calculateRankingGain(story.globalRanking1995, story.globalRanking2022);
+  const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+  const gainPrefix = rankingGain > 0 ? '+' : '';
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
@@ -83,17 +86,25 @@ const LegacyStoryCard: React.FC<{
           </button>
         </div>
 
-        {/* Export Rankings Comparison */}
+        {/* Global Ranking Gain */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Global Export Ranking</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-red-50 p-4 rounded-lg text-center">
-              <p className="text-2xl font-bold text-red-600">#{story.globalRanking1995}</p>
-              <p className="text-sm text-red-700">1995</p>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg text-center">
-              <p className="text-2xl font-bold text-green-600">#{story.globalRanking2022}</p>
-              <p className="text-sm text-green-700">2022</p>
+          <h3 className="text-lg font-semibold mb-3">Global Ranking Gain 1995-2022</h3>
+          <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-red-600">#{story.globalRanking1995}</p>
+                <p className="text-sm text-red-700">1995</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
+                <span className={`text-lg font-bold ${gainColor}`}>
+                  {gainPrefix}{rankingGain} positions
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">#{story.globalRanking2022}</p>
+                <p className="text-sm text-green-700">2022</p>
+              </div>
             </div>
           </div>
         </div>
@@ -162,8 +173,8 @@ const MultiSectorStoryCard: React.FC<{
     return amount;
   };
 
-  const formatPercentage = (value: number): string => {
-    return `${value.toFixed(2)}%`;
+  const calculateRankingGain = (rank1995: number, rank2022: number): number => {
+    return rank1995 - rank2022;
   };
 
   // Convert to legacy format for onReadMore
@@ -189,6 +200,10 @@ const MultiSectorStoryCard: React.FC<{
     successfulProduct: selectedSector.successfulProduct,
     successStorySummary: selectedSector.successStorySummary
   });
+
+  const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
+  const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+  const gainPrefix = rankingGain > 0 ? '+' : '';
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
@@ -233,35 +248,25 @@ const MultiSectorStoryCard: React.FC<{
           </div>
         )}
 
-        {/* Export Rankings Comparison */}
+        {/* Global Ranking Gain */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Global Export Ranking</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-red-50 p-4 rounded-lg text-center">
-              <p className="text-2xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
-              <p className="text-sm text-red-700">1995</p>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg text-center">
-              <p className="text-2xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
-              <p className="text-sm text-green-700">2022</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Global Market Share */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 flex items-center">
-            <Globe size={18} className="mr-2 text-blue-600" />
-            Global Market Share
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg text-center">
-              <p className="text-lg font-bold text-gray-700">{formatPercentage(selectedSector.globalShare1995)}</p>
-              <p className="text-sm text-gray-600">1995</p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg text-center">
-              <p className="text-lg font-bold text-blue-600">{formatPercentage(selectedSector.globalShare2022)}</p>
-              <p className="text-sm text-blue-700">2022</p>
+          <h3 className="text-lg font-semibold mb-3">Global Ranking Gain 1995-2022</h3>
+          <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
+                <p className="text-sm text-red-700">1995</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
+                <span className={`text-lg font-bold ${gainColor}`}>
+                  {gainPrefix}{rankingGain} positions
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
+                <p className="text-sm text-green-700">2022</p>
+              </div>
             </div>
           </div>
         </div>

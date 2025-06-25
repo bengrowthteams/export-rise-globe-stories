@@ -18,8 +18,6 @@ export interface SectorStory {
   initialExports2022: string;
   successfulProduct: string;
   successStorySummary: string;
-  globalShare1995: number;
-  globalShare2022: number;
 }
 
 export interface CountrySuccessStories {
