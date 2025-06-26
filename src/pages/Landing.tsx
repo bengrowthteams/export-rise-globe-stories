@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Map, HelpCircle, Filter } from 'lucide-react';
@@ -49,11 +49,12 @@ const Landing = () => {
     }
   }, []);
 
-  // Add callback to receive stories from WorldMap
-  const handleStoriesLoaded = (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
+  // Add callback to receive stories from WorldMap - wrapped in useCallback to prevent infinite loops
+  const handleStoriesLoaded = useCallback((stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
+    console.log('Stories loaded in Landing component:', stories.length, 'single-sector,', countryStories.length, 'multi-sector');
     setSuccessStories(stories);
     setCountryStories(countryStories);
-  };
+  }, []);
 
   const handleExploreMap = () => {
     // First scroll to map section

@@ -43,6 +43,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
   const mapStateInitialized = useRef(false);
   const initialMapStateApplied = useRef(false);
+  const dataLoadingRef = useRef(false);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
@@ -53,7 +54,14 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   useEffect(() => {
     const loadSuccessStories = async () => {
+      // Prevent multiple simultaneous loading attempts
+      if (dataLoadingRef.current) {
+        console.log('Data loading already in progress, skipping...');
+        return;
+      }
+
       try {
+        dataLoadingRef.current = true;
         setLoading(true);
         setError(null);
         console.log('Starting to load success stories...');
@@ -73,7 +81,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           setCountryStories([]);
           setDataSource('fallback');
           setError('Using fallback data - Supabase connection issue detected');
-          // Notify parent component
+          // Notify parent component only once
           if (onStoriesLoaded) {
             onStoriesLoaded(fallbackStories, []);
           }
@@ -81,7 +89,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           setSuccessStories(stories);
           setCountryStories(multiSectorStories);
           setDataSource('supabase');
-          // Notify parent component
+          // Notify parent component only once
           if (onStoriesLoaded) {
             onStoriesLoaded(stories, multiSectorStories);
           }
@@ -94,17 +102,19 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         setCountryStories([]);
         setDataSource('fallback');
         setError(`Supabase error (using fallback data): ${error instanceof Error ? error.message : 'Unknown error'}`);
-        // Notify parent component
+        // Notify parent component only once
         if (onStoriesLoaded) {
           onStoriesLoaded(fallbackStories, []);
         }
       } finally {
         setLoading(false);
+        dataLoadingRef.current = false;
       }
     };
 
+    // Load data only once on mount
     loadSuccessStories();
-  }, [onStoriesLoaded]);
+  }, []); // Remove onStoriesLoaded from dependencies to prevent infinite loop
 
   const handleTokenSubmit = (token: string) => {
     localStorage.setItem('mapboxToken', token);
