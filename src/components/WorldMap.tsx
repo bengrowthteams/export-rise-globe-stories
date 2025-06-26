@@ -267,7 +267,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     // Add markers for filtered single-sector countries
     filteredSingleStories.forEach((story) => {
       if (!map.current || !story.coordinates || (story.coordinates.lat === 0 && story.coordinates.lng === 0)) return;
-      addMarker(story, null, false, selectedSectors.length > 0 ? getSectorColor(story.sector) : '#10b981');
+      
+      // Use sector-specific color when filtering, or default green when no filter
+      const markerColor = selectedSectors.length > 0 ? getSectorColor(story.sector) : '#10b981';
+      addMarker(story, null, false, markerColor);
     });
 
     // Add markers for filtered multi-sector countries
@@ -275,7 +278,15 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       if (!map.current || !countryStory.coordinates || (countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0)) return;
       
       const hasMultipleFilteredSectors = countryStory.sectors.length > 1;
-      const markerColor = hasMultipleFilteredSectors ? '#10b981' : getSectorColor(countryStory.sectors[0].sector);
+      let markerColor;
+      
+      if (selectedSectors.length > 0) {
+        // When filtering, use sector color for single sector, green for multiple
+        markerColor = hasMultipleFilteredSectors ? '#10b981' : getSectorColor(countryStory.sectors[0].sector);
+      } else {
+        // When not filtering, always use green
+        markerColor = '#10b981';
+      }
       
       addMarker(null, countryStory, hasMultipleFilteredSectors, markerColor);
     });
@@ -294,7 +305,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     }
 
     if (coordinates.lat === 0 && coordinates.lng === 0) {
-      console.warn(`Invalid coordinates (0,0) for country: ${country}`);
+      console.warn(`Invalid coordinates (0,0) for country: ${country} - skipping marker`);
       return;
     }
 
@@ -340,9 +351,13 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     markerElement.addEventListener('click', (e) => {
       e.stopPropagation();
+      console.log('Marker clicked for:', country, 'Filtering active:', selectedSectors.length > 0);
+      
       if (story) {
+        console.log('Calling onCountrySelect with single story:', story.country);
         onCountrySelect(story, null);
       } else if (countryStory) {
+        console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length);
         const primaryStory: SuccessStory = {
           id: `${countryStory.id}-${countryStory.primarySector.sector}`,
           country: countryStory.country,

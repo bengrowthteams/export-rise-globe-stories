@@ -1,26 +1,31 @@
 
-// Color mapping for different sectors
+// Color mapping for different sectors - no green colors for individual sectors
 export const sectorColors: Record<string, string> = {
-  'Agriculture': '#22c55e', // green-500
+  'Agriculture': '#f59e0b', // amber-500 (changed from green)
   'Textiles': '#3b82f6', // blue-500
-  'Manufacturing': '#f59e0b', // amber-500
+  'Manufacturing': '#f97316', // orange-500
   'Electronics': '#8b5cf6', // violet-500
   'Chemicals': '#ef4444', // red-500
   'Automotive': '#06b6d4', // cyan-500
   'Food Processing': '#84cc16', // lime-500
   'Mining': '#a855f7', // purple-500
-  'Energy': '#f97316', // orange-500
+  'Energy': '#dc2626', // red-600
   'Services': '#ec4899', // pink-500
-  'Tourism': '#10b981', // emerald-500
+  'Tourism': '#14b8a6', // teal-500
   'Technology': '#6366f1', // indigo-500
-  'Pharmaceuticals': '#14b8a6', // teal-500
+  'Pharmaceuticals': '#0891b2', // sky-600
   'Construction': '#f472b6', // pink-400
   'Transportation': '#64748b', // slate-500
   'Forestry': '#059669', // emerald-600
-  'Fishing': '#0891b2', // sky-600
+  'Fishing': '#0ea5e9', // sky-500
   'Steel': '#374151', // gray-700
-  'Petroleum': '#dc2626', // red-600
+  'Petroleum': '#b91c1c', // red-700
   'Machinery': '#7c3aed', // violet-600
+  'Metals': '#92400e', // amber-700
+  'Plastics': '#be185d', // pink-700
+  'Rubber': '#166534', // green-700
+  'Paper': '#7c2d12', // orange-800
+  'Glass': '#1e40af', // blue-700
 };
 
 // Function to get color for a sector

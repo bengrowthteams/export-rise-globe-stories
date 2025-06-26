@@ -73,6 +73,14 @@ const Landing = () => {
   };
 
   const handleCountrySelect = (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => {
+    console.log('handleCountrySelect called with:', {
+      country: story?.country,
+      hasCountryStories: !!countryStories,
+      hasMutipleSectors: countryStories?.hasMutipleSectors,
+      filterActive: selectedSectors.length > 0,
+      selectedSectors
+    });
+
     if (countryStories && countryStories.hasMutipleSectors) {
       // Multi-sector country - show modal for sector selection
       setSelectedCountryStories(countryStories);
@@ -85,23 +93,41 @@ const Landing = () => {
           sectors: countryStories.sectors.filter(sector => selectedSectors.includes(sector.sector))
         };
         
+        console.log('Filtered sectors for', countryStories.country, ':', filteredCountryStories.sectors.length);
+        
         if (filteredCountryStories.sectors.length > 1) {
           // Multiple filtered sectors - show filtered modal
+          console.log('Showing filtered sector modal');
           setShowFilteredSectorModal(true);
+          setSelectedStory(story); // This triggers the zoom
         } else if (filteredCountryStories.sectors.length === 1) {
           // Only one matching sector - show it directly
+          console.log('Only one filtered sector, showing directly');
           setSelectedSector(filteredCountryStories.sectors[0]);
           setSelectedStory(story);
+          setShowFilteredSectorModal(false);
+          setShowSectorModal(false);
+        } else {
+          // No matching sectors - this shouldn't happen but handle gracefully
+          console.log('No matching sectors found');
+          setSelectedStory(null);
+          setSelectedCountryStories(null);
+          setSelectedSector(null);
+          setShowFilteredSectorModal(false);
+          setShowSectorModal(false);
         }
       } else {
         // No filter - show regular modal with all sectors
+        console.log('No filter active, showing regular sector modal');
         setShowSectorModal(true);
+        setSelectedStory(story); // This triggers the zoom
+        setShowFilteredSectorModal(false);
       }
       
-      setSelectedStory(story); // This triggers the zoom
       setSelectedSector(null);
     } else {
       // Single-sector country - show story card directly
+      console.log('Single-sector country, showing story card directly');
       setSelectedStory(story);
       setSelectedCountryStories(null);
       setSelectedSector(null);
