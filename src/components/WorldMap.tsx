@@ -5,12 +5,14 @@ import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
 import { fetchSuccessStories, fetchCountryStories, clearSuccessStoriesCache } from '../services/countryDataService';
 import { successStories as fallbackStories } from '../data/successStories';
+import { getSectorColor } from '../data/sectorColors';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void;
   selectedStory?: SuccessStory | null;
   onMapStateChange?: (center: [number, number], zoom: number) => void;
   initialMapState?: { center: [number, number]; zoom: number };
+  selectedSectors?: string[];
 }
 
 export interface WorldMapRef {
@@ -21,7 +23,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   onCountrySelect, 
   selectedStory,
   onMapStateChange,
-  initialMapState
+  initialMapState,
+  selectedSectors = []
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -46,7 +49,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     }
   }, []);
 
-  // Fetch success stories on component mount
   useEffect(() => {
     const loadSuccessStories = async () => {
       try {
@@ -54,7 +56,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         setError(null);
         console.log('Starting to load success stories...');
         
-        // Clear cache to ensure fresh data
         clearSuccessStoriesCache();
         
         const [stories, multiSectorStories] = await Promise.all([
@@ -129,7 +130,32 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     resetToInitialPosition
   }));
 
-  // Initialize map only once when token is available and stories are loaded
+  const getFilteredStories = () => {
+    if (selectedSectors.length === 0) {
+      return { filteredSingleStories: successStories, filteredCountryStories: countryStories };
+    }
+
+    const filteredSingleStories = successStories.filter(story => 
+      selectedSectors.includes(story.sector)
+    );
+
+    const filteredCountryStories = countryStories.map(countryStory => {
+      const matchingSectors = countryStory.sectors.filter(sector => 
+        selectedSectors.includes(sector.sector)
+      );
+      
+      if (matchingSectors.length === 0) return null;
+      
+      return {
+        ...countryStory,
+        sectors: matchingSectors,
+        primarySector: matchingSectors[0] // Update primary sector to first matching
+      };
+    }).filter(Boolean) as CountrySuccessStories[];
+
+    return { filteredSingleStories, filteredCountryStories };
+  };
+
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
@@ -166,28 +192,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
-      
-      // Clear existing markers
-      markers.current.forEach(marker => marker.remove());
-      markers.current = [];
-
-      // Add markers for single-sector countries
-      successStories.forEach((story) => {
-        if (!map.current || !story.coordinates || story.coordinates.lat === 0 && story.coordinates.lng === 0) return;
-        
-        addMarker(story, null, false);
-      });
-
-      // Add markers for multi-sector countries
-      countryStories.forEach((countryStory) => {
-        if (!map.current || !countryStory.coordinates || countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0) return;
-        
-        addMarker(null, countryStory, true);
-      });
-      
+      updateMarkers();
       setMapInitialized(true);
       
-      // Apply initial map state only once after a delay
       if (initialMapState && !initialMapStateApplied.current) {
         setTimeout(() => {
           if (map.current) {
@@ -205,7 +212,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }
     });
 
-    // Cleanup
     return () => {
       if (map.current) {
         markers.current.forEach(marker => marker.remove());
@@ -219,7 +225,39 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     };
   }, [mapboxToken, successStories, countryStories, loading]);
 
-  const addMarker = (story: SuccessStory | null, countryStory: CountrySuccessStories | null, isMultiSector: boolean) => {
+  useEffect(() => {
+    if (mapInitialized) {
+      updateMarkers();
+    }
+  }, [selectedSectors, mapInitialized]);
+
+  const updateMarkers = () => {
+    if (!map.current) return;
+
+    // Clear existing markers
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+
+    const { filteredSingleStories, filteredCountryStories } = getFilteredStories();
+
+    // Add markers for filtered single-sector countries
+    filteredSingleStories.forEach((story) => {
+      if (!map.current || !story.coordinates || (story.coordinates.lat === 0 && story.coordinates.lng === 0)) return;
+      addMarker(story, null, false, selectedSectors.length > 0 ? getSectorColor(story.sector) : '#10b981');
+    });
+
+    // Add markers for filtered multi-sector countries
+    filteredCountryStories.forEach((countryStory) => {
+      if (!map.current || !countryStory.coordinates || (countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0)) return;
+      
+      const hasMultipleFilteredSectors = countryStory.sectors.length > 1;
+      const markerColor = hasMultipleFilteredSectors ? '#10b981' : getSectorColor(countryStory.sectors[0].sector);
+      
+      addMarker(null, countryStory, hasMultipleFilteredSectors, markerColor);
+    });
+  };
+
+  const addMarker = (story: SuccessStory | null, countryStory: CountrySuccessStories | null, isMultiSector: boolean, color: string = '#10b981') => {
     if (!map.current) return;
 
     const coordinates = story?.coordinates || countryStory?.coordinates;
@@ -231,32 +269,29 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       return;
     }
 
-    // Check if coordinates are valid (not 0,0 or default fallback)
     if (coordinates.lat === 0 && coordinates.lng === 0) {
       console.warn(`Invalid coordinates (0,0) for country: ${country}`);
       return;
     }
 
-    console.log(`Adding marker for ${country} at:`, coordinates);
+    console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color);
 
-    // Create marker element - both single and multi-sector are green
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
     markerElement.setAttribute('data-story-id', story?.id || countryStory?.id || '');
     
-    // Apply styles directly to avoid CSS conflicts - both green now
     markerElement.style.width = isMultiSector ? '24px' : '20px';
     markerElement.style.height = isMultiSector ? '24px' : '20px';
-    markerElement.style.backgroundColor = '#10b981'; // Both are now green
+    markerElement.style.backgroundColor = color;
     markerElement.style.border = isMultiSector ? '3px solid white' : '2px solid white';
     markerElement.style.borderRadius = '50%';
     markerElement.style.cursor = 'pointer';
     markerElement.style.boxShadow = isMultiSector 
-      ? '0 3px 10px rgba(16, 185, 129, 0.5)' 
-      : '0 2px 8px rgba(16, 185, 129, 0.4)';
+      ? `0 3px 10px ${color}80` 
+      : `0 2px 8px ${color}66`;
     markerElement.style.transition = 'all 0.2s ease';
 
-    // Add multi-sector indicator - keep the orange dot
+    // Add multi-sector indicator only if it's actually multiple sectors
     if (isMultiSector) {
       const indicator = document.createElement('div');
       indicator.style.position = 'absolute';
@@ -279,13 +314,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     markers.current.push(marker);
 
-    // Add click handler
     markerElement.addEventListener('click', (e) => {
       e.stopPropagation();
       if (story) {
         onCountrySelect(story, null);
       } else if (countryStory) {
-        // For multi-sector, pass the primary sector as a legacy story
         const primaryStory: SuccessStory = {
           id: `${countryStory.id}-${countryStory.primarySector.sector}`,
           country: countryStory.country,
@@ -312,25 +345,27 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }
     });
 
-    // Add hover effects - both green now
+    // Hover effects
     markerElement.addEventListener('mouseenter', () => {
-      markerElement.style.backgroundColor = '#059669'; // Darker green for both
+      const darkerColor = color === '#10b981' ? '#059669' : color;
+      markerElement.style.backgroundColor = darkerColor;
       markerElement.style.boxShadow = isMultiSector 
-        ? '0 4px 12px rgba(16, 185, 129, 0.7)' 
-        : '0 4px 12px rgba(16, 185, 129, 0.6)';
+        ? `0 4px 12px ${darkerColor}99` 
+        : `0 4px 12px ${darkerColor}80`;
       markerElement.style.width = isMultiSector ? '28px' : '24px';
       markerElement.style.height = isMultiSector ? '28px' : '24px';
     });
 
     markerElement.addEventListener('mouseleave', () => {
-      markerElement.style.backgroundColor = '#10b981'; // Back to green for both
+      markerElement.style.backgroundColor = color;
       markerElement.style.boxShadow = isMultiSector 
-        ? '0 3px 10px rgba(16, 185, 129, 0.5)' 
-        : '0 2px 8px rgba(16, 185, 129, 0.4)';
+        ? `0 3px 10px ${color}80` 
+        : `0 2px 8px ${color}66`;
       markerElement.style.width = isMultiSector ? '24px' : '20px';
       markerElement.style.height = isMultiSector ? '24px' : '20px';
     });
 
+    // Popup logic
     const popup = new mapboxgl.Popup({
       offset: 25,
       closeButton: false,
@@ -357,7 +392,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         </div>
       `);
     } else if (story) {
-      // Calculate ranking gain for single-sector countries
       const rankingGain = story.globalRanking1995 - story.globalRanking2022;
       const gainText = rankingGain > 0 ? `+${rankingGain}` : `${rankingGain}`;
       const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
@@ -380,7 +414,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     });
   };
 
-  // Handle story selection flyTo - now handles both single and multi-sector
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
@@ -397,10 +430,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         isFlying.current = false;
       }, 2000);
     } else if (lastSelectedStory.current) {
-      // When closing (selectedStory becomes null), zoom out
       isFlying.current = true;
       map.current.flyTo({
-        center: [20, 20], // Return to world view
+        center: [20, 20],
         zoom: 2,
         duration: 1500
       });
@@ -463,7 +495,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     );
   }
 
-  const totalCountries = successStories.length + countryStories.length;
+  const { filteredSingleStories, filteredCountryStories } = getFilteredStories();
+  const totalCountries = filteredSingleStories.length + filteredCountryStories.length;
+  const originalTotal = successStories.length + countryStories.length;
 
   return (
     <div className="relative w-full h-full">
@@ -484,26 +518,49 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-3 py-2 rounded-lg text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            Live data from Supabase ({totalCountries} countries)
+            {selectedSectors.length > 0 
+              ? `Filtered: ${totalCountries} of ${originalTotal} countries` 
+              : `Live data from Supabase (${totalCountries} countries)`
+            }
           </div>
         </div>
       )}
 
-      {/* Legend for multi-sector countries */}
-      {countryStories.length > 0 && (
+      {/* Legend - updated for filtered view */}
+      {(filteredCountryStories.length > 0 || selectedSectors.length > 0) && (
         <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
-              <span>Single Sector</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
+            {selectedSectors.length === 0 ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+                  <span>Single Sector</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+                    <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
+                  </div>
+                  <span>Multiple Sectors</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span>Filtered by:</span>
+                {selectedSectors.slice(0, 3).map(sector => (
+                  <div key={sector} className="flex items-center gap-1">
+                    <div 
+                      className="w-3 h-3 rounded-full border border-white shadow-sm"
+                      style={{ backgroundColor: getSectorColor(sector) }}
+                    />
+                    <span className="text-xs">{sector}</span>
+                  </div>
+                ))}
+                {selectedSectors.length > 3 && (
+                  <span className="text-gray-500">+{selectedSectors.length - 3} more</span>
+                )}
               </div>
-              <span>Multiple Sectors</span>
-            </div>
+            )}
           </div>
         </div>
       )}

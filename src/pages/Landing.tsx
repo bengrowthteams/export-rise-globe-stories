@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Map, HelpCircle } from 'lucide-react';
+import { Map, HelpCircle, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
 import SectorSelectionModal from '../components/SectorSelectionModal';
+import FilteredSectorModal from '../components/FilteredSectorModal';
+import SectorFilter from '../components/SectorFilter';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
 import { SuccessStory } from '../types/SuccessStory';
@@ -17,6 +19,11 @@ const Landing = () => {
   const [selectedCountryStories, setSelectedCountryStories] = useState<CountrySuccessStories | null>(null);
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
+  const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
+  const [showSectorFilter, setShowSectorFilter] = useState(false);
+  const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
+  const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -31,7 +38,6 @@ const Landing = () => {
       try {
         const parsedState = JSON.parse(savedMapState);
         console.log('Restoring saved map state:', parsedState);
-        // Adjust zoom to be more zoomed out for better return view
         if (parsedState.zoom > 4) {
           parsedState.zoom = 4; // Set to a more reasonable zoom level
         }
@@ -63,48 +69,48 @@ const Landing = () => {
     if (countryStories && countryStories.hasMutipleSectors) {
       // Multi-sector country - show modal for sector selection
       setSelectedCountryStories(countryStories);
-      setShowSectorModal(true);
-      setSelectedStory(null);
-      setSelectedSector(null);
       
-      // Set a temporary story for zoom purposes (using primary sector)
-      const tempStory: SuccessStory = {
-        id: `${countryStories.id}-${countryStories.primarySector.sector}`,
-        country: countryStories.country,
-        sector: countryStories.primarySector.sector,
-        product: countryStories.primarySector.product,
-        description: countryStories.primarySector.description,
-        growthRate: countryStories.primarySector.growthRate,
-        timeframe: countryStories.timeframe,
-        exportValue: countryStories.primarySector.exportValue,
-        keyFactors: countryStories.primarySector.keyFactors,
-        coordinates: countryStories.coordinates,
-        flag: countryStories.flag,
-        marketDestinations: countryStories.primarySector.marketDestinations,
-        challenges: countryStories.primarySector.challenges,
-        impact: countryStories.primarySector.impact,
-        globalRanking1995: countryStories.primarySector.globalRanking1995,
-        globalRanking2022: countryStories.primarySector.globalRanking2022,
-        initialExports1995: countryStories.primarySector.initialExports1995,
-        initialExports2022: countryStories.primarySector.initialExports2022,
-        successfulProduct: countryStories.primarySector.successfulProduct,
-        successStorySummary: countryStories.primarySector.successStorySummary
-      };
-      setSelectedStory(tempStory); // This will trigger the zoom
+      // Check if we're in filtered mode
+      if (selectedSectors.length > 0) {
+        // Filter the country's sectors to only show selected ones
+        const filteredCountryStories = {
+          ...countryStories,
+          sectors: countryStories.sectors.filter(sector => selectedSectors.includes(sector.sector))
+        };
+        
+        if (filteredCountryStories.sectors.length > 1) {
+          // Multiple filtered sectors - show filtered modal
+          setShowFilteredSectorModal(true);
+        } else if (filteredCountryStories.sectors.length === 1) {
+          // Only one matching sector - show it directly
+          setSelectedSector(filteredCountryStories.sectors[0]);
+          setSelectedStory(story);
+        }
+      } else {
+        // No filter - show regular modal with all sectors
+        setShowSectorModal(true);
+      }
+      
+      setSelectedStory(story); // This triggers the zoom
+      setSelectedSector(null);
     } else {
       // Single-sector country - show story card directly
       setSelectedStory(story);
       setSelectedCountryStories(null);
       setSelectedSector(null);
       setShowSectorModal(false);
+      setShowFilteredSectorModal(false);
     }
   };
 
   const handleSectorSelectFromModal = (sector: SectorStory) => {
     setSelectedSector(sector);
     setShowSectorModal(false);
-    // Keep the country stories for the "other sectors" functionality
-    // Keep the selectedStory for zoom (it's already set from handleCountrySelect)
+  };
+
+  const handleFilteredSectorSelectFromModal = (sector: SectorStory) => {
+    setSelectedSector(sector);
+    setShowFilteredSectorModal(false);
   };
 
   const handleSectorSelect = (sector: SectorStory) => {
@@ -116,6 +122,7 @@ const Landing = () => {
     setSelectedCountryStories(null);
     setSelectedSector(null);
     setShowSectorModal(false);
+    setShowFilteredSectorModal(false);
   };
 
   const handleCloseSectorModal = () => {
@@ -123,6 +130,31 @@ const Landing = () => {
     setSelectedCountryStories(null);
     // Clear the temporary story to zoom out
     setSelectedStory(null);
+  };
+
+  const handleCloseFilteredSectorModal = () => {
+    setShowFilteredSectorModal(false);
+    setSelectedCountryStories(null);
+    setSelectedStory(null);
+  };
+
+  // Sector filter handlers
+  const handleSectorToggle = (sector: string) => {
+    setSelectedSectors(prev => {
+      if (prev.includes(sector)) {
+        return prev.filter(s => s !== sector);
+      } else {
+        return [...prev, sector];
+      }
+    });
+  };
+
+  const handleResetFilter = () => {
+    setSelectedSectors([]);
+  };
+
+  const handleToggleSectorFilter = () => {
+    setShowSectorFilter(!showSectorFilter);
   };
 
   const handleReadMore = (story: SuccessStory) => {
@@ -226,12 +258,25 @@ const Landing = () => {
       {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
-          {/* Search Bar - positioned below fixed navbar */}
+          {/* Search Bar */}
           <div className="absolute top-20 left-4 z-20 tutorial-search-bar">
             <SearchBar onCountrySelect={handleCountrySelect} />
           </div>
 
-          {/* Tutorial Help Button - positioned below fixed navbar */}
+          {/* Filter Button */}
+          <div className="absolute top-20 left-80 z-20">
+            <Button
+              onClick={handleToggleSectorFilter}
+              variant="outline"
+              size="sm"
+              className={`bg-white/90 hover:bg-white ${showSectorFilter ? 'bg-blue-50 border-blue-300' : ''}`}
+            >
+              <Filter size={16} className="mr-1" />
+              Filter ({selectedSectors.length})
+            </Button>
+          </div>
+
+          {/* Tutorial Help Button */}
           <div className="absolute top-20 right-4 z-20">
             <Button
               onClick={handleStartTutorial}
@@ -244,6 +289,17 @@ const Landing = () => {
             </Button>
           </div>
 
+          {/* Sector Filter Sidebar */}
+          <SectorFilter
+            stories={successStories}
+            countryStories={countryStories}
+            selectedSectors={selectedSectors}
+            onSectorToggle={handleSectorToggle}
+            onReset={handleResetFilter}
+            onClose={() => setShowSectorFilter(false)}
+            isVisible={showSectorFilter}
+          />
+
           {/* Map - full width now since no sidebar */}
           <div className="h-full w-full">
             <WorldMap 
@@ -252,6 +308,7 @@ const Landing = () => {
               selectedStory={selectedStory}
               onMapStateChange={handleMapStateChange}
               initialMapState={mapState}
+              selectedSectors={selectedSectors}
             />
           </div>
           
@@ -280,12 +337,22 @@ const Landing = () => {
             </>
           )}
 
-          {/* Sector Selection Modal */}
+          {/* Regular Sector Selection Modal */}
           {showSectorModal && selectedCountryStories && (
             <SectorSelectionModal
               countryStories={selectedCountryStories}
               onSectorSelect={handleSectorSelectFromModal}
               onClose={handleCloseSectorModal}
+            />
+          )}
+
+          {/* Filtered Sector Selection Modal */}
+          {showFilteredSectorModal && selectedCountryStories && (
+            <FilteredSectorModal
+              countryStories={selectedCountryStories}
+              selectedSectors={selectedSectors}
+              onSectorSelect={handleFilteredSectorSelectFromModal}
+              onClose={handleCloseFilteredSectorModal}
             />
           )}
 
