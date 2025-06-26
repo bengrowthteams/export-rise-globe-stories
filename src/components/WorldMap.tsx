@@ -20,6 +20,9 @@ export interface WorldMapRef {
   resetToInitialPosition: () => void;
 }
 
+// Store the Mapbox token as a constant
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmVuYmFzZWJhbGwxIiwiYSI6ImNtYzlpN3FrczE1MW4ybW9lM3ZzY2lkbWkifQ.UTHfGBeNb7EyBbIEt99mqQ';
+
 const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({ 
   onCountrySelect, 
   selectedStory,
@@ -31,7 +34,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState('');
   const [mapInitialized, setMapInitialized] = useState(false);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
@@ -48,7 +50,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
     if (savedToken) {
-      setMapboxToken(savedToken);
+      
     }
   }, []);
 
@@ -116,11 +118,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     loadSuccessStories();
   }, []); // Remove onStoriesLoaded from dependencies to prevent infinite loop
 
-  const handleTokenSubmit = (token: string) => {
-    localStorage.setItem('mapboxToken', token);
-    setMapboxToken(token);
-  };
-
   const handleMapStateChange = () => {
     if (stateChangeTimeout.current) {
       clearTimeout(stateChangeTimeout.current);
@@ -183,11 +180,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   };
 
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
+    if (!mapContainer.current || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
     console.log('Initializing map with', successStories.length, 'single-sector and', countryStories.length, 'multi-sector countries from', dataSource);
     
-    mapboxgl.accessToken = mapboxToken;
+    mapboxgl.accessToken = MAPBOX_TOKEN;
     
     const initialCenter = [20, 20] as [number, number];
     const initialZoom = 2;
@@ -249,7 +246,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         initialMapStateApplied.current = false;
       }
     };
-  }, [mapboxToken, successStories, countryStories, loading]);
+  }, [successStories, countryStories, loading]);
 
   useEffect(() => {
     if (mapInitialized) {
@@ -491,47 +488,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }, 1500);
     }
   }, [selectedStory, mapInitialized]);
-
-  if (!mapboxToken) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-8">
-        <div className="max-w-md text-center">
-          <h3 className="text-lg font-semibold mb-4">Mapbox Token Required</h3>
-          <p className="text-gray-600 mb-4">
-            Please enter your Mapbox public token to view the interactive map. 
-            You can get one for free at{' '}
-            <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              mapbox.com
-            </a>
-          </p>
-          <input
-            type="text"
-            placeholder="Enter your Mapbox public token"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleTokenSubmit(e.currentTarget.value);
-              }
-            }}
-          />
-          <button
-            onClick={(e) => {
-              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-              if (input.value) {
-                handleTokenSubmit(input.value);
-              }
-            }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Save Token
-          </button>
-          <p className="text-xs text-gray-500 mt-2">
-            Your token will be saved locally for future visits
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
