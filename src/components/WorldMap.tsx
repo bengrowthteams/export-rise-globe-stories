@@ -170,10 +170,12 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       
       if (matchingSectors.length === 0) return null;
       
+      // CRITICAL FIX: Update hasMutipleSectors based on filtered results
       return {
         ...countryStory,
         sectors: matchingSectors,
-        primarySector: matchingSectors[0] // Update primary sector to first matching
+        primarySector: matchingSectors[0], // Update primary sector to first matching
+        hasMutipleSectors: matchingSectors.length > 1 // This is the key fix!
       };
     }).filter(Boolean) as CountrySuccessStories[];
 
@@ -277,7 +279,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     filteredCountryStories.forEach((countryStory) => {
       if (!map.current || !countryStory.coordinates || (countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0)) return;
       
-      const hasMultipleFilteredSectors = countryStory.sectors.length > 1;
+      // FIXED: Use the updated hasMutipleSectors flag from filtered results
+      const hasMultipleFilteredSectors = countryStory.hasMutipleSectors;
       let markerColor;
       
       if (selectedSectors.length > 0) {
@@ -288,6 +291,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         markerColor = '#10b981';
       }
       
+      console.log(`Adding filtered marker for ${countryStory.country}: hasMultiple=${hasMultipleFilteredSectors}, sectors=${countryStory.sectors.length}, color=${markerColor}`);
       addMarker(null, countryStory, hasMultipleFilteredSectors, markerColor);
     });
   };
@@ -309,7 +313,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       return;
     }
 
-    console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color);
+    console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color, 'isMultiSector:', isMultiSector);
 
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
@@ -351,16 +355,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     markerElement.addEventListener('click', (e) => {
       e.stopPropagation();
-      console.log('Marker clicked for:', country, 'Filtering active:', selectedSectors.length > 0);
+      console.log('Marker clicked for:', country, 'isMultiSector:', isMultiSector, 'Filtering active:', selectedSectors.length > 0);
       
       if (story) {
         console.log('Calling onCountrySelect with single story:', story.country);
         onCountrySelect(story, null);
       } else if (countryStory) {
-        console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length);
+        console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length, 'hasMutipleSectors:', countryStory.hasMutipleSectors);
         
-        // FIX: Use the first sector from the FILTERED sectors list, not the original primarySector
-        const sectorToUse = countryStory.sectors[0]; // This is already filtered in getFilteredStories
+        // Use the first sector from the filtered sectors list
+        const sectorToUse = countryStory.sectors[0];
         console.log('Using sector for primaryStory:', sectorToUse.sector);
         
         const primaryStory: SuccessStory = {

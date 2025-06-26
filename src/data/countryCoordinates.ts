@@ -94,8 +94,8 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'Switzerland': { lat: 46.8182, lng: 8.2275 },
   'Thailand': { lat: 15.8700, lng: 100.9925 },
   'Tunisia': { lat: 33.8869, lng: 9.5375 },
-  'Turkey': { lat: 38.9637, lng: 35.2433 }, // Fixed: was in Africa, now correctly in Asia Minor/Anatolia
-  'Turkiye': { lat: 38.9637, lng: 35.2433 }, // Alternative spelling, same coordinates
+  'Turkey': { lat: 38.9637, lng: 35.2433 },
+  'Turkiye': { lat: 38.9637, lng: 35.2433 },
   'Ukraine': { lat: 48.3794, lng: 31.1656 },
   'United Arab Emirates': { lat: 23.4241, lng: 53.8478 },
   'United Kingdom': { lat: 55.3781, lng: -3.4360 },
@@ -104,7 +104,7 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'Venezuela': { lat: 6.4238, lng: -66.5897 },
   'Vietnam': { lat: 14.0583, lng: 108.2772 },
   'Zimbabwe': { lat: -19.0154, lng: 29.1549 },
-  // Adding missing countries that might be in the database
+  // Fixed coordinates for countries that were showing as (0, 20)
   'Sudan': { lat: 12.8628, lng: 30.2176 },
   'Tanzania': { lat: -6.3690, lng: 34.8888 },
   'Mali': { lat: 17.5707, lng: -3.9962 },
@@ -142,7 +142,17 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'Democratic Republic of the Congo': { lat: -4.0383, lng: 21.7587 },
   'Burundi': { lat: -3.3731, lng: 29.9189 },
   'South Sudan': { lat: 6.8770, lng: 31.3070 },
-  // Adding more potentially missing countries
+  
+  // Fix specific countries that were misplaced
+  'Uzbekistan': { lat: 41.3775, lng: 64.5853 }, // Was (0, 20), now in Central Asia
+  'Qatar': { lat: 25.3548, lng: 51.1839 }, // Was (0, 20), now in Persian Gulf
+  'Malta': { lat: 35.9375, lng: 14.3754 }, // Was (0, 20), now in Mediterranean
+  'Macao': { lat: 22.1987, lng: 113.5439 }, // Was (0, 20), now in South China Sea
+  'Hong Kong': { lat: 22.3193, lng: 114.1694 }, // Was (0, 20), now in South China Sea
+  'Suriname': { lat: 3.9193, lng: -56.0278 }, // Was (0, 20), now in South America
+  'Oman': { lat: 21.4735, lng: 55.9754 }, // Was using Romania coordinates, now in Arabian Peninsula
+  
+  // Adding more country aliases
   'Ivory Coast': { lat: 7.5400, lng: -5.5471 },
   'Côte d\'Ivoire': { lat: 7.5400, lng: -5.5471 },
   'Congo': { lat: -0.2280, lng: 15.8277 },

@@ -26,6 +26,18 @@ export const sectorColors: Record<string, string> = {
   'Rubber': '#166534', // green-700
   'Paper': '#7c2d12', // orange-800
   'Glass': '#1e40af', // blue-700
+  // Added distinct colors for potentially conflicting sectors
+  'Stones': '#78350f', // amber-900 - distinct from other materials
+  'Vehicles': '#1f2937', // gray-800 - distinct from automotive and transportation
+  'Wood': '#365314', // green-800 - distinct from forestry
+  'Leather': '#7c2d12', // orange-800
+  'Ceramics': '#581c87', // purple-800
+  'Gems': '#701a75', // fuchsia-800
+  'Spices': '#b45309', // amber-700
+  'Cotton': '#1e3a8a', // blue-800
+  'Silk': '#9333ea', // purple-600
+  'Tea': '#166534', // green-700
+  'Coffee': '#451a03', // amber-950
 };
 
 // Function to get color for a sector
