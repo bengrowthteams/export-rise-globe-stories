@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
@@ -80,6 +81,42 @@ const transformToSectorStory = (row: CountryDataRow): SectorStory => {
   };
 };
 
+const getCountryCoordinates = (country: string): { lat: number; lng: number } => {
+  // First try exact match
+  if (countryCoordinates[country]) {
+    return countryCoordinates[country];
+  }
+  
+  // Try case-insensitive match
+  const lowerCountry = country.toLowerCase();
+  const matchingKey = Object.keys(countryCoordinates).find(
+    key => key.toLowerCase() === lowerCountry
+  );
+  
+  if (matchingKey) {
+    console.log(`Found case-insensitive match for ${country}: ${matchingKey}`);
+    return countryCoordinates[matchingKey];
+  }
+  
+  // Try partial matches for common variations
+  const partialMatch = Object.keys(countryCoordinates).find(key => {
+    const keyLower = key.toLowerCase();
+    return keyLower.includes(lowerCountry) || lowerCountry.includes(keyLower);
+  });
+  
+  if (partialMatch) {
+    console.log(`Found partial match for ${country}: ${partialMatch}`);
+    return countryCoordinates[partialMatch];
+  }
+  
+  // Log missing countries for debugging
+  console.warn(`Missing coordinates for country: "${country}"`);
+  console.warn('Available countries:', Object.keys(countryCoordinates).sort());
+  
+  // Return a default location (center of Africa for missing countries)
+  return { lat: 0, lng: 20 };
+};
+
 const transformCountryData = (data: CountryDataRow[]): { 
   legacyStories: SuccessStory[], 
   countryStories: CountrySuccessStories[] 
@@ -109,7 +146,7 @@ const transformCountryData = (data: CountryDataRow[]): {
 
   countryGroups.forEach((rows, country) => {
     const sectors = rows.map(transformToSectorStory);
-    const firstRow = rows[0];
+    const coordinates = getCountryCoordinates(country);
     
     if (sectors.length === 1) {
       // Single sector - create legacy story
@@ -124,7 +161,7 @@ const transformCountryData = (data: CountryDataRow[]): {
         timeframe: '1995-2022',
         exportValue: sectorStory.exportValue,
         keyFactors: sectorStory.keyFactors,
-        coordinates: countryCoordinates[country] || { lat: 0, lng: 0 },
+        coordinates,
         flag: countryFlags[country] || '🌍',
         marketDestinations: sectorStory.marketDestinations,
         challenges: sectorStory.challenges,
@@ -147,7 +184,7 @@ const transformCountryData = (data: CountryDataRow[]): {
         id: country.toLowerCase().replace(/\s+/g, '-'),
         country,
         flag: countryFlags[country] || '🌍',
-        coordinates: countryCoordinates[country] || { lat: 0, lng: 0 },
+        coordinates,
         timeframe: '1995-2022',
         sectors: sectors.sort((a, b) => a.globalRanking2022 - b.globalRanking2022), // Sort by best ranking
         hasMutipleSectors: true,

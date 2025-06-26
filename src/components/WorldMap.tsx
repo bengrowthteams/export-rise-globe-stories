@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -227,9 +226,20 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     const country = story?.country || countryStory?.country;
     const flag = story?.flag || countryStory?.flag;
     
-    if (!coordinates || !country) return;
+    if (!coordinates || !country) {
+      console.warn(`Missing coordinates or country for marker:`, { country, coordinates });
+      return;
+    }
 
-    // Create marker element - now both single and multi-sector are green
+    // Check if coordinates are valid (not 0,0 or default fallback)
+    if (coordinates.lat === 0 && coordinates.lng === 0) {
+      console.warn(`Invalid coordinates (0,0) for country: ${country}`);
+      return;
+    }
+
+    console.log(`Adding marker for ${country} at:`, coordinates);
+
+    // Create marker element - both single and multi-sector are green
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
     markerElement.setAttribute('data-story-id', story?.id || countryStory?.id || '');
