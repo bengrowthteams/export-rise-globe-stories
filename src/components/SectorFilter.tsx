@@ -1,11 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { X, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSectorColor, getAllSectors } from '../data/sectorColors';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
-import { fetchSuccessStories, fetchCountryStories } from '../services/countryDataService';
 
 interface SectorFilterProps {
   stories: SuccessStory[];
@@ -26,43 +25,12 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
   onClose,
   isVisible
 }) => {
-  const [allStories, setAllStories] = useState<SuccessStory[]>(stories);
-  const [allCountryStories, setAllCountryStories] = useState<CountrySuccessStories[]>(countryStories);
-  const [loading, setLoading] = useState(false);
-
-  // Load stories if not provided
-  useEffect(() => {
-    const loadStories = async () => {
-      if (stories.length === 0 && countryStories.length === 0) {
-        setLoading(true);
-        try {
-          const [fetchedStories, fetchedCountryStories] = await Promise.all([
-            fetchSuccessStories(),
-            fetchCountryStories()
-          ]);
-          setAllStories(fetchedStories);
-          setAllCountryStories(fetchedCountryStories);
-        } catch (error) {
-          console.error('Failed to load stories for sector filter:', error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setAllStories(stories);
-        setAllCountryStories(countryStories);
-      }
-    };
-
-    if (isVisible) {
-      loadStories();
-    }
-  }, [isVisible, stories, countryStories]);
-
-  const allSectors = getAllSectors(allStories, allCountryStories);
-
   if (!isVisible) return null;
 
-  if (loading) {
+  const allSectors = getAllSectors(stories, countryStories);
+
+  // Show loading state only if no data is available
+  if (stories.length === 0 && countryStories.length === 0) {
     return (
       <div className="absolute left-4 top-32 z-30 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-6">
         <div className="flex items-center justify-center">
