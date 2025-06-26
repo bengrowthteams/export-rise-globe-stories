@@ -358,27 +358,32 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         onCountrySelect(story, null);
       } else if (countryStory) {
         console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length);
+        
+        // FIX: Use the first sector from the FILTERED sectors list, not the original primarySector
+        const sectorToUse = countryStory.sectors[0]; // This is already filtered in getFilteredStories
+        console.log('Using sector for primaryStory:', sectorToUse.sector);
+        
         const primaryStory: SuccessStory = {
-          id: `${countryStory.id}-${countryStory.primarySector.sector}`,
+          id: `${countryStory.id}-${sectorToUse.sector}`,
           country: countryStory.country,
-          sector: countryStory.primarySector.sector,
-          product: countryStory.primarySector.product,
-          description: countryStory.primarySector.description,
-          growthRate: countryStory.primarySector.growthRate,
+          sector: sectorToUse.sector,
+          product: sectorToUse.product,
+          description: sectorToUse.description,
+          growthRate: sectorToUse.growthRate,
           timeframe: countryStory.timeframe,
-          exportValue: countryStory.primarySector.exportValue,
-          keyFactors: countryStory.primarySector.keyFactors,
+          exportValue: sectorToUse.exportValue,
+          keyFactors: sectorToUse.keyFactors,
           coordinates: countryStory.coordinates,
           flag: countryStory.flag,
-          marketDestinations: countryStory.primarySector.marketDestinations,
-          challenges: countryStory.primarySector.challenges,
-          impact: countryStory.primarySector.impact,
-          globalRanking1995: countryStory.primarySector.globalRanking1995,
-          globalRanking2022: countryStory.primarySector.globalRanking2022,
-          initialExports1995: countryStory.primarySector.initialExports1995,
-          initialExports2022: countryStory.primarySector.initialExports2022,
-          successfulProduct: countryStory.primarySector.successfulProduct,
-          successStorySummary: countryStory.primarySector.successStorySummary
+          marketDestinations: sectorToUse.marketDestinations,
+          challenges: sectorToUse.challenges,
+          impact: sectorToUse.impact,
+          globalRanking1995: sectorToUse.globalRanking1995,
+          globalRanking2022: sectorToUse.globalRanking2022,
+          initialExports1995: sectorToUse.initialExports1995,
+          initialExports2022: sectorToUse.initialExports2022,
+          successfulProduct: sectorToUse.successfulProduct,
+          successStorySummary: sectorToUse.successStorySummary
         };
         onCountrySelect(primaryStory, countryStory);
       }
