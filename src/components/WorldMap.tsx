@@ -13,6 +13,7 @@ interface WorldMapProps {
   onMapStateChange?: (center: [number, number], zoom: number) => void;
   initialMapState?: { center: [number, number]; zoom: number };
   selectedSectors?: string[];
+  onStoriesLoaded?: (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => void;
 }
 
 export interface WorldMapRef {
@@ -24,7 +25,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   selectedStory,
   onMapStateChange,
   initialMapState,
-  selectedSectors = []
+  selectedSectors = [],
+  onStoriesLoaded
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -71,10 +73,18 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           setCountryStories([]);
           setDataSource('fallback');
           setError('Using fallback data - Supabase connection issue detected');
+          // Notify parent component
+          if (onStoriesLoaded) {
+            onStoriesLoaded(fallbackStories, []);
+          }
         } else {
           setSuccessStories(stories);
           setCountryStories(multiSectorStories);
           setDataSource('supabase');
+          // Notify parent component
+          if (onStoriesLoaded) {
+            onStoriesLoaded(stories, multiSectorStories);
+          }
         }
         
       } catch (error) {
@@ -84,13 +94,17 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         setCountryStories([]);
         setDataSource('fallback');
         setError(`Supabase error (using fallback data): ${error instanceof Error ? error.message : 'Unknown error'}`);
+        // Notify parent component
+        if (onStoriesLoaded) {
+          onStoriesLoaded(fallbackStories, []);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadSuccessStories();
-  }, []);
+  }, [onStoriesLoaded]);
 
   const handleTokenSubmit = (token: string) => {
     localStorage.setItem('mapboxToken', token);

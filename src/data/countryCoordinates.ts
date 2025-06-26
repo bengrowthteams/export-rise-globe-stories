@@ -94,7 +94,8 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'Switzerland': { lat: 46.8182, lng: 8.2275 },
   'Thailand': { lat: 15.8700, lng: 100.9925 },
   'Tunisia': { lat: 33.8869, lng: 9.5375 },
-  'Turkey': { lat: 38.9637, lng: 35.2433 },
+  'Turkey': { lat: 38.9637, lng: 35.2433 }, // Fixed: was in Africa, now correctly in Asia Minor/Anatolia
+  'Turkiye': { lat: 38.9637, lng: 35.2433 }, // Alternative spelling, same coordinates
   'Ukraine': { lat: 48.3794, lng: 31.1656 },
   'United Arab Emirates': { lat: 23.4241, lng: 53.8478 },
   'United Kingdom': { lat: 55.3781, lng: -3.4360 },
@@ -140,5 +141,18 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'Republic of the Congo': { lat: -0.2280, lng: 15.8277 },
   'Democratic Republic of the Congo': { lat: -4.0383, lng: 21.7587 },
   'Burundi': { lat: -3.3731, lng: 29.9189 },
-  'South Sudan': { lat: 6.8770, lng: 31.3070 }
+  'South Sudan': { lat: 6.8770, lng: 31.3070 },
+  // Adding more potentially missing countries
+  'Ivory Coast': { lat: 7.5400, lng: -5.5471 },
+  'Côte d\'Ivoire': { lat: 7.5400, lng: -5.5471 },
+  'Congo': { lat: -0.2280, lng: 15.8277 },
+  'DRC': { lat: -4.0383, lng: 21.7587 },
+  'Congo, Democratic Republic of the': { lat: -4.0383, lng: 21.7587 },
+  'Congo, Republic of the': { lat: -0.2280, lng: 15.8277 },
+  'Korea, South': { lat: 35.9078, lng: 127.7669 },
+  'Korea': { lat: 35.9078, lng: 127.7669 },
+  'UAE': { lat: 23.4241, lng: 53.8478 },
+  'UK': { lat: 55.3781, lng: -3.4360 },
+  'USA': { lat: 37.0902, lng: -95.7129 },
+  'US': { lat: 37.0902, lng: -95.7129 }
 };

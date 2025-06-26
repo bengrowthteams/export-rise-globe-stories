@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSectorColor, getAllSectors } from '../data/sectorColors';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
+import { fetchSuccessStories, fetchCountryStories } from '../services/countryDataService';
 
 interface SectorFilterProps {
   stories: SuccessStory[];
@@ -25,9 +26,52 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
   onClose,
   isVisible
 }) => {
-  const allSectors = getAllSectors(stories, countryStories);
+  const [allStories, setAllStories] = useState<SuccessStory[]>(stories);
+  const [allCountryStories, setAllCountryStories] = useState<CountrySuccessStories[]>(countryStories);
+  const [loading, setLoading] = useState(false);
+
+  // Load stories if not provided
+  useEffect(() => {
+    const loadStories = async () => {
+      if (stories.length === 0 && countryStories.length === 0) {
+        setLoading(true);
+        try {
+          const [fetchedStories, fetchedCountryStories] = await Promise.all([
+            fetchSuccessStories(),
+            fetchCountryStories()
+          ]);
+          setAllStories(fetchedStories);
+          setAllCountryStories(fetchedCountryStories);
+        } catch (error) {
+          console.error('Failed to load stories for sector filter:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setAllStories(stories);
+        setAllCountryStories(countryStories);
+      }
+    };
+
+    if (isVisible) {
+      loadStories();
+    }
+  }, [isVisible, stories, countryStories]);
+
+  const allSectors = getAllSectors(allStories, allCountryStories);
 
   if (!isVisible) return null;
+
+  if (loading) {
+    return (
+      <div className="absolute left-4 top-32 z-30 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-6">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-sm text-gray-600">Loading sectors...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute left-4 top-32 z-30 w-80 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto">

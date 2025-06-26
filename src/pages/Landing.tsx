@@ -49,6 +49,12 @@ const Landing = () => {
     }
   }, []);
 
+  // Add callback to receive stories from WorldMap
+  const handleStoriesLoaded = (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
+    setSuccessStories(stories);
+    setCountryStories(countryStories);
+  };
+
   const handleExploreMap = () => {
     // First scroll to map section
     document.getElementById('map-section')?.scrollIntoView({ 
@@ -309,6 +315,7 @@ const Landing = () => {
               onMapStateChange={handleMapStateChange}
               initialMapState={mapState}
               selectedSectors={selectedSectors}
+              onStoriesLoaded={handleStoriesLoaded}
             />
           </div>
           
