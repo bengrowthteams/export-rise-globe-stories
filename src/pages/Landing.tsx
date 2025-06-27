@@ -10,6 +10,7 @@ import FilteredSectorModal from '../components/FilteredSectorModal';
 import SectorFilter from '../components/SectorFilter';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
+import MapViewToggle from '../components/MapViewToggle';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
@@ -25,6 +26,7 @@ const Landing = () => {
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  const [is3DView, setIs3DView] = useState(true);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
@@ -247,6 +249,10 @@ const Landing = () => {
     closeTutorial();
   };
 
+  const handleMapViewToggle = (is3D: boolean) => {
+    setIs3DView(is3D);
+  };
+
   return (
     <div className="min-h-screen">
       <NavigationBar />
@@ -309,6 +315,11 @@ const Landing = () => {
             </Button>
           </div>
 
+          {/* Map View Toggle */}
+          <div className="absolute top-20 left-[480px] z-20">
+            <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
+          </div>
+
           {/* Tutorial Help Button */}
           <div className="absolute top-20 right-4 z-20">
             <Button
@@ -343,6 +354,7 @@ const Landing = () => {
               initialMapState={mapState}
               selectedSectors={selectedSectors}
               onStoriesLoaded={handleStoriesLoaded}
+              is3DView={is3DView}
             />
           </div>
           

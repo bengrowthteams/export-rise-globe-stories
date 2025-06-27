@@ -14,6 +14,7 @@ interface WorldMapProps {
   initialMapState?: { center: [number, number]; zoom: number };
   selectedSectors?: string[];
   onStoriesLoaded?: (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => void;
+  is3DView?: boolean;
 }
 
 export interface WorldMapRef {
@@ -29,7 +30,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   onMapStateChange,
   initialMapState,
   selectedSectors = [],
-  onStoriesLoaded
+  onStoriesLoaded,
+  is3DView = true
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -179,6 +181,41 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return { filteredSingleStories, filteredCountryStories };
   };
 
+  // Handle 3D/2D view toggle
+  useEffect(() => {
+    if (!map.current || !mapInitialized) return;
+
+    console.log('Switching to', is3DView ? '3D' : '2D', 'view');
+    
+    const currentCenter = map.current.getCenter();
+    const currentZoom = map.current.getZoom();
+    
+    if (is3DView) {
+      // Switch to 3D globe
+      map.current.setProjection('globe');
+      map.current.setPitch(45);
+      
+      // Set fog effects for globe
+      map.current.setFog({
+        color: 'rgb(255, 255, 255)',
+        'high-color': 'rgb(200, 200, 225)',
+        'horizon-blend': 0.2,
+      });
+    } else {
+      // Switch to 2D flat map
+      map.current.setProjection('mercator');
+      map.current.setPitch(0);
+      
+      // Remove fog for flat map
+      map.current.setFog({});
+    }
+    
+    // Maintain position
+    map.current.setCenter(currentCenter);
+    map.current.setZoom(currentZoom);
+    
+  }, [is3DView, mapInitialized]);
+
   useEffect(() => {
     if (!mapContainer.current || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
@@ -192,9 +229,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
+      projection: is3DView ? 'globe' : 'mercator',
       zoom: initialZoom,
       center: initialCenter,
-      pitch: 0,
+      pitch: is3DView ? 45 : 0,
     });
 
     map.current.addControl(
@@ -215,6 +253,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
+      
+      // Add atmosphere and fog effects for 3D view
+      if (is3DView) {
+        map.current?.setFog({
+          color: 'rgb(255, 255, 255)',
+          'high-color': 'rgb(200, 200, 225)',
+          'horizon-blend': 0.2,
+        });
+      }
+      
       updateMarkers();
       setMapInitialized(true);
       
@@ -246,7 +294,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         initialMapStateApplied.current = false;
       }
     };
-  }, [successStories, countryStories, loading]);
+  }, [successStories, countryStories, loading, is3DView]);
 
   useEffect(() => {
     if (mapInitialized) {
@@ -524,7 +572,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
             {selectedSectors.length > 0 
               ? `Filtered: ${totalCountries} of ${originalTotal} countries` 
-              : `Live data from Supabase (${totalCountries} countries)`
+              : `${is3DView ? '3D Globe' : '2D Map'} - Live data (${totalCountries} countries)`
             }
           </div>
         </div>
