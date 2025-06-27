@@ -6,6 +6,7 @@ import { CountrySuccessStories } from '../types/CountrySuccessStories';
 import { fetchSuccessStories, fetchCountryStories, clearSuccessStoriesCache } from '../services/countryDataService';
 import { successStories as fallbackStories } from '../data/successStories';
 import { getSectorColor } from '../data/sectorColors';
+import { countryFlags } from '../data/countryFlags';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void;
@@ -413,7 +414,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     const coordinates = story?.coordinates || countryStory?.coordinates;
     const country = story?.country || countryStory?.country;
-    const flag = story?.flag || countryStory?.flag;
+    // Use the expanded countryFlags data for flag lookup
+    const flag = countryFlags[country || ''] || story?.flag || countryStory?.flag || '🌍';
     
     if (!coordinates || !country) {
       console.warn(`Missing coordinates or country for marker:`, { country, coordinates });
@@ -525,14 +527,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       markerElement.style.height = isMultiSector ? '24px' : '20px';
     });
 
-    // Popup logic
+    // Popup logic - FIXED to handle filtered single-sector countries
     const popup = new mapboxgl.Popup({
       offset: 25,
       closeButton: false,
       closeOnClick: false
     });
 
-    if (isMultiSector && countryStory) {
+    // Check if this is a multi-sector country (either original or filtered)
+    if (isMultiSector && countryStory && countryStory.sectors.length > 1) {
+      // Multi-sector popup
       popup.setHTML(`
         <div class="p-3 max-w-xs">
           <div class="flex items-center mb-2">
@@ -551,18 +555,49 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           </div>
         </div>
       `);
-    } else if (story) {
-      const rankingGain = story.globalRanking1995 - story.globalRanking2022;
-      const gainText = rankingGain > 0 ? `+${rankingGain}` : `${rankingGain}`;
-      const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+    } else {
+      // Single-sector popup (either original single-sector or filtered to single-sector)
+      let sectorData, rankingGain, gainText, gainColor;
       
-      popup.setHTML(`
-        <div class="p-3">
-          <h3 class="font-semibold text-sm">${country}</h3>
-          <p class="text-xs text-gray-600">${story.sector}</p>
-          <p class="text-xs font-medium ${gainColor}">Ranking gain: ${gainText}</p>
-        </div>
-      `);
+      if (story) {
+        // Original single-sector story
+        sectorData = story;
+      } else if (countryStory && countryStory.sectors.length === 1) {
+        // Filtered to single-sector from multi-sector country
+        const sector = countryStory.sectors[0];
+        sectorData = {
+          sector: sector.sector,
+          globalRanking1995: sector.globalRanking1995,
+          globalRanking2022: sector.globalRanking2022
+        };
+      }
+      
+      if (sectorData) {
+        rankingGain = sectorData.globalRanking1995 - sectorData.globalRanking2022;
+        gainText = rankingGain > 0 ? `+${rankingGain}` : `${rankingGain}`;
+        gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
+        
+        popup.setHTML(`
+          <div class="p-3">
+            <div class="flex items-center mb-1">
+              <span class="text-lg mr-2">${flag}</span>
+              <h3 class="font-semibold text-sm">${country}</h3>
+            </div>
+            <p class="text-xs text-gray-600">${sectorData.sector}</p>
+            <p class="text-xs font-medium ${gainColor}">Ranking gain: ${gainText}</p>
+          </div>
+        `);
+      } else {
+        // Fallback popup
+        popup.setHTML(`
+          <div class="p-3">
+            <div class="flex items-center mb-1">
+              <span class="text-lg mr-2">${flag}</span>
+              <h3 class="font-semibold text-sm">${country}</h3>
+            </div>
+          </div>
+        `);
+      }
     }
 
     markerElement.addEventListener('mouseenter', () => {
