@@ -322,8 +322,8 @@ const Landing = () => {
       </div>
 
       {/* Map Section */}
-      <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
-        <div className="relative h-screen">
+      <div id="map-section" ref={mapSectionRef} className="h-screen bg-gray-50">
+        <div className="relative h-full">
           {/* Search Bar and Filter - moved to left column */}
           <div className="absolute top-4 left-4 z-20 space-y-2">
             <div className="tutorial-search-bar">
@@ -378,7 +378,7 @@ const Landing = () => {
             </Button>
           </div>
 
-          {/* Map - full width now since no sidebar */}
+          {/* Map - full width and height */}
           <div className="h-full w-full">
             <WorldMap 
               ref={worldMapRef}

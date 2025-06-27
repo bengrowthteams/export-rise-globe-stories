@@ -1,4 +1,3 @@
-
 // Country flag emojis mapping
 export const countryFlags: Record<string, string> = {
   'Afghanistan': '🇦🇫',
