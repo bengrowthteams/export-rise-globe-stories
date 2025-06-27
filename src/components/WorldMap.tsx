@@ -20,6 +20,7 @@ interface WorldMapProps {
 export interface WorldMapRef {
   resetToInitialPosition: () => void;
   flyToPosition: (center: [number, number], zoom: number) => void;
+  getCurrentMapState: () => { center: [number, number]; zoom: number } | null;
 }
 
 // Store the Mapbox token as a constant
@@ -135,6 +136,15 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     }, 200);
   };
 
+  const getCurrentMapState = () => {
+    if (map.current && mapInitialized) {
+      const center = map.current.getCenter();
+      const zoom = map.current.getZoom();
+      return { center: [center.lng, center.lat] as [number, number], zoom };
+    }
+    return null;
+  };
+
   const resetToInitialPosition = () => {
     if (map.current && mapInitialized) {
       console.log('Resetting map to initial position');
@@ -143,7 +153,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       if (is3DView) {
         // Reset to centered globe position
         map.current.flyTo({
-          center: [0, 0], // Changed to center at 0,0 for better globe centering
+          center: [0, 0],
           zoom: 1.5,
           duration: 1500
         });
@@ -180,7 +190,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   useImperativeHandle(ref, () => ({
     resetToInitialPosition,
-    flyToPosition
+    flyToPosition,
+    getCurrentMapState
   }));
 
   const getFilteredStories = () => {
@@ -266,7 +277,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     // Different initial settings based on view type
-    const initialCenter = is3DView ? [0, 0] as [number, number] : [20, 20] as [number, number]; // Changed 3D center to 0,0
+    const initialCenter = is3DView ? [0, 0] as [number, number] : [20, 20] as [number, number];
     const initialZoom = is3DView ? 1.5 : 2;
     
     map.current = new mapboxgl.Map({
@@ -275,8 +286,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       projection: is3DView ? 'globe' : 'mercator',
       zoom: initialZoom,
       center: initialCenter,
-      pitch: 0, // Set pitch to 0 for both modes for better centering
-      maxBounds: is3DView ? undefined : [[-180, -85], [180, 85]], // Set boundaries for 2D only
+      pitch: 0,
+      bearing: 0, // Ensure globe is properly oriented
+      maxBounds: is3DView ? undefined : [[-180, -85], [180, 85]],
     });
 
     map.current.addControl(
@@ -317,7 +329,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             
             if (is3DView) {
               // For 3D, center the globe properly
-              map.current.setCenter([0, 0]); // Changed to 0,0
+              map.current.setCenter([0, 0]);
               map.current.setZoom(Math.max(1.5, initialMapState.zoom));
             } else {
               // For 2D, use the saved state but constrain to boundaries
@@ -577,30 +589,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       setTimeout(() => {
         isFlying.current = false;
       }, 2000);
-    } else if (lastSelectedStory.current) {
-      isFlying.current = true;
-      
-      if (is3DView) {
-        // Reset to centered globe position
-        map.current.flyTo({
-          center: [0, 0], // Changed to 0,0 for better centering
-          zoom: 1.5,
-          duration: 1500
-        });
-      } else {
-        // Reset to 2D map position
-        map.current.flyTo({
-          center: [20, 20],
-          zoom: 2,
-          duration: 1500
-        });
-      }
-      
-      lastSelectedStory.current = null;
-      
-      setTimeout(() => {
-        isFlying.current = false;
-      }, 1500);
     }
   }, [selectedStory, mapInitialized, is3DView]);
 

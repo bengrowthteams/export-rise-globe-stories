@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Map, HelpCircle, X } from 'lucide-react';
+import { Map, HelpCircle, X, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
@@ -21,13 +21,13 @@ const Landing = () => {
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
   const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
-  const [showSectorFilter, setShowSectorFilter] = useState(true); // Always open by default
+  const [showSectorFilter, setShowSectorFilter] = useState(true);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [is3DView, setIs3DView] = useState(false);
-  const [previousMapState, setPreviousMapState] = useState<{ center: [number, number]; zoom: number } | null>(null); // Store previous map state
+  const [previousMapState, setPreviousMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
@@ -60,7 +60,7 @@ const Landing = () => {
   }, []);
 
   const handleExploreMap = () => {
-    // First scroll to map section
+    // Scroll to the very top of the map section
     document.getElementById('map-section')?.scrollIntoView({ 
       behavior: 'smooth',
       block: 'start'
@@ -84,9 +84,11 @@ const Landing = () => {
       selectedSectors
     });
 
-    // Store current map state before zooming
-    if (mapState) {
-      setPreviousMapState(mapState);
+    // Store current map state before any changes
+    if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
+      const currentState = worldMapRef.current.getCurrentMapState();
+      setPreviousMapState(currentState);
+      console.log('Stored current map state:', currentState);
     }
 
     if (countryStories && countryStories.hasMutipleSectors) {
@@ -159,12 +161,10 @@ const Landing = () => {
   };
 
   const handleClosePanel = () => {
-    // Restore previous map state instead of returning to center
-    if (previousMapState && worldMapRef.current && mapState) {
+    // Restore previous map state when closing panel
+    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
       console.log('Restoring previous map state:', previousMapState);
-      if (worldMapRef.current.flyToPosition) {
-        worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
-      }
+      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
     }
     
     setSelectedStory(null);
@@ -205,6 +205,10 @@ const Landing = () => {
 
   const handleCloseSectorFilter = () => {
     setShowSectorFilter(false);
+  };
+
+  const handleShowSectorFilter = () => {
+    setShowSectorFilter(true);
   };
 
   const handleReadMore = (story: SuccessStory) => {
@@ -318,9 +322,22 @@ const Landing = () => {
               <SearchBar onCountrySelect={handleCountrySelect} />
             </div>
             
-            {/* Sector Filter - always open, thinner design */}
+            {/* Show filter toggle button when filter is closed */}
+            {!showSectorFilter && (
+              <Button
+                onClick={handleShowSectorFilter}
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white flex items-center gap-2"
+              >
+                <Filter size={16} />
+                Show Filters
+              </Button>
+            )}
+            
+            {/* Sector Filter - always open when visible, narrower design */}
             {showSectorFilter && (
-              <div className="w-80">
+              <div className="w-72">
                 <SectorFilter
                   stories={successStories}
                   countryStories={countryStories}
@@ -335,8 +352,8 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle */}
-          <div className="absolute top-4 right-20 z-20">
+          {/* Map View Toggle - repositioned to avoid overlap */}
+          <div className="absolute top-4 right-32 z-20">
             <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
           </div>
 

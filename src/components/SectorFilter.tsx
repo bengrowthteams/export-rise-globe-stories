@@ -34,7 +34,7 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
   // Show loading state only if no data is available
   if (stories.length === 0 && countryStories.length === 0) {
     return (
-      <div className={`bg-white border border-gray-200 rounded-lg shadow-lg p-6 ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-80'}`}>
+      <div className={`bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-4 ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-72'}`}>
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
           <span className="ml-2 text-sm text-gray-600">Loading sectors...</span>
@@ -44,34 +44,34 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
   }
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-80'}`}>
-      <div className={`flex items-center justify-between border-b border-gray-200 ${isCompact ? 'p-3' : 'p-4'}`}>
-        <h3 className={`font-semibold ${isCompact ? 'text-base' : 'text-lg'}`}>Filter by Sector</h3>
+    <div className={`bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-72'}`}>
+      <div className={`flex items-center justify-between border-b border-gray-200 ${isCompact ? 'p-2' : 'p-3'}`}>
+        <h3 className={`font-semibold ${isCompact ? 'text-sm' : 'text-base'}`}>Filter by Sector</h3>
         <button
           onClick={onClose}
           className="p-1 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <X size={16} />
+          <X size={14} />
         </button>
       </div>
 
-      <div className={isCompact ? 'p-3' : 'p-4'}>
-        <div className={`flex justify-between items-center ${isCompact ? 'mb-3' : 'mb-4'}`}>
-          <span className="text-sm text-gray-600">
+      <div className={isCompact ? 'p-2' : 'p-3'}>
+        <div className={`flex justify-between items-center ${isCompact ? 'mb-2' : 'mb-3'}`}>
+          <span className="text-xs text-gray-600">
             {selectedSectors.length} of {allSectors.length} selected
           </span>
           <Button
             onClick={onReset}
             variant="outline"
             size="sm"
-            className="text-xs"
+            className="text-xs px-2 py-1 h-auto"
           >
-            <RotateCcw size={12} className="mr-1" />
+            <RotateCcw size={10} className="mr-1" />
             Reset
           </Button>
         </div>
 
-        <div className={`space-y-${isCompact ? '1' : '2'}`}>
+        <div className="space-y-1">
           {allSectors.map((sector) => {
             const isSelected = selectedSectors.includes(sector);
             const sectorColor = getSectorColor(sector);
@@ -80,26 +80,22 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
               <button
                 key={sector}
                 onClick={() => onSectorToggle(sector)}
-                className={`w-full flex items-center rounded-lg border transition-all text-left ${
-                  isCompact ? 'p-2' : 'p-3'
-                } ${
+                className={`w-full flex items-center rounded-md border transition-all text-left p-2 ${
                   isSelected 
                     ? 'bg-gray-50 border-gray-300 shadow-sm' 
                     : 'bg-white border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 <div
-                  className={`rounded-full mr-3 border-2 border-white shadow-sm ${
-                    isCompact ? 'w-3 h-3' : 'w-4 h-4'
-                  }`}
+                  className="w-2.5 h-2.5 rounded-full mr-2 border border-white shadow-sm"
                   style={{ backgroundColor: sectorColor }}
                 />
-                <span className={`${isCompact ? 'text-xs' : 'text-sm'} ${isSelected ? 'font-medium' : ''}`}>
+                <span className={`text-xs ${isSelected ? 'font-medium' : ''}`}>
                   {sector}
                 </span>
                 {isSelected && (
                   <div className="ml-auto">
-                    <div className={`bg-blue-500 rounded-full ${isCompact ? 'w-1.5 h-1.5' : 'w-2 h-2'}`} />
+                    <div className="bg-blue-500 rounded-full w-1 h-1" />
                   </div>
                 )}
               </button>
