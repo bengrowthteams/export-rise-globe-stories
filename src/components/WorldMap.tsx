@@ -31,7 +31,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   initialMapState,
   selectedSectors = [],
   onStoriesLoaded,
-  is3DView = true
+  is3DView = false // Changed default to false for 2D
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -138,11 +138,23 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     if (map.current && mapInitialized) {
       console.log('Resetting map to initial position');
       isFlying.current = true;
-      map.current.flyTo({
-        center: [20, 20],
-        zoom: 2,
-        duration: 1500
-      });
+      
+      if (is3DView) {
+        // Reset to centered globe position
+        map.current.flyTo({
+          center: [0, 20],
+          zoom: 1.5,
+          duration: 1500
+        });
+      } else {
+        // Reset to 2D map position
+        map.current.flyTo({
+          center: [20, 20],
+          zoom: 2,
+          duration: 1500
+        });
+      }
+      
       setTimeout(() => {
         isFlying.current = false;
       }, 1500);
@@ -191,9 +203,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     const currentZoom = map.current.getZoom();
     
     if (is3DView) {
-      // Switch to 3D globe
+      // Switch to 3D globe - center it properly
       map.current.setProjection('globe');
-      map.current.setPitch(45);
+      map.current.setPitch(30); // Reduced pitch for better centering
       
       // Set fog effects for globe
       map.current.setFog({
@@ -201,18 +213,30 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         'high-color': 'rgb(200, 200, 225)',
         'horizon-blend': 0.2,
       });
+      
+      // Center the globe properly
+      map.current.setCenter([0, 20]);
+      map.current.setZoom(Math.max(1.5, currentZoom));
     } else {
-      // Switch to 2D flat map
+      // Switch to 2D flat map with boundaries
       map.current.setProjection('mercator');
       map.current.setPitch(0);
       
       // Remove fog for flat map
       map.current.setFog({});
+      
+      // Set world boundaries to prevent infinite scrolling
+      map.current.setMaxBounds([
+        [-180, -85], // Southwest coordinates
+        [180, 85]    // Northeast coordinates
+      ]);
+      
+      // Maintain position but ensure it's within bounds
+      const constrainedLng = Math.max(-180, Math.min(180, currentCenter.lng));
+      const constrainedLat = Math.max(-85, Math.min(85, currentCenter.lat));
+      map.current.setCenter([constrainedLng, constrainedLat]);
+      map.current.setZoom(currentZoom);
     }
-    
-    // Maintain position
-    map.current.setCenter(currentCenter);
-    map.current.setZoom(currentZoom);
     
   }, [is3DView, mapInitialized]);
 
@@ -223,8 +247,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
-    const initialCenter = [20, 20] as [number, number];
-    const initialZoom = 2;
+    // Different initial settings based on view type
+    const initialCenter = is3DView ? [0, 20] as [number, number] : [20, 20] as [number, number];
+    const initialZoom = is3DView ? 1.5 : 2;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -232,7 +257,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       projection: is3DView ? 'globe' : 'mercator',
       zoom: initialZoom,
       center: initialCenter,
-      pitch: is3DView ? 45 : 0,
+      pitch: is3DView ? 30 : 0, // Reduced pitch for better centering
+      maxBounds: is3DView ? undefined : [[-180, -85], [180, 85]], // Set boundaries for 2D only
     });
 
     map.current.addControl(
@@ -254,7 +280,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
       
-      // Add atmosphere and fog effects for 3D view
+      // Add atmosphere and fog effects for 3D view only
       if (is3DView) {
         map.current?.setFog({
           color: 'rgb(255, 255, 255)',
@@ -270,8 +296,19 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         setTimeout(() => {
           if (map.current) {
             console.log('Applying initial map state:', initialMapState);
-            map.current.setCenter(initialMapState.center);
-            map.current.setZoom(initialMapState.zoom);
+            
+            if (is3DView) {
+              // For 3D, center the globe properly
+              map.current.setCenter([0, 20]);
+              map.current.setZoom(Math.max(1.5, initialMapState.zoom));
+            } else {
+              // For 2D, use the saved state but constrain to boundaries
+              const constrainedLng = Math.max(-180, Math.min(180, initialMapState.center[0]));
+              const constrainedLat = Math.max(-85, Math.min(85, initialMapState.center[1]));
+              map.current.setCenter([constrainedLng, constrainedLat]);
+              map.current.setZoom(initialMapState.zoom);
+            }
+            
             initialMapStateApplied.current = true;
           }
           mapStateInitialized.current = true;
@@ -524,18 +561,30 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }, 2000);
     } else if (lastSelectedStory.current) {
       isFlying.current = true;
-      map.current.flyTo({
-        center: [20, 20],
-        zoom: 2,
-        duration: 1500
-      });
+      
+      if (is3DView) {
+        // Reset to centered globe position
+        map.current.flyTo({
+          center: [0, 20],
+          zoom: 1.5,
+          duration: 1500
+        });
+      } else {
+        // Reset to 2D map position
+        map.current.flyTo({
+          center: [20, 20],
+          zoom: 2,
+          duration: 1500
+        });
+      }
+      
       lastSelectedStory.current = null;
       
       setTimeout(() => {
         isFlying.current = false;
       }, 1500);
     }
-  }, [selectedStory, mapInitialized]);
+  }, [selectedStory, mapInitialized, is3DView]);
 
   if (loading) {
     return (
