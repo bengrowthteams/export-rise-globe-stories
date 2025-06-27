@@ -1,3 +1,4 @@
+
 // Country flag emojis mapping
 export const countryFlags: Record<string, string> = {
   'Afghanistan': '🇦🇫',
@@ -111,6 +112,11 @@ export const countryFlags: Record<string, string> = {
   'Chad': '🇹🇩',
   'Comoros': '🇰🇲',
   'Congo': '🇨🇬',
+  'Republic of Congo': '🇨🇬',
+  'Congo Republic': '🇨🇬',
+  'Congo, Republic of': '🇨🇬',
+  'Congo (Republic of)': '🇨🇬',
+  'Congo-Brazzaville': '🇨🇬',
   'Democratic Republic of the Congo': '🇨🇩',
   'Djibouti': '🇩🇯',
   'Equatorial Guinea': '🇬🇶',
@@ -199,9 +205,6 @@ export const countryFlags: Record<string, string> = {
   // Alternate names and variations
   'Türkiye': '🇹🇷',
   'Turkiye': '🇹🇷',
-  'Republic of Congo': '🇨🇬',
-  'Congo Republic': '🇨🇬',
-  'Congo-Brazzaville': '🇨🇬',
   'DRC': '🇨🇩',
   'Congo-Kinshasa': '🇨🇩',
   'Republic of Korea': '🇰🇷',
@@ -260,12 +263,18 @@ export const countryFlags: Record<string, string> = {
   'Republic of Cyprus': '🇨🇾'
 };
 
-// Helper function to find flag with fuzzy matching
+// Helper function to find flag with fuzzy matching and debug logging
 export const getCountryFlag = (countryName: string): string => {
-  if (!countryName) return '🌍';
+  console.log('Looking up flag for country:', countryName);
+  
+  if (!countryName) {
+    console.log('No country name provided, returning default flag');
+    return '🌍';
+  }
   
   // Direct match first
   if (countryFlags[countryName]) {
+    console.log('Direct match found for:', countryName, '→', countryFlags[countryName]);
     return countryFlags[countryName];
   }
   
@@ -273,6 +282,7 @@ export const getCountryFlag = (countryName: string): string => {
   const lowerName = countryName.toLowerCase();
   for (const [key, value] of Object.entries(countryFlags)) {
     if (key.toLowerCase() === lowerName) {
+      console.log('Case-insensitive match found for:', countryName, '→', key, '→', value);
       return value;
     }
   }
@@ -294,9 +304,11 @@ export const getCountryFlag = (countryName: string): string => {
       .trim();
       
     if (normalizedKey.toLowerCase() === normalizedName.toLowerCase()) {
+      console.log('Normalized match found for:', countryName, '→', key, '→', value);
       return value;
     }
   }
   
+  console.log('No flag found for:', countryName, '- returning default flag');
   return '🌍'; // Default fallback
 };

@@ -321,8 +321,8 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* Map Section */}
-      <div id="map-section" ref={mapSectionRef} className="h-screen bg-gray-50">
+      {/* Map Section - Fixed height to account for navigation bar */}
+      <div id="map-section" ref={mapSectionRef} className="h-[calc(100vh-3.5rem)] bg-gray-50">
         <div className="relative h-full">
           {/* Search Bar and Filter - moved to left column */}
           <div className="absolute top-4 left-4 z-20 space-y-2">
