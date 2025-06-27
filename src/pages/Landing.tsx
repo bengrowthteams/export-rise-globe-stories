@@ -60,11 +60,19 @@ const Landing = () => {
   }, []);
 
   const handleExploreMap = () => {
-    // Scroll to the very top of the map section
-    document.getElementById('map-section')?.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    });
+    // Scroll to show the search bar and controls at the top
+    const mapSection = document.getElementById('map-section');
+    if (mapSection) {
+      // Get the height of the fixed navigation bar (14 = 3.5rem = 56px)
+      const navHeight = 56; // 14 * 4 = 56px for h-14 class
+      const elementPosition = mapSection.offsetTop;
+      const offsetPosition = elementPosition - navHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
 
     // If user hasn't seen tutorial, start it after scrolling
     if (!hasSeenTutorial) {

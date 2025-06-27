@@ -6,7 +6,7 @@ import { CountrySuccessStories } from '../types/CountrySuccessStories';
 import { fetchSuccessStories, fetchCountryStories, clearSuccessStoriesCache } from '../services/countryDataService';
 import { successStories as fallbackStories } from '../data/successStories';
 import { getSectorColor } from '../data/sectorColors';
-import { countryFlags } from '../data/countryFlags';
+import { countryFlags, getCountryFlag } from '../data/countryFlags';
 
 interface WorldMapProps {
   onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void;
@@ -414,8 +414,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     const coordinates = story?.coordinates || countryStory?.coordinates;
     const country = story?.country || countryStory?.country;
-    // Use the expanded countryFlags data for flag lookup
-    const flag = countryFlags[country || ''] || story?.flag || countryStory?.flag || '🌍';
+    // Use the improved flag lookup function
+    const flag = getCountryFlag(country || '');
     
     if (!coordinates || !country) {
       console.warn(`Missing coordinates or country for marker:`, { country, coordinates });
@@ -427,7 +427,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       return;
     }
 
-    console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color, 'isMultiSector:', isMultiSector);
+    console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color, 'isMultiSector:', isMultiSector, 'flag:', flag);
 
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';

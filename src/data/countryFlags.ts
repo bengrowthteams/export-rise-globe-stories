@@ -196,5 +196,110 @@ export const countryFlags: Record<string, string> = {
   'Saint Lucia': '🇱🇨',
   'Saint Vincent and the Grenadines': '🇻🇨',
   'Suriname': '🇸🇷',
-  'Trinidad and Tobago': '🇹🇹'
+  'Trinidad and Tobago': '🇹🇹',
+  // Alternate names and variations
+  'Türkiye': '🇹🇷',
+  'Turkiye': '🇹🇷',
+  'Republic of Congo': '🇨🇬',
+  'Congo Republic': '🇨🇬',
+  'Congo-Brazzaville': '🇨🇬',
+  'DRC': '🇨🇩',
+  'Congo-Kinshasa': '🇨🇩',
+  'Republic of Korea': '🇰🇷',
+  'Korea, South': '🇰🇷',
+  'DPRK': '🇰🇵',
+  'Korea, North': '🇰🇵',
+  'Democratic People\'s Republic of Korea': '🇰🇵',
+  'UAE': '🇦🇪',
+  'UK': '🇬🇧',
+  'USA': '🇺🇸',
+  'US': '🇺🇸',
+  'United States of America': '🇺🇸',
+  'Russian Federation': '🇷🇺',
+  'Islamic Republic of Iran': '🇮🇷',
+  'Republic of the Philippines': '🇵🇭',
+  'Kingdom of Saudi Arabia': '🇸🇦',
+  'Republic of South Africa': '🇿🇦',
+  'Federal Republic of Germany': '🇩🇪',
+  'French Republic': '🇫🇷',
+  'Italian Republic': '🇮🇹',
+  'Kingdom of Spain': '🇪🇸',
+  'Hellenic Republic': '🇬🇷',
+  'Portuguese Republic': '🇵🇹',
+  'Republic of Poland': '🇵🇱',
+  'Czech Republic': '🇨🇿',
+  'Czechia': '🇨🇿',
+  'Slovak Republic': '🇸🇰',
+  'Republic of Slovenia': '🇸🇮',
+  'Republic of Croatia': '🇭🇷',
+  'Bosnia & Herzegovina': '🇧🇦',
+  'Republic of Serbia': '🇷🇸',
+  'Republic of Montenegro': '🇲🇪',
+  'Republic of North Macedonia': '🇲🇰',
+  'Macedonia': '🇲🇰',
+  'FYROM': '🇲🇰',
+  'Republic of Albania': '🇦🇱',
+  'Republic of Bulgaria': '🇧🇬',
+  'Romania': '🇷🇴',
+  'Republic of Moldova': '🇲🇩',
+  'Republic of Belarus': '🇧🇾',
+  'Republic of Lithuania': '🇱🇹',
+  'Republic of Latvia': '🇱🇻',
+  'Republic of Estonia': '🇪🇪',
+  'Republic of Finland': '🇫🇮',
+  'Kingdom of Sweden': '🇸🇪',
+  'Kingdom of Norway': '🇳🇴',
+  'Kingdom of Denmark': '🇩🇰',
+  'Republic of Iceland': '🇮🇸',
+  'Republic of Ireland': '🇮🇪',
+  'Swiss Confederation': '🇨🇭',
+  'Republic of Austria': '🇦🇹',
+  'Principality of Liechtenstein': '🇱🇮',
+  'Principality of Monaco': '🇲🇨',
+  'Republic of San Marino': '🇸🇲',
+  'State of Vatican City': '🇻🇦',
+  'Principality of Andorra': '🇦🇩',
+  'Republic of Malta': '🇲🇹',
+  'Republic of Cyprus': '🇨🇾'
+};
+
+// Helper function to find flag with fuzzy matching
+export const getCountryFlag = (countryName: string): string => {
+  if (!countryName) return '🌍';
+  
+  // Direct match first
+  if (countryFlags[countryName]) {
+    return countryFlags[countryName];
+  }
+  
+  // Try case-insensitive match
+  const lowerName = countryName.toLowerCase();
+  for (const [key, value] of Object.entries(countryFlags)) {
+    if (key.toLowerCase() === lowerName) {
+      return value;
+    }
+  }
+  
+  // Try partial matches for common variations
+  const normalizedName = countryName
+    .replace(/^the\s+/i, '')
+    .replace(/\s+republic$/i, '')
+    .replace(/\s+federation$/i, '')
+    .replace(/\s+kingdom$/i, '')
+    .trim();
+    
+  for (const [key, value] of Object.entries(countryFlags)) {
+    const normalizedKey = key
+      .replace(/^the\s+/i, '')
+      .replace(/\s+republic$/i, '')
+      .replace(/\s+federation$/i, '')
+      .replace(/\s+kingdom$/i, '')
+      .trim();
+      
+    if (normalizedKey.toLowerCase() === normalizedName.toLowerCase()) {
+      return value;
+    }
+  }
+  
+  return '🌍'; // Default fallback
 };

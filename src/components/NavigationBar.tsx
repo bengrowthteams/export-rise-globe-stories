@@ -7,6 +7,25 @@ interface NavigationBarProps {
 }
 
 const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
+  const handleExploreClick = () => {
+    if (onExploreClick) {
+      onExploreClick();
+    } else {
+      // Fallback scroll logic if no onExploreClick prop
+      const mapSection = document.getElementById('map-section');
+      if (mapSection) {
+        const navHeight = 56; // h-14 = 56px
+        const elementPosition = mapSection.offsetTop;
+        const offsetPosition = elementPosition - navHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +41,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
               Why Exports?
             </button>
             <button 
-              onClick={onExploreClick}
+              onClick={handleExploreClick}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               Explore
