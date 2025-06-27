@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Map, HelpCircle, Filter } from 'lucide-react';
+import { Map, HelpCircle, X } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
@@ -21,12 +21,13 @@ const Landing = () => {
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
   const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
-  const [showSectorFilter, setShowSectorFilter] = useState(false);
+  const [showSectorFilter, setShowSectorFilter] = useState(true); // Always open by default
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [is3DView, setIs3DView] = useState(false); // Changed to false for 2D default
+  const [is3DView, setIs3DView] = useState(false);
+  const [previousMapState, setPreviousMapState] = useState<{ center: [number, number]; zoom: number } | null>(null); // Store previous map state
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
@@ -82,6 +83,11 @@ const Landing = () => {
       filterActive: selectedSectors.length > 0,
       selectedSectors
     });
+
+    // Store current map state before zooming
+    if (mapState) {
+      setPreviousMapState(mapState);
+    }
 
     if (countryStories && countryStories.hasMutipleSectors) {
       // Multi-sector country - show modal for sector selection
@@ -153,11 +159,20 @@ const Landing = () => {
   };
 
   const handleClosePanel = () => {
+    // Restore previous map state instead of returning to center
+    if (previousMapState && worldMapRef.current && mapState) {
+      console.log('Restoring previous map state:', previousMapState);
+      if (worldMapRef.current.flyToPosition) {
+        worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+      }
+    }
+    
     setSelectedStory(null);
     setSelectedCountryStories(null);
     setSelectedSector(null);
     setShowSectorModal(false);
     setShowFilteredSectorModal(false);
+    setPreviousMapState(null);
   };
 
   const handleCloseSectorModal = () => {
@@ -188,8 +203,8 @@ const Landing = () => {
     setSelectedSectors([]);
   };
 
-  const handleToggleSectorFilter = () => {
-    setShowSectorFilter(!showSectorFilter);
+  const handleCloseSectorFilter = () => {
+    setShowSectorFilter(false);
   };
 
   const handleReadMore = (story: SuccessStory) => {
@@ -255,7 +270,7 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen">
-      <NavigationBar />
+      <NavigationBar onExploreClick={handleExploreMap} />
       
       {/* Hero Section - add top padding for fixed nav */}
       <div className="min-h-screen relative overflow-hidden pt-14">
@@ -297,31 +312,36 @@ const Landing = () => {
       {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="min-h-screen bg-gray-50">
         <div className="relative h-screen">
-          {/* Search Bar */}
-          <div className="absolute top-20 left-4 z-20 tutorial-search-bar">
-            <SearchBar onCountrySelect={handleCountrySelect} />
-          </div>
-
-          {/* Filter Button */}
-          <div className="absolute top-20 left-80 z-20">
-            <Button
-              onClick={handleToggleSectorFilter}
-              variant="outline"
-              size="sm"
-              className={`bg-white/90 hover:bg-white ${showSectorFilter ? 'bg-blue-50 border-blue-300' : ''}`}
-            >
-              <Filter size={16} className="mr-1" />
-              Filter ({selectedSectors.length})
-            </Button>
+          {/* Search Bar and Filter - moved to left column */}
+          <div className="absolute top-4 left-4 z-20 space-y-2">
+            <div className="tutorial-search-bar">
+              <SearchBar onCountrySelect={handleCountrySelect} />
+            </div>
+            
+            {/* Sector Filter - always open, thinner design */}
+            {showSectorFilter && (
+              <div className="w-80">
+                <SectorFilter
+                  stories={successStories}
+                  countryStories={countryStories}
+                  selectedSectors={selectedSectors}
+                  onSectorToggle={handleSectorToggle}
+                  onReset={handleResetFilter}
+                  onClose={handleCloseSectorFilter}
+                  isVisible={showSectorFilter}
+                  isCompact={true}
+                />
+              </div>
+            )}
           </div>
 
           {/* Map View Toggle */}
-          <div className="absolute top-20 left-[480px] z-20">
+          <div className="absolute top-4 right-20 z-20">
             <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
           </div>
 
           {/* Tutorial Help Button */}
-          <div className="absolute top-20 right-4 z-20">
+          <div className="absolute top-4 right-4 z-20">
             <Button
               onClick={handleStartTutorial}
               variant="outline"
@@ -332,17 +352,6 @@ const Landing = () => {
               Tutorial
             </Button>
           </div>
-
-          {/* Sector Filter Sidebar */}
-          <SectorFilter
-            stories={successStories}
-            countryStories={countryStories}
-            selectedSectors={selectedSectors}
-            onSectorToggle={handleSectorToggle}
-            onReset={handleResetFilter}
-            onClose={() => setShowSectorFilter(false)}
-            isVisible={showSectorFilter}
-          />
 
           {/* Map - full width now since no sidebar */}
           <div className="h-full w-full">

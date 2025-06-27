@@ -19,6 +19,7 @@ interface WorldMapProps {
 
 export interface WorldMapRef {
   resetToInitialPosition: () => void;
+  flyToPosition: (center: [number, number], zoom: number) => void;
 }
 
 // Store the Mapbox token as a constant
@@ -31,7 +32,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   initialMapState,
   selectedSectors = [],
   onStoriesLoaded,
-  is3DView = false // Changed default to false for 2D
+  is3DView = false
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -142,7 +143,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       if (is3DView) {
         // Reset to centered globe position
         map.current.flyTo({
-          center: [0, 20],
+          center: [0, 0], // Changed to center at 0,0 for better globe centering
           zoom: 1.5,
           duration: 1500
         });
@@ -161,8 +162,25 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     }
   };
 
+  const flyToPosition = (center: [number, number], zoom: number) => {
+    if (map.current && mapInitialized) {
+      console.log('Flying to position:', center, 'zoom:', zoom);
+      isFlying.current = true;
+      map.current.flyTo({
+        center: center,
+        zoom: zoom,
+        duration: 1500
+      });
+      
+      setTimeout(() => {
+        isFlying.current = false;
+      }, 1500);
+    }
+  };
+
   useImperativeHandle(ref, () => ({
-    resetToInitialPosition
+    resetToInitialPosition,
+    flyToPosition
   }));
 
   const getFilteredStories = () => {
@@ -205,7 +223,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     if (is3DView) {
       // Switch to 3D globe - center it properly
       map.current.setProjection('globe');
-      map.current.setPitch(30); // Reduced pitch for better centering
+      map.current.setPitch(0); // Set pitch to 0 for better centering
       
       // Set fog effects for globe
       map.current.setFog({
@@ -214,8 +232,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         'horizon-blend': 0.2,
       });
       
-      // Center the globe properly
-      map.current.setCenter([0, 20]);
+      // Center the globe properly at equator
+      map.current.setCenter([0, 0]); // Changed to 0,0 for better centering
       map.current.setZoom(Math.max(1.5, currentZoom));
     } else {
       // Switch to 2D flat map with boundaries
@@ -248,7 +266,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     // Different initial settings based on view type
-    const initialCenter = is3DView ? [0, 20] as [number, number] : [20, 20] as [number, number];
+    const initialCenter = is3DView ? [0, 0] as [number, number] : [20, 20] as [number, number]; // Changed 3D center to 0,0
     const initialZoom = is3DView ? 1.5 : 2;
     
     map.current = new mapboxgl.Map({
@@ -257,7 +275,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       projection: is3DView ? 'globe' : 'mercator',
       zoom: initialZoom,
       center: initialCenter,
-      pitch: is3DView ? 30 : 0, // Reduced pitch for better centering
+      pitch: 0, // Set pitch to 0 for both modes for better centering
       maxBounds: is3DView ? undefined : [[-180, -85], [180, 85]], // Set boundaries for 2D only
     });
 
@@ -299,7 +317,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             
             if (is3DView) {
               // For 3D, center the globe properly
-              map.current.setCenter([0, 20]);
+              map.current.setCenter([0, 0]); // Changed to 0,0
               map.current.setZoom(Math.max(1.5, initialMapState.zoom));
             } else {
               // For 2D, use the saved state but constrain to boundaries
@@ -565,7 +583,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       if (is3DView) {
         // Reset to centered globe position
         map.current.flyTo({
-          center: [0, 20],
+          center: [0, 0], // Changed to 0,0 for better centering
           zoom: 1.5,
           duration: 1500
         });
