@@ -27,7 +27,7 @@ const Landing = () => {
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [is3DView, setIs3DView] = useState(false);
-  const [previousMapState, setPreviousMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
@@ -92,11 +92,11 @@ const Landing = () => {
       selectedSectors
     });
 
-    // Store current map state before any changes - FIXED: Always store before modal opens
+    // Store current map state BEFORE any modal opens or map changes
     if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
       const currentState = worldMapRef.current.getCurrentMapState();
-      setPreviousMapState(currentState);
-      console.log('Stored current map state before modal:', currentState);
+      setStoredMapState(currentState);
+      console.log('Stored current map state:', currentState);
     }
 
     if (countryStories && countryStories.hasMutipleSectors) {
@@ -169,10 +169,10 @@ const Landing = () => {
   };
 
   const handleClosePanel = () => {
-    // Restore previous map state when closing panel
-    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
-      console.log('Restoring previous map state:', previousMapState);
-      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+    // Restore stored map state when closing panel
+    if (storedMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
+      console.log('Restoring stored map state:', storedMapState);
+      worldMapRef.current.flyToPosition(storedMapState.center, storedMapState.zoom);
     }
     
     setSelectedStory(null);
@@ -180,33 +180,33 @@ const Landing = () => {
     setSelectedSector(null);
     setShowSectorModal(false);
     setShowFilteredSectorModal(false);
-    setPreviousMapState(null);
+    setStoredMapState(null);
   };
 
   const handleCloseSectorModal = () => {
-    // FIXED: Restore previous map state when closing sector modal without selection
-    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
-      console.log('Restoring previous map state from sector modal close:', previousMapState);
-      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+    // Restore stored map state when closing sector modal without selection
+    if (storedMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
+      console.log('Restoring stored map state from sector modal close:', storedMapState);
+      worldMapRef.current.flyToPosition(storedMapState.center, storedMapState.zoom);
     }
     
     setShowSectorModal(false);
     setSelectedCountryStories(null);
     setSelectedStory(null);
-    setPreviousMapState(null); // Clear the stored state
+    setStoredMapState(null);
   };
 
   const handleCloseFilteredSectorModal = () => {
-    // FIXED: Restore previous map state when closing filtered sector modal without selection
-    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
-      console.log('Restoring previous map state from filtered sector modal close:', previousMapState);
-      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+    // Restore stored map state when closing filtered sector modal without selection
+    if (storedMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
+      console.log('Restoring stored map state from filtered sector modal close:', storedMapState);
+      worldMapRef.current.flyToPosition(storedMapState.center, storedMapState.zoom);
     }
     
     setShowFilteredSectorModal(false);
     setSelectedCountryStories(null);
     setSelectedStory(null);
-    setPreviousMapState(null); // Clear the stored state
+    setStoredMapState(null);
   };
 
   // Sector filter handlers
@@ -455,6 +455,8 @@ const Landing = () => {
               onClose={handleTutorialClose}
               onDemoCountrySelect={handleTutorialDemo}
               demoStory={selectedStory}
+              selectedSectors={selectedSectors}
+              onSectorToggle={handleSectorToggle}
             />
           )}
         </div>

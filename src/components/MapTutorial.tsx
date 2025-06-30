@@ -9,9 +9,17 @@ interface MapTutorialProps {
   onClose: () => void;
   onDemoCountrySelect: (story: SuccessStory | null) => void;
   demoStory: SuccessStory | null;
+  selectedSectors: string[];
+  onSectorToggle: (sector: string) => void;
 }
 
-const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect, demoStory }) => {
+const MapTutorial: React.FC<MapTutorialProps> = ({ 
+  onClose, 
+  onDemoCountrySelect, 
+  demoStory,
+  selectedSectors,
+  onSectorToggle
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [demoStoryData, setDemoStoryData] = useState<SuccessStory | null>(null);
@@ -19,33 +27,27 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
   const steps = [
     {
       title: "Welcome to the Transformation Atlas",
-      content: "Discover how developing countries achieved remarkable export growth. Let's explore the interactive map and its powerful features together.",
+      content: "Discover how developing countries achieved remarkable export growth. This interactive map shows success stories across different sectors.",
       position: "center",
       highlight: null
     },
     {
-      title: "Green Dots Mark Success Stories",
-      content: "Each green dot represents a country with documented transformation stories. Click on any dot to explore their journey. Countries with multiple sectors show a small orange indicator.",
+      title: "Explore Success Stories",
+      content: "Green dots mark countries with transformation stories. Countries with multiple sectors show an orange indicator. Click any dot to explore their journey.",
       position: "left",
       highlight: "dots"
     },
     {
       title: "Search and Filter by Sector",
-      content: "Use the search bar to quickly find countries by name. Click 'Show Filters' to filter stories by specific sectors like textiles, electronics, or agriculture. Filtered markers will display in sector-specific colors.",
+      content: "Use the search bar to find countries quickly. Try filtering by 'Electronics' to see only electronics success stories. Notice how markers change color by sector!",
       position: "bottom-right",
       highlight: "search"
     },
     {
-      title: "Switch Between 2D and 3D Views",
-      content: "Toggle between a traditional 2D map and an interactive 3D globe using the view toggle button. The 3D globe rotates automatically and provides an immersive exploration experience.",
+      title: "Interactive Map Views",
+      content: "Switch between 2D and 3D globe views using the toggle button. The 3D globe rotates automatically and provides an immersive exploration experience.",
       position: "bottom-left",
       highlight: "3d-toggle"
-    },
-    {
-      title: "Detailed Country Insights",
-      content: "Country cards reveal export rankings, growth data, and transformation stories. For countries with multiple sectors, you can browse between different success stories. Click 'View Full Case Study' for comprehensive details.",
-      position: "left",
-      highlight: "card"
     }
   ];
 
@@ -54,7 +56,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
     const loadDemoStory = async () => {
       try {
         const stories = await fetchSuccessStories();
-        // Find Vietnam or use the first available story
         const vietnamStory = stories.find(story => story.country === 'Vietnam');
         const fallbackStory = vietnamStory || stories[0];
         setDemoStoryData(fallbackStory);
@@ -66,7 +67,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
     loadDemoStory();
   }, []);
 
-  // Apply visual effects based on current step
+  // Apply visual effects and demo functionality based on current step
   useEffect(() => {
     const applyHighlights = () => {
       // Remove all existing highlights first
@@ -86,59 +87,37 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         toggle3D.style.background = '';
       }
 
-      const helpButton = document.querySelector('.tutorial-help-button') as HTMLElement;
-      if (helpButton) {
-        helpButton.style.boxShadow = '';
-        helpButton.style.border = '';
-        helpButton.style.borderRadius = '';
-        helpButton.style.background = '';
-      }
-
-      const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
-      if (storyCard) {
-        storyCard.style.boxShadow = '';
-        storyCard.style.border = '';
-        storyCard.style.background = '';
-        storyCard.style.transform = '';
-        storyCard.style.zIndex = '';
-        storyCard.style.top = '';
-        storyCard.style.height = '';
-        storyCard.style.right = '';
-        storyCard.style.position = '';
-        storyCard.classList.remove('tutorial-card-highlight');
-      }
-
       // Apply highlights based on current step
-      if (currentStep === 2) {
-        // Highlight search bar and filter area
+      if (currentStep === 1 && demoStoryData) {
+        // Show demo country for dots step
+        onDemoCountrySelect(demoStoryData);
+      } else if (currentStep === 2) {
+        // Highlight search bar and demonstrate filter
         if (searchBar) {
           searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
           searchBar.style.border = '2px solid #3b82f6';
           searchBar.style.borderRadius = '12px';
           searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
+        
+        // Demonstrate filtering by Electronics sector
+        if (!selectedSectors.includes('Electronics')) {
+          setTimeout(() => {
+            onSectorToggle('Electronics');
+          }, 1000);
+        }
       } else if (currentStep === 3) {
+        // Clear any sector filters from demo
+        if (selectedSectors.length > 0) {
+          selectedSectors.forEach(sector => onSectorToggle(sector));
+        }
+        
         // Highlight 3D toggle button
         if (toggle3D) {
           toggle3D.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.5), 0 8px 24px rgba(16, 185, 129, 0.4)';
           toggle3D.style.border = '2px solid #10b981';
           toggle3D.style.borderRadius = '12px';
           toggle3D.style.background = 'rgba(16, 185, 129, 0.1)';
-        }
-      } else if (currentStep === 4) {
-        // Ensure demo story is visible during card step
-        if (!demoStory && demoStoryData) {
-          onDemoCountrySelect(demoStoryData);
-        }
-        
-        // Position and highlight story card for better visibility during tutorial
-        if (storyCard) {
-          storyCard.classList.add('tutorial-card-highlight');
-          storyCard.style.zIndex = '45'; // Higher than tutorial overlay
-          storyCard.style.top = '120px'; // Position below navbar and tutorial
-          storyCard.style.height = 'calc(100vh - 140px)'; // Adjust height to fit screen
-          storyCard.style.right = '0';
-          storyCard.style.position = 'fixed'; // Ensure it's properly positioned
         }
       }
     };
@@ -162,29 +141,10 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         toggle3D.style.borderRadius = '';
         toggle3D.style.background = '';
       }
-
-      const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
-      if (storyCard) {
-        storyCard.style.boxShadow = '';
-        storyCard.style.border = '';
-        storyCard.style.background = '';
-        storyCard.style.transform = '';
-        storyCard.style.zIndex = '';
-        storyCard.style.top = '';
-        storyCard.style.height = '';
-        storyCard.style.right = '';
-        storyCard.style.position = '';
-        storyCard.classList.remove('tutorial-card-highlight');
-      }
     };
-  }, [currentStep, demoStory, demoStoryData, onDemoCountrySelect]);
+  }, [currentStep, demoStory, demoStoryData, onDemoCountrySelect, selectedSectors, onSectorToggle]);
 
   const handleNext = () => {
-    if (currentStep === 1 && demoStoryData) {
-      // Trigger demo for dots step
-      onDemoCountrySelect(demoStoryData);
-    }
-
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -193,11 +153,20 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
   };
 
   const handleSkip = () => {
+    // Clear any demo filters
+    if (selectedSectors.length > 0) {
+      selectedSectors.forEach(sector => onSectorToggle(sector));
+    }
     onDemoCountrySelect(null);
     handleClose();
   };
 
   const handleClose = () => {
+    // Clear any demo filters when closing
+    if (selectedSectors.length > 0) {
+      selectedSectors.forEach(sector => onSectorToggle(sector));
+    }
+    
     setIsVisible(false);
     setTimeout(() => {
       onClose();
@@ -270,34 +239,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           </div>
         </div>
       </div>
-
-      {/* Enhanced CSS for story card highlighting */}
-      <style>
-        {`
-          .tutorial-card-highlight {
-            animation: tutorial-card-glow 2s ease-in-out infinite alternate !important;
-            border: 4px solid #9333ea !important;
-            box-shadow: 0 0 0 6px rgba(147, 51, 234, 0.3), 
-                        0 0 30px rgba(147, 51, 234, 0.5),
-                        0 20px 60px rgba(147, 51, 234, 0.3) !important;
-            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(147, 51, 234, 0.1)) !important;
-            transform: scale(1.02) !important;
-          }
-          
-          @keyframes tutorial-card-glow {
-            from {
-              box-shadow: 0 0 0 6px rgba(147, 51, 234, 0.3), 
-                          0 0 30px rgba(147, 51, 234, 0.5),
-                          0 20px 60px rgba(147, 51, 234, 0.3);
-            }
-            to {
-              box-shadow: 0 0 0 8px rgba(147, 51, 234, 0.5), 
-                          0 0 40px rgba(147, 51, 234, 0.7),
-                          0 25px 80px rgba(147, 51, 234, 0.4);
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
