@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,9 +80,9 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       }
 
       // Apply highlights based on current step
-      if (currentStep === 1 && demoStoryData) {
-        // Show demo country for dots step
-        onDemoCountrySelect(demoStoryData);
+      if (currentStep === 1) {
+        // Show global view for dots step - don't zoom into any country
+        onDemoCountrySelect(null);
       } else if (currentStep === 2) {
         // Clear any existing demo selection to show global view for filter demo
         onDemoCountrySelect(null);
@@ -106,7 +107,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           selectedSectors.forEach(sector => onSectorToggle(sector));
         }
         
-        // Show demo story card for case study step
+        // Show demo story card for case study step - NOW zoom into country
         onDemoCountrySelect(demoStoryData);
       }
     };

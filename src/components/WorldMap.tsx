@@ -51,6 +51,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const mapStateInitialized = useRef(false);
   const initialMapStateApplied = useRef(false);
   const dataLoadingRef = useRef(false);
+  const preservedMapState = useRef<{ center: [number, number]; zoom: number } | null>(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
@@ -223,19 +224,26 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return { filteredSingleStories, filteredCountryStories };
   };
 
-  // Handle 3D/2D view toggle
+  // Handle 3D/2D view toggle with improved location preservation
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
     console.log('Switching to', is3DView ? '3D' : '2D', 'view');
     
+    // Store current position before switching
     const currentCenter = map.current.getCenter();
     const currentZoom = map.current.getZoom();
+    preservedMapState.current = { 
+      center: [currentCenter.lng, currentCenter.lat], 
+      zoom: currentZoom 
+    };
+    
+    console.log('Preserving map state:', preservedMapState.current);
     
     if (is3DView) {
-      // Switch to 3D globe - center it properly
+      // Switch to 3D globe
       map.current.setProjection('globe');
-      map.current.setPitch(0); // Set pitch to 0 for better centering
+      map.current.setPitch(0);
       
       // Set fog effects for globe
       map.current.setFog({
@@ -244,11 +252,18 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         'horizon-blend': 0.2,
       });
       
-      // Center the globe properly at equator
-      map.current.setCenter([0, 0]); // Changed to 0,0 for better centering
-      map.current.setZoom(Math.max(1.5, currentZoom));
+      // Remove world boundaries for globe
+      map.current.setMaxBounds(undefined);
+      
+      // Preserve the user's current location when switching to 3D
+      // Constrain longitude to prevent over-rotation
+      const constrainedLng = ((currentCenter.lng % 360) + 360) % 360;
+      const finalLng = constrainedLng > 180 ? constrainedLng - 360 : constrainedLng;
+      
+      map.current.setCenter([finalLng, currentCenter.lat]);
+      map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8))); // Reasonable zoom range for 3D
     } else {
-      // Switch to 2D flat map with boundaries
+      // Switch to 2D flat map
       map.current.setProjection('mercator');
       map.current.setPitch(0);
       
@@ -261,11 +276,12 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         [180, 85]    // Northeast coordinates
       ]);
       
-      // Maintain position but ensure it's within bounds
-      const constrainedLng = Math.max(-180, Math.min(180, currentCenter.lng));
-      const constrainedLat = Math.max(-85, Math.min(85, currentCenter.lat));
+      // Preserve the user's location when switching to 2D
+      const constrainedLng = Math.max(-180, Math.min(180, preservedMapState.current?.center[0] || currentCenter.lng));
+      const constrainedLat = Math.max(-85, Math.min(85, preservedMapState.current?.center[1] || currentCenter.lat));
+      
       map.current.setCenter([constrainedLng, constrainedLat]);
-      map.current.setZoom(currentZoom);
+      map.current.setZoom(preservedMapState.current?.zoom || currentZoom);
     }
     
   }, [is3DView, mapInitialized]);
