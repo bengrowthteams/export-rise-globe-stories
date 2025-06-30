@@ -92,11 +92,11 @@ const Landing = () => {
       selectedSectors
     });
 
-    // Store current map state before any changes
+    // Store current map state before any changes - FIXED: Always store before modal opens
     if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
       const currentState = worldMapRef.current.getCurrentMapState();
       setPreviousMapState(currentState);
-      console.log('Stored current map state:', currentState);
+      console.log('Stored current map state before modal:', currentState);
     }
 
     if (countryStories && countryStories.hasMutipleSectors) {
@@ -184,16 +184,29 @@ const Landing = () => {
   };
 
   const handleCloseSectorModal = () => {
+    // FIXED: Restore previous map state when closing sector modal without selection
+    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
+      console.log('Restoring previous map state from sector modal close:', previousMapState);
+      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+    }
+    
     setShowSectorModal(false);
     setSelectedCountryStories(null);
-    // Clear the temporary story to zoom out
     setSelectedStory(null);
+    setPreviousMapState(null); // Clear the stored state
   };
 
   const handleCloseFilteredSectorModal = () => {
+    // FIXED: Restore previous map state when closing filtered sector modal without selection
+    if (previousMapState && worldMapRef.current && worldMapRef.current.flyToPosition) {
+      console.log('Restoring previous map state from filtered sector modal close:', previousMapState);
+      worldMapRef.current.flyToPosition(previousMapState.center, previousMapState.zoom);
+    }
+    
     setShowFilteredSectorModal(false);
     setSelectedCountryStories(null);
     setSelectedStory(null);
+    setPreviousMapState(null); // Clear the stored state
   };
 
   // Sector filter handlers
@@ -360,22 +373,22 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle - repositioned to avoid overlap */}
-          <div className="absolute top-4 right-32 z-20">
-            <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
-          </div>
-
-          {/* Tutorial Help Button */}
-          <div className="absolute top-4 right-4 z-20">
-            <Button
-              onClick={handleStartTutorial}
-              variant="outline"
-              size="sm"
-              className="bg-white/90 hover:bg-white"
-            >
-              <HelpCircle size={16} className="mr-1" />
-              Tutorial
-            </Button>
+          {/* Map View Toggle and Tutorial Button - repositioned to avoid overlap */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            <div className="tutorial-3d-toggle">
+              <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
+            </div>
+            <div className="tutorial-help-button">
+              <Button
+                onClick={handleStartTutorial}
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white"
+              >
+                <HelpCircle size={16} className="mr-1" />
+                Tutorial
+              </Button>
+            </div>
           </div>
 
           {/* Map - full width and height */}

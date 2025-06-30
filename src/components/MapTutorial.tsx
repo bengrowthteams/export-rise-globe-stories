@@ -19,25 +19,31 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
   const steps = [
     {
       title: "Welcome to the Transformation Atlas",
-      content: "Discover how developing countries achieved remarkable export growth. Let's explore the interactive map together.",
+      content: "Discover how developing countries achieved remarkable export growth. Let's explore the interactive map and its powerful features together.",
       position: "center",
       highlight: null
     },
     {
       title: "Green Dots Mark Success Stories",
-      content: "Each green dot represents a country with a documented transformation story. Click on any dot to explore their journey.",
+      content: "Each green dot represents a country with documented transformation stories. Click on any dot to explore their journey. Countries with multiple sectors show a small orange indicator.",
       position: "left",
       highlight: "dots"
     },
     {
-      title: "Search for Specific Countries",
-      content: "Use the search bar to quickly find countries by name or explore by sector like textiles, electronics, or agriculture.",
+      title: "Search and Filter by Sector",
+      content: "Use the search bar to quickly find countries by name. Click 'Show Filters' to filter stories by specific sectors like textiles, electronics, or agriculture. Filtered markers will display in sector-specific colors.",
       position: "bottom-right",
       highlight: "search"
     },
     {
+      title: "Switch Between 2D and 3D Views",
+      content: "Toggle between a traditional 2D map and an interactive 3D globe using the view toggle button. The 3D globe rotates automatically and provides an immersive exploration experience.",
+      position: "bottom-left",
+      highlight: "3d-toggle"
+    },
+    {
       title: "Detailed Country Insights",
-      content: "Country cards reveal export rankings, growth data, and the story behind each transformation. Click 'View Full Case Study' for comprehensive details about each success story.",
+      content: "Country cards reveal export rankings, growth data, and transformation stories. For countries with multiple sectors, you can browse between different success stories. Click 'View Full Case Study' for comprehensive details.",
       position: "left",
       highlight: "card"
     }
@@ -72,6 +78,22 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         searchBar.style.background = '';
       }
 
+      const toggle3D = document.querySelector('.tutorial-3d-toggle') as HTMLElement;
+      if (toggle3D) {
+        toggle3D.style.boxShadow = '';
+        toggle3D.style.border = '';
+        toggle3D.style.borderRadius = '';
+        toggle3D.style.background = '';
+      }
+
+      const helpButton = document.querySelector('.tutorial-help-button') as HTMLElement;
+      if (helpButton) {
+        helpButton.style.boxShadow = '';
+        helpButton.style.border = '';
+        helpButton.style.borderRadius = '';
+        helpButton.style.background = '';
+      }
+
       const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
       if (storyCard) {
         storyCard.style.boxShadow = '';
@@ -88,7 +110,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
 
       // Apply highlights based on current step
       if (currentStep === 2) {
-        // Highlight search bar
+        // Highlight search bar and filter area
         if (searchBar) {
           searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
           searchBar.style.border = '2px solid #3b82f6';
@@ -96,6 +118,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
           searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
       } else if (currentStep === 3) {
+        // Highlight 3D toggle button
+        if (toggle3D) {
+          toggle3D.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.5), 0 8px 24px rgba(16, 185, 129, 0.4)';
+          toggle3D.style.border = '2px solid #10b981';
+          toggle3D.style.borderRadius = '12px';
+          toggle3D.style.background = 'rgba(16, 185, 129, 0.1)';
+        }
+      } else if (currentStep === 4) {
         // Ensure demo story is visible during card step
         if (!demoStory && demoStoryData) {
           onDemoCountrySelect(demoStoryData);
@@ -123,6 +153,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         searchBar.style.border = '';
         searchBar.style.borderRadius = '';
         searchBar.style.background = '';
+      }
+
+      const toggle3D = document.querySelector('.tutorial-3d-toggle') as HTMLElement;
+      if (toggle3D) {
+        toggle3D.style.boxShadow = '';
+        toggle3D.style.border = '';
+        toggle3D.style.borderRadius = '';
+        toggle3D.style.background = '';
       }
 
       const storyCard = document.querySelector('.tutorial-story-card') as HTMLElement;
@@ -178,6 +216,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({ onClose, onDemoCountrySelect,
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
         currentStepData.position === 'bottom-right' ? 'bottom-8 right-8' :
+        currentStepData.position === 'bottom-left' ? 'bottom-8 left-8' :
         'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
       }`}>
         <div className="flex items-start justify-between mb-4">
