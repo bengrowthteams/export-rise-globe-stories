@@ -1,20 +1,20 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { countryFlags } from '@/data/countryFlags';
+import { formatCurrency } from '../utils/formatUtils';
 
 export interface CaseStudyData {
   id: number;
   country: string;
-  flag: string;
   sector: string;
   successfulProduct: string;
+  flag: string;
   publicSectorSummary: string;
   privateSectorSummary: string;
   externalFactorsSummary: string;
   rank1995: number;
   rank2022: number;
-  initialExports1995: number;
-  currentExports2022: number;
+  initialExports1995: string;
+  currentExports2022: string;
   globalShare1995: number;
   globalShare2022: number;
   outcome: string;
@@ -27,21 +27,14 @@ export interface CaseStudyData {
   sources: string;
 }
 
-const formatCurrency = (amount: number): string => {
-  if (amount >= 1000000000) {
-    return `$${(amount / 1000000000).toFixed(1)}B`;
-  } else if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  } else if (amount >= 1000) {
-    return `$${(amount / 1000).toFixed(1)}K`;
-  }
-  return `$${amount.toLocaleString()}`;
+export const getAvailableCaseStudyIds = (): number[] => {
+  return [1, 2, 3, 4, 5]; // First 5 rows only
 };
 
 export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyData | null> => {
   try {
-    console.log('Fetching case study data for primary key:', primaryKey);
-    
+    console.log(`Fetching case study data for primary key: ${primaryKey}`);
+
     const { data, error } = await supabase
       .from('Country Data')
       .select('*')
@@ -49,51 +42,48 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
       .single();
 
     if (error) {
-      console.error('Error fetching case study data:', error);
+      console.error('Supabase error:', error);
       return null;
     }
 
     if (!data) {
-      console.warn('No data found for primary key:', primaryKey);
+      console.log('No data found for primary key:', primaryKey);
       return null;
     }
 
-    console.log('Raw case study data:', data);
+    console.log('Raw data from Supabase:', data);
 
-    const country = data.Country || 'Unknown Country';
-    const flag = countryFlags[country] || '🌍';
-
-    return {
+    // Transform the database row into our CaseStudyData interface
+    const caseStudyData: CaseStudyData = {
       id: data['Primary key'],
-      country,
-      flag,
+      country: data.Country || 'Unknown Country',
       sector: data.Sector || 'Unknown Sector',
-      successfulProduct: data['Successful product'] || 'Unknown Product',
-      publicSectorSummary: data['Public Sector - One Bullet Summary'] || 'No public sector information available.',
-      privateSectorSummary: data['Private Sector - One Bullet Summary'] || 'No private sector information available.',
-      externalFactorsSummary: data['External Factors - One Bullet Summary'] || 'No external factors information available.',
+      successfulProduct: data['Successful product'] || 'Not specified',
+      flag: countryFlags[data.Country || ''] || '🌍',
+      publicSectorSummary: data['Public Sector - One Bullet Summary'] || 'Public sector information not available.',
+      privateSectorSummary: data['Private Sector - One Bullet Summary'] || 'Private sector information not available.',
+      externalFactorsSummary: data['External Factors - One Bullet Summary'] || 'External factors information not available.',
       rank1995: data['Rank (1995)'] || 0,
       rank2022: data['Rank (2022)'] || 0,
-      initialExports1995: data['Initial Exports - 1995 (USD)'] || 0,
-      currentExports2022: data['Current Exports - 2022 (USD)'] || 0,
+      initialExports1995: formatCurrency(data['Initial Exports - 1995 (USD)'] || 0),
+      currentExports2022: formatCurrency(data['Current Exports - 2022 (USD)'] || 0),
       globalShare1995: data['Global Share 1995 - %'] || 0,
       globalShare2022: data['Global Share 2022 - %'] || 0,
-      outcome: data.Outcome || 'No outcome information available.',
-      publicSectorPolicy: data['Public Sector Policy'] || 'No policy information available.',
-      publicSectorActor: data['Public Sector Actor'] || 'No actor information available.',
-      privateSectorPioneeringFirm: data['Private Sector Pioneering Firm'] || 'No pioneering firm information available.',
-      privateSectorIndustryGrowth: data['Private Sector Industry Growth'] || 'No industry growth information available.',
-      externalMarketFactors: data['External Market Factors'] || 'No external market factors information available.',
-      externalActorContribution: data['External Actor Contribution'] || 'No external actor contribution information available.',
-      sources: data.Sources || 'No sources available.'
+      outcome: data.Outcome || 'Outcome information not available.',
+      publicSectorPolicy: data['Public Sector Policy'] || 'Public sector policy information not available.',
+      publicSectorActor: data['Public Sector Actor'] || 'Public sector actor information not available.',
+      privateSectorPioneeringFirm: data['Private Sector Pioneering Firm'] || 'Private sector pioneering firm information not available.',
+      privateSectorIndustryGrowth: data['Private Sector Industry Growth'] || 'Private sector industry growth information not available.',
+      externalMarketFactors: data['External Market Factors'] || 'External market factors information not available.',
+      externalActorContribution: data['External Actor Contribution'] || 'External actor contribution information not available.',
+      sources: data.Sources || 'Sources not available.'
     };
+
+    console.log('Transformed case study data:', caseStudyData);
+    return caseStudyData;
+
   } catch (error) {
-    console.error('Failed to fetch case study data:', error);
+    console.error('Error fetching case study data:', error);
     return null;
   }
-};
-
-// Get available case study IDs (first 5 rows)
-export const getAvailableCaseStudyIds = (): number[] => {
-  return [1, 2, 3, 4, 5];
 };
