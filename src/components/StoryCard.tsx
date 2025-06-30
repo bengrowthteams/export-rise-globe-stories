@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,8 @@ const LegacyStoryCard: React.FC<{
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
 }> = ({ story, onClose, onReadMore }) => {
+  const navigate = useNavigate();
+
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
     if (numAmount >= 1000000000) {
@@ -69,6 +72,14 @@ const LegacyStoryCard: React.FC<{
     const availableIds = getAvailableCaseStudyIds();
     const storyId = parseInt(story.id);
     return availableIds.includes(storyId);
+  };
+
+  const handleViewCaseStudy = () => {
+    if (hasEnhancedCaseStudy()) {
+      navigate(`/enhanced-case-study/${story.id}`);
+    } else {
+      onReadMore(story);
+    }
   };
 
   const rankingGain = calculateRankingGain(story.globalRanking1995, story.globalRanking2022);
@@ -165,7 +176,7 @@ const LegacyStoryCard: React.FC<{
 
         {/* Read More Button */}
         <Button 
-          onClick={() => onReadMore(story)}
+          onClick={handleViewCaseStudy}
           className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
@@ -185,6 +196,8 @@ const MultiSectorStoryCard: React.FC<{
   onReadMore: (story: SuccessStory) => void;
   onSectorChange?: (sector: SectorStory) => void;
 }> = ({ countryStories, selectedSector, onClose, onReadMore, onSectorChange }) => {
+  const navigate = useNavigate();
+
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
     if (numAmount >= 1000000000) {
@@ -228,6 +241,14 @@ const MultiSectorStoryCard: React.FC<{
     const availableIds = getAvailableCaseStudyIds();
     const storyId = parseInt(countryStories.id);
     return availableIds.includes(storyId);
+  };
+
+  const handleViewCaseStudy = () => {
+    if (hasEnhancedCaseStudy()) {
+      navigate(`/enhanced-case-study/${countryStories.id}`);
+    } else {
+      onReadMore(convertToLegacyStory());
+    }
   };
 
   const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
@@ -347,7 +368,7 @@ const MultiSectorStoryCard: React.FC<{
 
         {/* Read More Button */}
         <Button 
-          onClick={() => onReadMore(convertToLegacyStory())}
+          onClick={handleViewCaseStudy}
           className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
