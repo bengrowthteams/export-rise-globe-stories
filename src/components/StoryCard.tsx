@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
+import { getAvailableCaseStudyIds } from '@/services/caseStudyService';
 
 interface StoryCardProps {
   story: SuccessStory | null;
@@ -62,6 +64,13 @@ const LegacyStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
+  // Check if this story has enhanced case study data
+  const hasEnhancedCaseStudy = () => {
+    const availableIds = getAvailableCaseStudyIds();
+    const storyId = parseInt(story.id);
+    return availableIds.includes(storyId);
+  };
+
   const rankingGain = calculateRankingGain(story.globalRanking1995, story.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
@@ -85,6 +94,19 @@ const LegacyStoryCard: React.FC<{
             <X size={20} />
           </button>
         </div>
+
+        {/* Enhanced Case Study Badge */}
+        {hasEnhancedCaseStudy() && (
+          <div className="mb-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-sm font-medium text-blue-800">Enhanced Case Study Available</span>
+              </div>
+              <p className="text-xs text-blue-600 mt-1">Detailed analysis with professional insights</p>
+            </div>
+          </div>
+        )}
 
         {/* Global Ranking Gain */}
         <div className="mb-6">
@@ -144,10 +166,10 @@ const LegacyStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={() => onReadMore(story)}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
-          View Full Case Study
+          {hasEnhancedCaseStudy() ? 'View Enhanced Case Study' : 'View Full Case Study'}
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
@@ -201,6 +223,13 @@ const MultiSectorStoryCard: React.FC<{
     successStorySummary: selectedSector.successStorySummary
   });
 
+  // Check if this story has enhanced case study data
+  const hasEnhancedCaseStudy = () => {
+    const availableIds = getAvailableCaseStudyIds();
+    const storyId = parseInt(countryStories.id);
+    return availableIds.includes(storyId);
+  };
+
   const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
@@ -224,6 +253,19 @@ const MultiSectorStoryCard: React.FC<{
             <X size={20} />
           </button>
         </div>
+
+        {/* Enhanced Case Study Badge */}
+        {hasEnhancedCaseStudy() && (
+          <div className="mb-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-sm font-medium text-blue-800">Enhanced Case Study Available</span>
+              </div>
+              <p className="text-xs text-blue-600 mt-1">Detailed analysis with professional insights</p>
+            </div>
+          </div>
+        )}
 
         {/* Sector Navigation */}
         {countryStories.sectors.length > 1 && onSectorChange && (
@@ -306,10 +348,10 @@ const MultiSectorStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={() => onReadMore(convertToLegacyStory())}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
-          View Full Case Study
+          {hasEnhancedCaseStudy() ? 'View Enhanced Case Study' : 'View Full Case Study'}
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
