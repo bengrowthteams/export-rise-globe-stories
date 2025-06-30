@@ -13,37 +13,73 @@ export type Database = {
         Row: {
           Country: string | null
           "Current Exports - 2022 (USD)": number | null
+          "External Actor Contribution": string | null
+          "External Factors - One Bullet Summary": string | null
+          "External Market Factors": string | null
           "Global Share 1995 - %": number | null
           "Global Share 2022 - %": number | null
           "Initial Exports - 1995 (USD)": number | null
+          Outcome: string | null
+          "Primary key": number
+          "Private Sector - One Bullet Summary": string | null
+          "Private Sector Industry Growth": string | null
+          "Private Sector Pioneering Firm": string | null
+          "Public Sector - One Bullet Summary": string | null
+          "Public Sector Actor": string | null
+          "Public Sector Policy": string | null
           "Rank (1995)": number | null
           "Rank (2022)": number | null
           "Ranks Change (absolute)": number | null
           Sector: string | null
+          Sources: string | null
           "Successful product": string | null
         }
         Insert: {
           Country?: string | null
           "Current Exports - 2022 (USD)"?: number | null
+          "External Actor Contribution"?: string | null
+          "External Factors - One Bullet Summary"?: string | null
+          "External Market Factors"?: string | null
           "Global Share 1995 - %"?: number | null
           "Global Share 2022 - %"?: number | null
           "Initial Exports - 1995 (USD)"?: number | null
+          Outcome?: string | null
+          "Primary key"?: number
+          "Private Sector - One Bullet Summary"?: string | null
+          "Private Sector Industry Growth"?: string | null
+          "Private Sector Pioneering Firm"?: string | null
+          "Public Sector - One Bullet Summary"?: string | null
+          "Public Sector Actor"?: string | null
+          "Public Sector Policy"?: string | null
           "Rank (1995)"?: number | null
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
+          Sources?: string | null
           "Successful product"?: string | null
         }
         Update: {
           Country?: string | null
           "Current Exports - 2022 (USD)"?: number | null
+          "External Actor Contribution"?: string | null
+          "External Factors - One Bullet Summary"?: string | null
+          "External Market Factors"?: string | null
           "Global Share 1995 - %"?: number | null
           "Global Share 2022 - %"?: number | null
           "Initial Exports - 1995 (USD)"?: number | null
+          Outcome?: string | null
+          "Primary key"?: number
+          "Private Sector - One Bullet Summary"?: string | null
+          "Private Sector Industry Growth"?: string | null
+          "Private Sector Pioneering Firm"?: string | null
+          "Public Sector - One Bullet Summary"?: string | null
+          "Public Sector Actor"?: string | null
+          "Public Sector Policy"?: string | null
           "Rank (1995)"?: number | null
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
+          Sources?: string | null
           "Successful product"?: string | null
         }
         Relationships: []

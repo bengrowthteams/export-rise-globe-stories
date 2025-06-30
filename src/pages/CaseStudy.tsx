@@ -1,7 +1,7 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { successStories } from '../data/successStories';
+import { getAvailableCaseStudyIds } from '../services/caseStudyService';
 import CaseStudyHeader from '../components/case-study/CaseStudyHeader';
 import TransformationOverview from '../components/case-study/TransformationOverview';
 import SuccessStorySummary from '../components/case-study/SuccessStorySummary';
@@ -14,6 +14,17 @@ import FurtherReadingSection from '../components/case-study/FurtherReadingSectio
 const CaseStudy = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // Check if this ID should use the enhanced version
+  useEffect(() => {
+    const primaryKey = parseInt(id || '0');
+    const availableIds = getAvailableCaseStudyIds();
+    
+    if (availableIds.includes(primaryKey)) {
+      navigate(`/enhanced-case-study/${id}`, { replace: true });
+      return;
+    }
+  }, [id, navigate]);
   
   const story = successStories.find(s => s.id === id);
 
