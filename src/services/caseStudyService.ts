@@ -1,6 +1,6 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { countryFlags } from '@/data/countryFlags';
-import { formatCurrency } from '../utils/formatUtils';
 
 export interface CaseStudyData {
   id: number;
@@ -13,8 +13,8 @@ export interface CaseStudyData {
   externalFactorsSummary: string;
   rank1995: number;
   rank2022: number;
-  initialExports1995: string;
-  currentExports2022: string;
+  initialExports1995: number;
+  currentExports2022: number;
   globalShare1995: number;
   globalShare2022: number;
   outcome: string;
@@ -65,8 +65,8 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
       externalFactorsSummary: data['External Factors - One Bullet Summary'] || 'External factors information not available.',
       rank1995: data['Rank (1995)'] || 0,
       rank2022: data['Rank (2022)'] || 0,
-      initialExports1995: formatCurrency(data['Initial Exports - 1995 (USD)'] || 0),
-      currentExports2022: formatCurrency(data['Current Exports - 2022 (USD)'] || 0),
+      initialExports1995: data['Initial Exports - 1995 (USD)'] || 0,
+      currentExports2022: data['Current Exports - 2022 (USD)'] || 0,
       globalShare1995: data['Global Share 1995 - %'] || 0,
       globalShare2022: data['Global Share 2022 - %'] || 0,
       outcome: data.Outcome || 'Outcome information not available.',
