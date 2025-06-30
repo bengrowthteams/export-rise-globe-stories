@@ -373,8 +373,8 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle and Tutorial Button - repositioned to avoid overlap */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          {/* Map View Toggle and Tutorial Button - moved further right to avoid zoom controls overlap */}
+          <div className="absolute top-4 right-20 z-20 flex items-center gap-2">
             <div className="tutorial-3d-toggle">
               <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
             </div>

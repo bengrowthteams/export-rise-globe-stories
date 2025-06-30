@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,16 +37,16 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       highlight: "dots"
     },
     {
-      title: "Search and Filter by Sector",
-      content: "Use the search bar to find countries quickly. Try filtering by 'Electronics' to see only electronics success stories. Notice how markers change color by sector!",
+      title: "Filter by Sector",
+      content: "Use the sector filter to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories. Notice how markers change color by sector!",
       position: "bottom-right",
       highlight: "search"
     },
     {
-      title: "Interactive Map Views",
-      content: "Switch between 2D and 3D globe views using the toggle button. The 3D globe rotates automatically and provides an immersive exploration experience.",
-      position: "bottom-left",
-      highlight: "3d-toggle"
+      title: "Story Cards & Case Studies",
+      content: "When you select a country, a detailed story card appears showing key outcomes and transformation details. Click 'View Full Case Study' to dive deeper into their complete journey.",
+      position: "right",
+      highlight: "story-card"
     }
   ];
 
@@ -79,19 +78,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
         searchBar.style.background = '';
       }
 
-      const toggle3D = document.querySelector('.tutorial-3d-toggle') as HTMLElement;
-      if (toggle3D) {
-        toggle3D.style.boxShadow = '';
-        toggle3D.style.border = '';
-        toggle3D.style.borderRadius = '';
-        toggle3D.style.background = '';
-      }
-
       // Apply highlights based on current step
       if (currentStep === 1 && demoStoryData) {
         // Show demo country for dots step
         onDemoCountrySelect(demoStoryData);
       } else if (currentStep === 2) {
+        // Clear any existing demo selection to show global view for filter demo
+        onDemoCountrySelect(null);
+        
         // Highlight search bar and demonstrate filter
         if (searchBar) {
           searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
@@ -106,19 +100,14 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
             onSectorToggle('Electronics');
           }, 1000);
         }
-      } else if (currentStep === 3) {
+      } else if (currentStep === 3 && demoStoryData) {
         // Clear any sector filters from demo
         if (selectedSectors.length > 0) {
           selectedSectors.forEach(sector => onSectorToggle(sector));
         }
         
-        // Highlight 3D toggle button
-        if (toggle3D) {
-          toggle3D.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.5), 0 8px 24px rgba(16, 185, 129, 0.4)';
-          toggle3D.style.border = '2px solid #10b981';
-          toggle3D.style.borderRadius = '12px';
-          toggle3D.style.background = 'rgba(16, 185, 129, 0.1)';
-        }
+        // Show demo story card for case study step
+        onDemoCountrySelect(demoStoryData);
       }
     };
 
@@ -132,14 +121,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
         searchBar.style.border = '';
         searchBar.style.borderRadius = '';
         searchBar.style.background = '';
-      }
-
-      const toggle3D = document.querySelector('.tutorial-3d-toggle') as HTMLElement;
-      if (toggle3D) {
-        toggle3D.style.boxShadow = '';
-        toggle3D.style.border = '';
-        toggle3D.style.borderRadius = '';
-        toggle3D.style.background = '';
       }
     };
   }, [currentStep, demoStory, demoStoryData, onDemoCountrySelect, selectedSectors, onSectorToggle]);
