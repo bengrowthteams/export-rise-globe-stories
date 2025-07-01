@@ -26,7 +26,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
 
   const steps = [
     {
-      title: "Welcome to the Sector Transformation Atlas",
+      title: "Welcome to the Transformation Atlas",
       content: "Discover how countries achieved rapid export growth. This interactive map shows success stories across different sectors.",
       position: "center",
       highlight: null
