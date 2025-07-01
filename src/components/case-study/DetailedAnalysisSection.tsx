@@ -22,17 +22,28 @@ const DetailedAnalysisSection = ({
 }: DetailedAnalysisSectionProps) => {
   
   const formatBulletPoints = (text: string) => {
-    // Only format if text contains bullets (●)
+    // Only format if text contains bullets (●) - don't add bullets where they don't exist
     if (text.includes('●')) {
-      return text.split('●').map((point, index) => {
-        if (index === 0 && !point.trim()) return null;
-        return (
-          <div key={index} className="flex items-start mb-2">
-            <span className="text-gray-600 mr-2 mt-1">●</span>
-            <span className="flex-1">{point.trim()}</span>
-          </div>
-        );
-      }).filter(Boolean);
+      const parts = text.split('●');
+      const firstPart = parts[0].trim();
+      const bulletParts = parts.slice(1);
+      
+      return (
+        <div>
+          {/* First part without bullet if it exists */}
+          {firstPart && <p className="mb-3">{firstPart}</p>}
+          {/* Bullet points */}
+          {bulletParts.map((point, index) => {
+            if (!point.trim()) return null;
+            return (
+              <div key={index} className="flex items-start mb-2">
+                <span className="text-gray-600 mr-2 mt-1">●</span>
+                <span className="flex-1">{point.trim()}</span>
+              </div>
+            );
+          }).filter(Boolean)}
+        </div>
+      );
     }
     // If no bullets, return as regular paragraph
     return <p>{text}</p>;

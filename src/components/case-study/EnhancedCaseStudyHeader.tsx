@@ -86,17 +86,17 @@ const EnhancedCaseStudyHeader = ({
         <div className="flex items-start space-x-6">
           <div className="text-8xl drop-shadow-lg">{flag}</div>
           <div className="flex-1">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               {country} <span className="text-gray-600">/</span> {sector}
             </h1>
             <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-white/50 mb-4">
-              <p className="text-xl text-gray-700">
+              <p className="text-lg text-gray-700">
                 <span className="font-semibold" style={{ color: sectorColor }}>Successful Product:</span> {successfulProduct}
               </p>
             </div>
             
             {/* Performance Stats - Inline */}
-            <div className="flex flex-wrap gap-6 text-sm">
+            <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
                 <Award className="text-orange-600" size={16} />
                 <div>
