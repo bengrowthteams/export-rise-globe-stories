@@ -14,73 +14,38 @@ interface CaseStudyHeaderProps {
 
 const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateBack }: CaseStudyHeaderProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleReturnToMap = () => {
-    console.log('Return to Map clicked - checking for saved state...');
+    console.log('Return to Map clicked - using simplified approach');
     
-    // Try to get map state from multiple sources
-    let mapParams = '';
+    // Get saved state from session storage (set when navigating to case study)
+    const savedMapState = sessionStorage.getItem('mapState');
+    const savedFilters = sessionStorage.getItem('selectedSectors');
+    const savedScrollPosition = sessionStorage.getItem('mapScrollPosition');
+    
     let navigationState = {};
     
-    // Priority 1: URL parameters (most reliable)
-    const currentUrlParams = new URLSearchParams(location.search);
-    const lat = currentUrlParams.get('lat');
-    const lng = currentUrlParams.get('lng');
-    const zoom = currentUrlParams.get('zoom');
-    const scrollPos = currentUrlParams.get('scroll');
-    
-    if (lat && lng && zoom) {
-      mapParams = `?lat=${lat}&lng=${lng}&zoom=${zoom}&from=case-study`;
-      navigationState = {
-        mapState: {
-          center: [parseFloat(lng), parseFloat(lat)],
-          zoom: parseFloat(zoom)
-        },
-        scrollPosition: scrollPos ? parseInt(scrollPos) : 0,
-        returnedFromCaseStudy: true,
-        timestamp: Date.now()
-      };
-      console.log('Using URL parameters for return navigation:', navigationState);
-    }
-    
-    // Priority 2: React Router state
-    else if (location.state?.mapState) {
-      const mapState = location.state.mapState;
-      mapParams = `?lat=${mapState.center[1]}&lng=${mapState.center[0]}&zoom=${mapState.zoom}&from=case-study`;
-      navigationState = {
-        mapState: mapState,
-        scrollPosition: location.state.scrollPosition || 0,
-        returnedFromCaseStudy: true,
-        timestamp: Date.now()
-      };
-      console.log('Using router state for return navigation:', navigationState);
-    }
-    
-    // Priority 3: Session storage fallback
-    else {
-      const savedMapState = sessionStorage.getItem('mapState');
-      const savedScroll = sessionStorage.getItem('mapScrollPosition');
-      
-      if (savedMapState) {
-        try {
-          const parsedState = JSON.parse(savedMapState);
-          mapParams = `?lat=${parsedState.center[1]}&lng=${parsedState.center[0]}&zoom=${parsedState.zoom}&from=case-study`;
-          navigationState = {
-            mapState: parsedState,
-            scrollPosition: savedScroll ? parseInt(savedScroll) : 0,
-            returnedFromCaseStudy: true,
-            timestamp: Date.now()
-          };
-          console.log('Using session storage for return navigation:', navigationState);
-        } catch (error) {
-          console.error('Failed to parse saved map state:', error);
-        }
+    if (savedMapState) {
+      try {
+        const mapState = JSON.parse(savedMapState);
+        const filters = savedFilters ? JSON.parse(savedFilters) : [];
+        
+        navigationState = {
+          mapState: mapState,
+          selectedSectors: filters,
+          scrollPosition: savedScrollPosition ? parseInt(savedScrollPosition) : 0,
+          returnedFromCaseStudy: true,
+          timestamp: Date.now()
+        };
+        
+        console.log('Restoring complete state:', navigationState);
+      } catch (error) {
+        console.error('Failed to parse saved state:', error);
       }
     }
 
-    // Navigate back to map with preserved state
-    navigate(`/${mapParams}`, {
+    // Use simple navigation approach (like the working error button)
+    navigate('/', {
       state: navigationState,
       replace: false
     });
@@ -88,7 +53,7 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
 
   return (
     <>
-      {/* Sticky Return Button - Enhanced responsive design */}
+      {/* Sticky Return Button - Fixed responsive positioning */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <Button 
@@ -102,7 +67,7 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
         </div>
       </div>
 
-      {/* Main Header Content - Responsive improvements */}
+      {/* Main Header Content - Fixed responsive positioning */}
       <div className="bg-white shadow-sm border-b pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">

@@ -28,7 +28,6 @@ const Landing = () => {
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [is3DView, setIs3DView] = useState(false);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [isRestoringFromCaseStudy, setIsRestoringFromCaseStudy] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -36,72 +35,34 @@ const Landing = () => {
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Enhanced map state restoration with better handling of return from case study
+  // Enhanced state restoration with filter support
   React.useEffect(() => {
-    const restoreMapState = async () => {
-      let restoredState = null;
-      let shouldScrollToMap = false;
+    const restoreCompleteState = async () => {
+      console.log('Checking for state to restore...');
       
-      // Priority 1: URL parameters (from case study return)
-      const urlParams = new URLSearchParams(location.search);
-      const lat = urlParams.get('lat');
-      const lng = urlParams.get('lng');
-      const zoom = urlParams.get('zoom');
-      const fromCaseStudy = urlParams.get('from') === 'case-study';
-      
-      if (lat && lng && zoom) {
-        restoredState = {
-          center: [parseFloat(lng), parseFloat(lat)] as [number, number],
-          zoom: parseFloat(zoom)
-        };
-        shouldScrollToMap = fromCaseStudy;
-        console.log('Restored map state from URL params:', restoredState);
+      // Priority 1: React Router state (from case study return)
+      if (location.state?.returnedFromCaseStudy) {
+        const state = location.state;
+        console.log('Restoring state from router:', state);
         
-        // Clean up URL but preserve necessary state
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({ fromCaseStudy }, '', cleanUrl);
-      }
-      
-      // Priority 2: React Router state
-      else if (location.state?.mapState) {
-        restoredState = location.state.mapState;
-        shouldScrollToMap = location.state?.returnedFromCaseStudy || false;
-        console.log('Restored map state from router state:', restoredState);
-      }
-      
-      // Priority 3: Session storage fallback
-      else {
-        const savedMapState = sessionStorage.getItem('mapState');
-        const savedScrollPos = sessionStorage.getItem('mapScrollPosition');
-        if (savedMapState) {
-          try {
-            const parsed = JSON.parse(savedMapState);
-            restoredState = parsed;
-            shouldScrollToMap = !!savedScrollPos;
-            console.log('Restored map state from session storage:', restoredState);
-          } catch (error) {
-            console.error('Failed to parse saved map state:', error);
-          }
+        // Restore map state
+        if (state.mapState) {
+          setMapState(state.mapState);
+          console.log('Restored map state:', state.mapState);
         }
-      }
-
-      // Apply restored state
-      if (restoredState && 
-          restoredState.center && restoredState.zoom && 
-          restoredState.center[0] >= -180 && restoredState.center[0] <= 180 &&
-          restoredState.center[1] >= -85 && restoredState.center[1] <= 85 &&
-          restoredState.zoom >= 1 && restoredState.zoom <= 20) {
         
-        setIsRestoringFromCaseStudy(true);
-        setMapState(restoredState);
+        // Restore filter state
+        if (state.selectedSectors) {
+          setSelectedSectors(state.selectedSectors);
+          console.log('Restored filters:', state.selectedSectors);
+        }
         
-        // Handle scroll restoration for seamless return
-        if (shouldScrollToMap) {
-          // Wait for map to be ready then scroll to it
+        // Handle scroll restoration
+        if (state.scrollPosition && state.scrollPosition > 0) {
           setTimeout(() => {
             const mapSection = document.getElementById('map-section');
             if (mapSection) {
-              const navHeight = 56; // Navigation bar height
+              const navHeight = 56;
               const elementPosition = mapSection.offsetTop;
               const offsetPosition = elementPosition - navHeight;
               
@@ -111,21 +72,45 @@ const Landing = () => {
               });
               console.log('Scrolled to map section after case study return');
             }
-            
-            // Clear restoration flag
-            setTimeout(() => {
-              setIsRestoringFromCaseStudy(false);
-            }, 1000);
-          }, 200);
+          }, 300);
         }
         
-        // Clean up session storage
-        sessionStorage.removeItem('mapScrollPosition');
-        sessionStorage.removeItem('mapState');
+        // Clean up state
+        window.history.replaceState({}, '', window.location.pathname);
+        return;
       }
+      
+      // Priority 2: Session storage fallback
+      const savedMapState = sessionStorage.getItem('mapState');
+      const savedFilters = sessionStorage.getItem('selectedSectors');
+      
+      if (savedMapState) {
+        try {
+          const parsedMapState = JSON.parse(savedMapState);
+          setMapState(parsedMapState);
+          console.log('Restored map state from session storage:', parsedMapState);
+        } catch (error) {
+          console.error('Failed to parse saved map state:', error);
+        }
+      }
+      
+      if (savedFilters) {
+        try {
+          const parsedFilters = JSON.parse(savedFilters);
+          setSelectedSectors(parsedFilters);
+          console.log('Restored filters from session storage:', parsedFilters);
+        } catch (error) {
+          console.error('Failed to parse saved filters:', error);
+        }
+      }
+      
+      // Clean up session storage after restoration
+      sessionStorage.removeItem('mapState');
+      sessionStorage.removeItem('selectedSectors');
+      sessionStorage.removeItem('mapScrollPosition');
     };
 
-    restoreMapState();
+    restoreCompleteState();
   }, [location]);
 
   const handleStoriesLoaded = useCallback((stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
@@ -291,74 +276,43 @@ const Landing = () => {
     setShowSectorFilter(true);
   };
 
-  // Enhanced handleReadMore with comprehensive state preservation
+  // Enhanced handleReadMore with comprehensive state preservation including filters
   const handleReadMore = (story: SuccessStory) => {
     // Save current scroll position
     const currentScrollY = window.scrollY;
-    sessionStorage.setItem('mapScrollPosition', currentScrollY.toString());
     console.log('Saving scroll position:', currentScrollY);
     
-    // Get and save current map state with enhanced data
+    // Get and save current map state
+    let currentMapState = null;
     if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
-      const currentMapState = worldMapRef.current.getCurrentMapState();
-      if (currentMapState) {
-        const enhancedState = {
-          ...currentMapState,
-          timestamp: Date.now(),
-          fromStoryId: story.id,
-          scrollPosition: currentScrollY
-        };
-        
-        // Save to multiple sources for reliability
-        sessionStorage.setItem('mapState', JSON.stringify(enhancedState));
-        localStorage.setItem('lastMapState', JSON.stringify(enhancedState));
-        
-        console.log('Saving comprehensive map state before case study navigation:', enhancedState);
-        
-        // Navigate with enhanced URL parameters
-        const urlParams = new URLSearchParams({
-          lat: currentMapState.center[1].toString(),
-          lng: currentMapState.center[0].toString(),
-          zoom: currentMapState.zoom.toString(),
-          from: 'map',
-          scroll: currentScrollY.toString()
-        });
-        
-        navigate(`/case-study/${story.id}?${urlParams.toString()}`, {
-          state: {
-            mapState: currentMapState,
-            scrollPosition: currentScrollY,
-            returnPath: '/',
-            timestamp: Date.now()
-          }
-        });
-      }
+      currentMapState = worldMapRef.current.getCurrentMapState();
     } else if (mapState) {
-      // Fallback to stored map state
-      const enhancedState = {
-        ...mapState,
-        timestamp: Date.now(),
-        fromStoryId: story.id,
-        scrollPosition: currentScrollY
-      };
-      
-      sessionStorage.setItem('mapState', JSON.stringify(enhancedState));
-      localStorage.setItem('lastMapState', JSON.stringify(enhancedState));
-      
-      console.log('Saving fallback map state before case study navigation:', enhancedState);
-      
-      navigate(`/case-study/${story.id}`, {
-        state: {
-          mapState: mapState,
-          scrollPosition: currentScrollY,
-          returnPath: '/',
-          timestamp: Date.now()
-        }
-      });
-    } else {
-      // Last resort - navigate without state
-      navigate(`/case-study/${story.id}`);
+      currentMapState = mapState;
     }
+    
+    if (currentMapState) {
+      // Save comprehensive state to session storage
+      sessionStorage.setItem('mapState', JSON.stringify({
+        ...currentMapState,
+        timestamp: Date.now(),
+        fromStoryId: story.id
+      }));
+      
+      // Save filter state
+      sessionStorage.setItem('selectedSectors', JSON.stringify(selectedSectors));
+      
+      // Save scroll position
+      sessionStorage.setItem('mapScrollPosition', currentScrollY.toString());
+      
+      console.log('Saving comprehensive state before case study navigation:', {
+        mapState: currentMapState,
+        selectedSectors,
+        scrollPosition: currentScrollY
+      });
+    }
+
+    // Navigate to case study
+    navigate(`/case-study/${story.id}`);
   };
 
   const handleTutorialDemo = (story: SuccessStory | null) => {
@@ -378,12 +332,8 @@ const Landing = () => {
   };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
-    // Only update state if not in restoration mode
-    if (!isRestoringFromCaseStudy) {
-      const newMapState = { center, zoom };
-      setMapState(newMapState);
-      console.log('Map state changed:', newMapState);
-    }
+    const newMapState = { center, zoom };
+    setMapState(newMapState);
   };
 
   const handleTutorialClose = () => {
@@ -402,7 +352,7 @@ const Landing = () => {
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
       
-      {/* Hero Section - Responsive positioning fixes */}
+      {/* Hero Section - Fixed responsive positioning */}
       <div className="min-h-screen relative overflow-hidden pt-14">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -414,7 +364,7 @@ const Landing = () => {
         </div>
 
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
-          <div className="max-w-4xl mx-auto w-full">
+          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">
               Sector Transformation Atlas
             </h1>
@@ -437,10 +387,10 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* Map Section - Responsive improvements */}
+      {/* Map Section - Fixed responsive positioning */}
       <div id="map-section" ref={mapSectionRef} className="h-[calc(100vh-3.5rem)] bg-gray-50">
         <div className="relative h-full">
-          {/* Search Bar and Filter - Responsive positioning */}
+          {/* Search Bar and Filter - Fixed responsive positioning */}
           <div className="absolute top-4 left-2 sm:left-4 z-20 space-y-2 w-[calc(100vw-1rem)] sm:w-auto max-w-[280px] sm:max-w-none">
             <div className="tutorial-search-bar">
               <SearchBar onCountrySelect={handleCountrySelect} />
@@ -474,8 +424,8 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle and Tutorial Button - Responsive positioning */}
-          <div className="absolute top-4 right-2 sm:right-20 z-20 flex items-center gap-2">
+          {/* Map View Toggle and Tutorial Button - Fixed responsive positioning */}
+          <div className="absolute top-4 right-2 sm:right-4 z-20 flex items-center gap-2">
             <div className="tutorial-3d-toggle">
               <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
             </div>
@@ -505,7 +455,7 @@ const Landing = () => {
             />
           </div>
           
-          {/* Story Card Overlay - Responsive improvements */}
+          {/* Story Card Overlay - Fixed responsive positioning */}
           {(selectedStory || (selectedCountryStories && selectedSector)) && (
             <>
               <div 

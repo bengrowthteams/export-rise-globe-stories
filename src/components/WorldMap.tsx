@@ -49,7 +49,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const isFlying = useRef(false);
   const dataLoadingRef = useRef(false);
   const preservedMapState = useRef<{ center: [number, number]; zoom: number } | null>(null);
-  const mapStateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
@@ -122,19 +121,13 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     loadSuccessStories();
   }, []); // Remove onStoriesLoaded from dependencies to prevent infinite loop
 
-  // Debounced map state change handler to prevent flash effect
+  // Simplified map state change handler - no debouncing to eliminate flash effect
   const handleMapStateChange = () => {
-    if (mapStateChangeTimeout.current) {
-      clearTimeout(mapStateChangeTimeout.current);
+    if (map.current && onMapStateChange && !isFlying.current && mapInitialized) {
+      const center = map.current.getCenter();
+      const zoom = map.current.getZoom();
+      onMapStateChange([center.lng, center.lat], zoom);
     }
-    
-    mapStateChangeTimeout.current = setTimeout(() => {
-      if (map.current && onMapStateChange && !isFlying.current && mapInitialized) {
-        const center = map.current.getCenter();
-        const zoom = map.current.getZoom();
-        onMapStateChange([center.lng, center.lat], zoom);
-      }
-    }, 300); // Increased debounce to reduce flash effect
   };
 
   const getCurrentMapState = () => {
