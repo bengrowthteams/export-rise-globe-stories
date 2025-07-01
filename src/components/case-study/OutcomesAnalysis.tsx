@@ -12,13 +12,26 @@ const OutcomesAnalysis = ({ outcome }: OutcomesAnalysisProps) => {
   const parseOutcomeMetrics = (text: string) => {
     const metrics = [];
     
-    // Look for job numbers
-    const jobMatch = text.match(/(\d+(?:,\d+)*(?:\.\d+)?)\s*(?:million|thousand)?\s*(?:direct\s+)?jobs?/i);
+    // Look for job numbers - improved regex to handle "3 million jobs" format
+    const jobMatch = text.match(/(\d+(?:,\d+)*(?:\.\d+)?)\s*(million|thousand)?\s*(?:direct\s+)?jobs?/i);
     if (jobMatch) {
+      let jobValue = jobMatch[1];
+      const multiplier = jobMatch[2];
+      
+      // Format the job value properly
+      if (multiplier && multiplier.toLowerCase() === 'million') {
+        jobValue = `${jobMatch[1]}M`;
+      } else if (multiplier && multiplier.toLowerCase() === 'thousand') {
+        jobValue = `${jobMatch[1]}K`;
+      } else if (jobMatch[1].includes(',')) {
+        // Handle comma-separated numbers
+        jobValue = jobMatch[1];
+      }
+      
       metrics.push({
         icon: Users,
         title: 'Jobs Created',
-        value: jobMatch[1].includes('million') ? `${jobMatch[1]}M` : jobMatch[1],
+        value: jobValue,
         color: 'text-blue-600',
         bgColor: 'bg-blue-50'
       });

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -70,13 +69,16 @@ const LegacyStoryCard: React.FC<{
   // Check if this story has enhanced case study data
   const hasEnhancedCaseStudy = () => {
     const availableIds = getAvailableCaseStudyIds();
-    const storyId = parseInt(story.id);
+    // Handle both string and numeric IDs - convert story.id to number for comparison
+    const storyId = typeof story.id === 'string' ? parseInt(story.id) : story.id;
     return availableIds.includes(storyId);
   };
 
   const handleViewCaseStudy = () => {
     if (hasEnhancedCaseStudy()) {
-      navigate(`/enhanced-case-study/${story.id}`);
+      // Convert string ID to number for navigation
+      const numericId = typeof story.id === 'string' ? parseInt(story.id) : story.id;
+      navigate(`/enhanced-case-study/${numericId}`);
     } else {
       onReadMore(story);
     }
@@ -239,13 +241,16 @@ const MultiSectorStoryCard: React.FC<{
   // Check if this story has enhanced case study data
   const hasEnhancedCaseStudy = () => {
     const availableIds = getAvailableCaseStudyIds();
-    const storyId = parseInt(countryStories.id);
+    // Handle both string and numeric IDs
+    const storyId = typeof countryStories.id === 'string' ? parseInt(countryStories.id) : parseInt(countryStories.id);
     return availableIds.includes(storyId);
   };
 
   const handleViewCaseStudy = () => {
     if (hasEnhancedCaseStudy()) {
-      navigate(`/enhanced-case-study/${countryStories.id}`);
+      // Ensure numeric ID for navigation
+      const numericId = typeof countryStories.id === 'string' ? parseInt(countryStories.id) : countryStories.id;
+      navigate(`/enhanced-case-study/${numericId}`);
     } else {
       onReadMore(convertToLegacyStory());
     }

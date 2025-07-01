@@ -97,18 +97,25 @@ const EnhancedCaseStudy = () => {
           externalFactorsSummary={caseStudyData.externalFactorsSummary}
         />
 
-        <QuantitativeDashboard
-          rank1995={caseStudyData.rank1995}
-          rank2022={caseStudyData.rank2022}
-          initialExports1995={caseStudyData.initialExports1995}
-          currentExports2022={caseStudyData.currentExports2022}
-          globalShare1995={caseStudyData.globalShare1995}
-          globalShare2022={caseStudyData.globalShare2022}
-        />
+        {/* Combined Performance Dashboard and Impact & Outcomes */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Performance Dashboard</h2>
+          
+          <QuantitativeDashboard
+            rank1995={caseStudyData.rank1995}
+            rank2022={caseStudyData.rank2022}
+            initialExports1995={caseStudyData.initialExports1995}
+            currentExports2022={caseStudyData.currentExports2022}
+            globalShare1995={caseStudyData.globalShare1995}
+            globalShare2022={caseStudyData.globalShare2022}
+          />
 
-        <OutcomesAnalysis
-          outcome={caseStudyData.outcome}
-        />
+          <div className="mt-8">
+            <OutcomesAnalysis
+              outcome={caseStudyData.outcome}
+            />
+          </div>
+        </div>
 
         <DetailedAnalysisSection
           publicSectorPolicy={caseStudyData.publicSectorPolicy}

@@ -39,8 +39,6 @@ const QuantitativeDashboard = ({
 
   return (
     <div className="mb-8">
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">Performance Dashboard</h2>
-      
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">

@@ -21,6 +21,36 @@ const DetailedAnalysisSection = ({
   externalActorContribution
 }: DetailedAnalysisSectionProps) => {
   
+  // Function to format text with bullet points
+  const formatTextWithBullets = (text: string) => {
+    // Split text by bullet points and create proper formatting
+    const parts = text.split('●').filter(part => part.trim().length > 0);
+    
+    if (parts.length <= 1) {
+      // No bullet points found, return original text
+      return <p className="text-gray-700 leading-relaxed">{text}</p>;
+    }
+
+    return (
+      <div className="text-gray-700 leading-relaxed">
+        {parts.map((part, index) => (
+          <div key={index} className={index === 0 ? "mb-3" : "mb-2"}>
+            {index === 0 ? (
+              // First part is usually intro text before bullets
+              <p className="mb-3">{part.trim()}</p>
+            ) : (
+              // Subsequent parts are bullet points
+              <div className="flex items-start space-x-2">
+                <span className="text-gray-500 mt-1">●</span>
+                <p className="flex-1">{part.trim()}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const sections = [
     {
       title: 'Public Sector Analysis',
@@ -102,9 +132,7 @@ const DetailedAnalysisSection = ({
                       <subsection.icon size={20} className="mr-2" />
                       <h4 className="text-lg font-semibold">{subsection.title}</h4>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">
-                      {subsection.content}
-                    </p>
+                    {formatTextWithBullets(subsection.content)}
                   </div>
                 ))}
               </div>
