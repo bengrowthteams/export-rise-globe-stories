@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -284,7 +283,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
             {selectedSectors.length > 0 
               ? `Filtered: ${totalCountries} of ${originalTotal} countries` 
-              : `Live data (${totalCountries} countries)`
+              : `2D Map - Live data (${totalCountries} countries)`
             }
           </div>
         </div>
