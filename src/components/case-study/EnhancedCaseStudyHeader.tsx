@@ -115,7 +115,7 @@ const EnhancedCaseStudyHeader = ({
                 <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
                   <TrendingUp className="text-green-600" size={16} />
                   <div>
-                    <span className="font-medium text-green-700">Rank Change:</span>
+                    <span className="font-medium text-green-700">Rank Change ('95-'22):</span>
                     <span className="ml-1 font-bold text-green-900">
                       {rankChange > 0 ? '+' : ''}{rankChange}
                     </span>
@@ -133,7 +133,7 @@ const EnhancedCaseStudyHeader = ({
                 <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
                   <BarChart3 className="text-blue-600" size={16} />
                   <div>
-                    <span className="font-medium text-blue-700">Growth:</span>
+                    <span className="font-medium text-blue-700">Growth ('95-'22):</span>
                     <span className="ml-1 font-bold text-blue-900">{exportGrowthMultiple}x</span>
                   </div>
                 </div>

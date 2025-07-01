@@ -53,7 +53,7 @@ const PerformanceDashboard = ({
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium text-sm">Global Export Ranking ('95-'22)</TableCell>
+                <TableCell className="font-medium text-sm">Global Export Ranking</TableCell>
                 <TableCell className="text-sm">#{rank1995}</TableCell>
                 <TableCell className="text-sm">#{rank2022}</TableCell>
                 <TableCell className={`text-sm font-semibold ${rankChange > 0 ? "text-green-600" : "text-red-600"}`}>
@@ -61,7 +61,7 @@ const PerformanceDashboard = ({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium text-sm">Export Value ('95-'22)</TableCell>
+                <TableCell className="font-medium text-sm">Export Value</TableCell>
                 <TableCell className="text-sm">{formatCurrency(initialExports1995)}</TableCell>
                 <TableCell className="text-sm">{formatCurrency(currentExports2022)}</TableCell>
                 <TableCell className="text-green-600 font-semibold text-sm">
