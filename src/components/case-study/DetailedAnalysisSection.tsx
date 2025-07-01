@@ -22,15 +22,20 @@ const DetailedAnalysisSection = ({
 }: DetailedAnalysisSectionProps) => {
   
   const formatBulletPoints = (text: string) => {
-    return text.split('●').map((point, index) => {
-      if (index === 0 && !point.trim()) return null;
-      return (
-        <div key={index} className="flex items-start mb-2">
-          <span className="text-gray-600 mr-2 mt-1">●</span>
-          <span className="flex-1">{point.trim()}</span>
-        </div>
-      );
-    }).filter(Boolean);
+    // Only format if text contains bullets (●)
+    if (text.includes('●')) {
+      return text.split('●').map((point, index) => {
+        if (index === 0 && !point.trim()) return null;
+        return (
+          <div key={index} className="flex items-start mb-2">
+            <span className="text-gray-600 mr-2 mt-1">●</span>
+            <span className="flex-1">{point.trim()}</span>
+          </div>
+        );
+      }).filter(Boolean);
+    }
+    // If no bullets, return as regular paragraph
+    return <p>{text}</p>;
   };
 
   const sections = [
@@ -115,10 +120,7 @@ const DetailedAnalysisSection = ({
                       <h4 className="text-lg font-semibold">{subsection.title}</h4>
                     </div>
                     <div className="text-gray-700 leading-relaxed">
-                      {subsection.content.includes('●') ? 
-                        formatBulletPoints(subsection.content) : 
-                        <p>{subsection.content}</p>
-                      }
+                      {formatBulletPoints(subsection.content)}
                     </div>
                   </div>
                 ))}

@@ -2,7 +2,6 @@
 import React from 'react';
 import { ArrowLeft, Award, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { getSectorColor } from '@/data/sectorColors';
 import ReturnStateService from '@/services/returnStateService';
@@ -72,100 +71,70 @@ const EnhancedCaseStudyHeader = ({
   const exportGrowthMultiple = (currentExports2022 / initialExports1995).toFixed(1);
 
   return (
-    <>
-      {/* Sticky Return Button */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
-          <Button 
-            onClick={handleReturnToMap}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm font-medium"
-            size="sm"
-          >
-            <ArrowLeft className="mr-2" size={16} />
-            Return to Map
-          </Button>
-        </div>
-      </div>
-
-      {/* New Clean Header Design */}
-      <div className="bg-white pt-16 pb-8 border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          {/* Main Title Section */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <span className="text-6xl">{flag}</span>
-              <div className="text-left">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                  {country}
-                </h1>
-                <p className="text-xl text-gray-600">{sector}</p>
-              </div>
+    <div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${sectorColor}15 0%, ${sectorColor}25 100%)` }}>
+      <div className="absolute inset-0 bg-gradient-to-r from-white/90 to-transparent"></div>
+      <div className="relative max-w-6xl mx-auto px-6 py-8">
+        <Button 
+          variant="ghost" 
+          onClick={handleReturnToMap}
+          className="mb-6 hover:bg-white/20"
+        >
+          <ArrowLeft className="mr-2" size={16} />
+          Return to Map
+        </Button>
+        
+        <div className="flex items-start space-x-6">
+          <div className="text-8xl drop-shadow-lg">{flag}</div>
+          <div className="flex-1">
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+              {country} <span className="text-gray-600">/</span> {sector}
+            </h1>
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-white/50 mb-4">
+              <p className="text-xl text-gray-700">
+                <span className="font-semibold" style={{ color: sectorColor }}>Successful Product:</span> {successfulProduct}
+              </p>
             </div>
             
-            {/* Successful Product Card */}
-            <Card className="max-w-md mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-              <CardContent className="p-4">
-                <p className="text-sm font-medium text-blue-700 mb-1">Success Story</p>
-                <p className="text-lg font-semibold text-gray-900">{successfulProduct}</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Performance Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Award className="text-orange-600" size={24} />
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-orange-700">2022 Global Rank</p>
-                    <p className="text-3xl font-bold text-orange-900">#{rank2022}</p>
-                  </div>
+            {/* Performance Stats - Inline */}
+            <div className="flex flex-wrap gap-6 text-sm">
+              <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <Award className="text-orange-600" size={16} />
+                <div>
+                  <span className="font-medium text-orange-700">2022 Rank:</span>
+                  <span className="ml-1 font-bold text-orange-900">#{rank2022}</span>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <TrendingUp className="text-green-600" size={24} />
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-green-700">Ranking Improvement (1995-2022)</p>
-                    <p className="text-3xl font-bold text-green-900">
-                      {rankChange > 0 ? '+' : ''}{rankChange}
-                    </p>
-                  </div>
+              </div>
+              
+              <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <TrendingUp className="text-green-600" size={16} />
+                <div>
+                  <span className="font-medium text-green-700">Rank Change:</span>
+                  <span className="ml-1 font-bold text-green-900">
+                    {rankChange > 0 ? '+' : ''}{rankChange}
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <DollarSign className="text-purple-600" size={24} />
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-purple-700">Current Exports</p>
-                    <p className="text-3xl font-bold text-purple-900">{formatCurrency(currentExports2022)}</p>
-                  </div>
+              </div>
+              
+              <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <DollarSign className="text-purple-600" size={16} />
+                <div>
+                  <span className="font-medium text-purple-700">Current Exports:</span>
+                  <span className="ml-1 font-bold text-purple-900">{formatCurrency(currentExports2022)}</span>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <BarChart3 className="text-blue-600" size={24} />
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-blue-700">Export Growth (1995-2022)</p>
-                    <p className="text-3xl font-bold text-blue-900">{exportGrowthMultiple}x</p>
-                  </div>
+              </div>
+              
+              <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <BarChart3 className="text-blue-600" size={16} />
+                <div>
+                  <span className="font-medium text-blue-700">Growth:</span>
+                  <span className="ml-1 font-bold text-blue-900">{exportGrowthMultiple}x</span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
