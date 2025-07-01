@@ -25,7 +25,11 @@ class ReturnStateService {
       hasActiveFilters: state.selectedSectors.length > 0
     };
     
-    console.log('ReturnStateService - Saving return state:', returnState);
+    console.log('ReturnStateService - Saving return state with filters:', {
+      ...returnState,
+      hasActiveFilters: returnState.hasActiveFilters,
+      filterCount: state.selectedSectors.length
+    });
     
     // Store in both session storage and local storage for reliability
     sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(returnState));
@@ -46,7 +50,14 @@ class ReturnStateService {
 
     try {
       const returnState = JSON.parse(data) as ReturnState;
-      console.log('ReturnStateService - Retrieved return state:', returnState);
+      console.log('ReturnStateService - Retrieved return state with filters:', {
+        country: returnState.country,
+        sector: returnState.sector,
+        hasActiveFilters: returnState.hasActiveFilters,
+        filterCount: returnState.selectedSectors?.length || 0,
+        hasCountryStories: !!returnState.countryStories,
+        hasSelectedSector: !!returnState.selectedSector
+      });
       
       // Check if state is not too old (1 hour max)
       const oneHour = 60 * 60 * 1000;
