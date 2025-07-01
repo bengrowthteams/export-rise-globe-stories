@@ -6,7 +6,6 @@ import { fetchCaseStudyData, CaseStudyData, getAvailableCaseStudyIds } from '../
 import EnhancedCaseStudyHeader from '../components/case-study/EnhancedCaseStudyHeader';
 import KeyHighlightsSection from '../components/case-study/KeyHighlightsSection';
 import QuantitativeDashboard from '../components/case-study/QuantitativeDashboard';
-import OutcomesAnalysis from '../components/case-study/OutcomesAnalysis';
 import DetailedAnalysisSection from '../components/case-study/DetailedAnalysisSection';
 import SourcesBibliography from '../components/case-study/SourcesBibliography';
 
@@ -97,10 +96,22 @@ const EnhancedCaseStudy = () => {
           externalFactorsSummary={caseStudyData.externalFactorsSummary}
         />
 
-        {/* Combined Performance Dashboard and Impact & Outcomes */}
+        {/* Performance Dashboard with Outcome */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Performance Dashboard</h2>
           
+          {/* Outcome Section */}
+          <div className="mb-6">
+            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Impact & Outcomes</h3>
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed text-lg">
+                  {caseStudyData.outcome}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <QuantitativeDashboard
             rank1995={caseStudyData.rank1995}
             rank2022={caseStudyData.rank2022}
@@ -109,12 +120,6 @@ const EnhancedCaseStudy = () => {
             globalShare1995={caseStudyData.globalShare1995}
             globalShare2022={caseStudyData.globalShare2022}
           />
-
-          <div className="mt-8">
-            <OutcomesAnalysis
-              outcome={caseStudyData.outcome}
-            />
-          </div>
         </div>
 
         <DetailedAnalysisSection

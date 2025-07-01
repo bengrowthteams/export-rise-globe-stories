@@ -34,14 +34,14 @@ const DetailedAnalysisSection = ({
     return (
       <div className="text-gray-700 leading-relaxed">
         {parts.map((part, index) => (
-          <div key={index} className={index === 0 ? "mb-3" : "mb-2"}>
+          <div key={index} className={index === 0 ? "mb-4" : "mb-3"}>
             {index === 0 ? (
               // First part is usually intro text before bullets
-              <p className="mb-3">{part.trim()}</p>
+              <p className="mb-4">{part.trim()}</p>
             ) : (
               // Subsequent parts are bullet points
-              <div className="flex items-start space-x-2">
-                <span className="text-gray-500 mt-1">●</span>
+              <div className="flex items-start space-x-3 mb-3">
+                <span className="text-gray-500 mt-1 text-lg">●</span>
                 <p className="flex-1">{part.trim()}</p>
               </div>
             )}
@@ -53,7 +53,7 @@ const DetailedAnalysisSection = ({
 
   const sections = [
     {
-      title: 'Public Sector Analysis',
+      title: 'Public Sector Role',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
@@ -72,7 +72,7 @@ const DetailedAnalysisSection = ({
       ]
     },
     {
-      title: 'Private Sector Analysis',
+      title: 'Private Sector Role',
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200',
@@ -91,7 +91,7 @@ const DetailedAnalysisSection = ({
       ]
     },
     {
-      title: 'External Factors Analysis',
+      title: 'External Factors Role',
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       borderColor: 'border-green-200',
@@ -113,7 +113,7 @@ const DetailedAnalysisSection = ({
 
   return (
     <div className="mb-8">
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">Detailed Analysis</h2>
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Understanding the Story</h2>
       
       <div className="space-y-8">
         {sections.map((section, sectionIndex) => (
