@@ -14,6 +14,7 @@ import MapViewToggle from '../components/MapViewToggle';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
+import ReturnStateService from '../services/returnStateService';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
@@ -202,6 +203,83 @@ const Landing = () => {
 
     restoreState();
   }, [location, successStories, countryStories]);
+
+  // Handle return from case studies
+  React.useEffect(() => {
+    const handleReturnFromCaseStudy = () => {
+      console.log('Landing - Checking for return state');
+      
+      if (ReturnStateService.hasReturnState()) {
+        const returnState = ReturnStateService.getReturnState();
+        
+        if (returnState) {
+          console.log('Landing - Found return state, restoring:', returnState);
+          
+          // Restore filters immediately
+          setSelectedSectors(returnState.selectedSectors);
+          
+          // Scroll to map section immediately
+          setTimeout(() => {
+            const mapSection = document.getElementById('map-section');
+            if (mapSection) {
+              mapSection.scrollIntoView({ behavior: 'instant', block: 'start' });
+            }
+          }, 0);
+          
+          // Wait for stories to load, then restore the specific story card
+          setTimeout(() => {
+            if (returnState.countryStories && returnState.selectedSector) {
+              // Multi-sector country - restore specific sector
+              setSelectedCountryStories(returnState.countryStories);
+              setSelectedSector(returnState.selectedSector);
+              
+              const primaryStory: SuccessStory = {
+                id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
+                country: returnState.countryStories.country,
+                sector: returnState.selectedSector.sector,
+                product: returnState.selectedSector.product,
+                description: returnState.selectedSector.description,
+                growthRate: returnState.selectedSector.growthRate,
+                timeframe: returnState.countryStories.timeframe,
+                exportValue: returnState.selectedSector.exportValue,
+                keyFactors: returnState.selectedSector.keyFactors,
+                coordinates: returnState.countryStories.coordinates,
+                flag: returnState.countryStories.flag,
+                marketDestinations: returnState.selectedSector.marketDestinations,
+                challenges: returnState.selectedSector.challenges,
+                impact: returnState.selectedSector.impact,
+                globalRanking1995: returnState.selectedSector.globalRanking1995,
+                globalRanking2022: returnState.selectedSector.globalRanking2022,
+                initialExports1995: returnState.selectedSector.initialExports1995,
+                initialExports2022: returnState.selectedSector.initialExports2022,
+                successfulProduct: returnState.selectedSector.successfulProduct,
+                successStorySummary: returnState.selectedSector.successStorySummary
+              };
+              
+              setSelectedStory(primaryStory);
+            } else {
+              // Single-sector country - find and restore the story
+              const targetStory = successStories.find(s => 
+                s.country === returnState.country && s.sector === returnState.sector
+              );
+              
+              if (targetStory) {
+                setSelectedStory(targetStory);
+              }
+            }
+          }, 100);
+          
+          // Clear the return state after use
+          ReturnStateService.clearReturnState();
+        }
+      }
+    };
+
+    // Only handle return state if we have loaded stories
+    if (successStories.length > 0 || countryStories.length > 0) {
+      handleReturnFromCaseStudy();
+    }
+  }, [successStories, countryStories]);
 
   // ... keep existing code (auto-scroll effect)
   React.useEffect(() => {
@@ -592,6 +670,7 @@ const Landing = () => {
                   story={selectedStory} 
                   countryStories={selectedCountryStories}
                   selectedSector={selectedSector}
+                  selectedSectors={selectedSectors}
                   onClose={handleClosePanel}
                   onReadMore={handleReadMore}
                   onSectorChange={handleSectorSelect}

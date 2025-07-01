@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,11 +5,13 @@ import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStori
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
 import { hasEnhancedCaseStudy, getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
+import ReturnStateService from '../services/returnStateService';
 
 interface StoryCardProps {
   story: SuccessStory | null;
   countryStories?: CountrySuccessStories | null;
   selectedSector?: SectorStory | null;
+  selectedSectors?: string[]; // Add selected sectors prop
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
   onSectorChange?: (sector: SectorStory) => void;
@@ -20,13 +21,21 @@ const StoryCard: React.FC<StoryCardProps> = ({
   story, 
   countryStories,
   selectedSector,
+  selectedSectors = [], // Default to empty array
   onClose, 
   onReadMore,
   onSectorChange
 }) => {
   // Handle legacy single-sector stories
   if (story && !countryStories) {
-    return <LegacyStoryCard story={story} onClose={onClose} onReadMore={onReadMore} />;
+    return (
+      <LegacyStoryCard 
+        story={story} 
+        selectedSectors={selectedSectors}
+        onClose={onClose} 
+        onReadMore={onReadMore} 
+      />
+    );
   }
 
   // Handle multi-sector country stories
@@ -35,6 +44,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
       <MultiSectorStoryCard 
         countryStories={countryStories}
         selectedSector={selectedSector}
+        selectedSectors={selectedSectors}
         onClose={onClose}
         onReadMore={onReadMore}
         onSectorChange={onSectorChange}
@@ -48,9 +58,10 @@ const StoryCard: React.FC<StoryCardProps> = ({
 // Legacy component for backwards compatibility
 const LegacyStoryCard: React.FC<{
   story: SuccessStory;
+  selectedSectors: string[];
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
-}> = ({ story, onClose, onReadMore }) => {
+}> = ({ story, selectedSectors, onClose, onReadMore }) => {
   const navigate = useNavigate();
 
   const formatCurrency = (amount: string) => {
@@ -69,6 +80,13 @@ const LegacyStoryCard: React.FC<{
 
   const handleViewCaseStudy = () => {
     console.log('Legacy Story Card - handleViewCaseStudy called for:', story);
+    
+    // Save return state before navigation
+    ReturnStateService.saveReturnState({
+      selectedSectors,
+      country: story.country,
+      sector: story.sector
+    });
     
     if (hasEnhancedCaseStudy(story)) {
       const enhancedId = getEnhancedCaseStudyId(story);
@@ -177,10 +195,11 @@ const LegacyStoryCard: React.FC<{
 const MultiSectorStoryCard: React.FC<{
   countryStories: CountrySuccessStories;
   selectedSector: SectorStory;
+  selectedSectors: string[];
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
   onSectorChange?: (sector: SectorStory) => void;
-}> = ({ countryStories, selectedSector, onClose, onReadMore, onSectorChange }) => {
+}> = ({ countryStories, selectedSector, selectedSectors, onClose, onReadMore, onSectorChange }) => {
   const navigate = useNavigate();
 
   const formatCurrency = (amount: string) => {
@@ -222,6 +241,15 @@ const MultiSectorStoryCard: React.FC<{
 
   const handleViewCaseStudy = () => {
     console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories.country, selectedSector.sector);
+    
+    // Save return state before navigation
+    ReturnStateService.saveReturnState({
+      selectedSectors,
+      countryStories,
+      selectedSector,
+      country: countryStories.country,
+      sector: selectedSector.sector
+    });
     
     // Create a story object with both country and sector for enhanced case study checking
     const sectorSpecificStory = {

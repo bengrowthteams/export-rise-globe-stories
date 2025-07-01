@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { getSectorColor } from '@/data/sectorColors';
+import ReturnStateService from '@/services/returnStateService';
 
 interface EnhancedCaseStudyHeaderProps {
   flag: string;
@@ -19,42 +19,8 @@ const EnhancedCaseStudyHeader = ({ flag, country, sector, successfulProduct }: E
   const handleReturnToMap = () => {
     console.log('Enhanced Case Study Header - Return to Map clicked');
     
-    // Get the stored return state
-    const storedReturnState = sessionStorage.getItem('enhancedCaseStudyReturnState');
-    
-    if (storedReturnState) {
-      try {
-        const returnState = JSON.parse(storedReturnState);
-        console.log('Enhanced Case Study Header - Found stored return state:', returnState);
-        
-        // Navigate back with the preserved state
-        navigate('/', { 
-          state: {
-            ...returnState,
-            returnedFromEnhancedCaseStudy: true,
-            seamlessReturn: true,
-            instantPositioning: true
-          }
-        });
-        
-        // Clean up session storage
-        sessionStorage.removeItem('enhancedCaseStudyReturnState');
-        return;
-      } catch (error) {
-        console.error('Enhanced Case Study Header - Failed to parse stored return state:', error);
-      }
-    }
-    
-    // Fallback: Navigate back to country location
-    console.log('Enhanced Case Study Header - No stored state, using fallback');
-    navigate('/', { 
-      state: {
-        returnedFromEnhancedCaseStudy: true,
-        instantPositioning: true,
-        countryToFocus: country,
-        sectorToFocus: sector
-      }
-    });
+    // Simply navigate back to main page - the return state service will handle restoration
+    navigate('/');
   };
 
   return (

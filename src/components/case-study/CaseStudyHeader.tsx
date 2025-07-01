@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import ReturnStateService from '@/services/returnStateService';
 
 interface CaseStudyHeaderProps {
   flag: string;
@@ -18,41 +18,8 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
   const handleReturnToMap = () => {
     console.log('Regular Case Study Header - Return to Map clicked');
     
-    // Get the stored return state (similar to enhanced case study)
-    const storedReturnState = sessionStorage.getItem('comprehensiveState');
-    
-    if (storedReturnState) {
-      try {
-        const returnState = JSON.parse(storedReturnState);
-        console.log('Regular Case Study Header - Found stored return state:', returnState);
-        
-        // Navigate back with the preserved state
-        navigate('/', { 
-          state: {
-            ...returnState,
-            returnedFromCaseStudy: true,
-            instantPositioning: true
-          }
-        });
-        
-        // Clean up session storage
-        sessionStorage.removeItem('comprehensiveState');
-        return;
-      } catch (error) {
-        console.error('Regular Case Study Header - Failed to parse stored return state:', error);
-      }
-    }
-    
-    // Fallback: Navigate back to country location
-    console.log('Regular Case Study Header - No stored state, using fallback');
-    navigate('/', { 
-      state: {
-        returnedFromCaseStudy: true,
-        instantPositioning: true,
-        countryToFocus: country,
-        sectorToFocus: sector
-      }
-    });
+    // Simply navigate back to main page - the return state service will handle restoration
+    navigate('/');
   };
 
   return (
