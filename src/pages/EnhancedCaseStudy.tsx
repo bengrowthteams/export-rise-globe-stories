@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -7,6 +6,7 @@ import EnhancedCaseStudyHeader from '../components/case-study/EnhancedCaseStudyH
 import KeyHighlightsSection from '../components/case-study/KeyHighlightsSection';
 import CompactOutcomesDashboard from '../components/case-study/CompactOutcomesDashboard';
 import DetailedAnalysisSection from '../components/case-study/DetailedAnalysisSection';
+import PerformanceDashboard from '../components/case-study/PerformanceDashboard';
 import SourcesBibliography from '../components/case-study/SourcesBibliography';
 import ReturnStateService from '../services/returnStateService';
 
@@ -127,6 +127,15 @@ const EnhancedCaseStudy = () => {
           privateSectorIndustryGrowth={caseStudyData.privateSectorIndustryGrowth}
           externalMarketFactors={caseStudyData.externalMarketFactors}
           externalActorContribution={caseStudyData.externalActorContribution}
+        />
+
+        <PerformanceDashboard
+          rank1995={caseStudyData.rank1995}
+          rank2022={caseStudyData.rank2022}
+          initialExports1995={caseStudyData.initialExports1995}
+          currentExports2022={caseStudyData.currentExports2022}
+          globalShare1995={caseStudyData.globalShare1995}
+          globalShare2022={caseStudyData.globalShare2022}
         />
 
         <SourcesBibliography
