@@ -104,12 +104,6 @@ const EnhancedCaseStudy = () => {
       />
 
       <div className="max-w-7xl mx-auto px-6 py-4 space-y-4">
-        <KeyHighlightsSection
-          publicSectorSummary={caseStudyData.publicSectorSummary}
-          privateSectorSummary={caseStudyData.privateSectorSummary}
-          externalFactorsSummary={caseStudyData.externalFactorsSummary}
-        />
-
         <CompactOutcomesDashboard
           outcome={caseStudyData.outcome}
           rank1995={caseStudyData.rank1995}
@@ -118,6 +112,12 @@ const EnhancedCaseStudy = () => {
           currentExports2022={caseStudyData.currentExports2022}
           globalShare1995={caseStudyData.globalShare1995}
           globalShare2022={caseStudyData.globalShare2022}
+        />
+
+        <KeyHighlightsSection
+          publicSectorSummary={caseStudyData.publicSectorSummary}
+          privateSectorSummary={caseStudyData.privateSectorSummary}
+          externalFactorsSummary={caseStudyData.externalFactorsSummary}
         />
 
         <DetailedAnalysisSection
