@@ -17,29 +17,54 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
   const location = useLocation();
 
   const handleReturnToMap = () => {
-    console.log('Regular Return to Map clicked - checking for saved state');
-    console.log('Location state:', location.state);
+    console.log('Regular Return to Map - preserving comprehensive state');
+    console.log('Current location state:', location.state);
     
-    // Check if we have saved state from navigation
+    // Preserve all existing state and ensure comprehensive restoration
     if (location.state) {
-      console.log('Found saved state, navigating back with state restoration');
+      console.log('Found comprehensive state, navigating back with full preservation');
       navigate('/', { 
         state: {
           ...location.state,
-          scrollToMap: true
+          returnedFromCaseStudy: true,
+          scrollToMap: true,
+          // Ensure all state is preserved for seamless restoration
+          preserveFilters: true,
+          seamlessReturn: true
         }
       });
     } else {
-      // Fallback: navigate to country location on map
-      console.log('No saved state, using fallback navigation to country location');
-      navigate('/', { 
-        state: {
-          returnedFromCaseStudy: true,
-          scrollToMap: true,
-          countryToFocus: country,
-          sectorToFocus: sector
+      // Enhanced fallback - try session storage restoration
+      const savedState = sessionStorage.getItem('comprehensiveState');
+      if (savedState) {
+        try {
+          const parsedState = JSON.parse(savedState);
+          console.log('Using session storage comprehensive state');
+          navigate('/', { 
+            state: {
+              ...parsedState,
+              returnedFromCaseStudy: true,
+              scrollToMap: true,
+              seamlessReturn: true
+            }
+          });
+          sessionStorage.removeItem('comprehensiveState');
+        } catch (error) {
+          console.error('Failed to parse session storage state:', error);
         }
-      });
+      } else {
+        // Final fallback: navigate to country location
+        console.log('No saved state, using country location fallback');
+        navigate('/', { 
+          state: {
+            returnedFromCaseStudy: true,
+            scrollToMap: true,
+            countryToFocus: country,
+            sectorToFocus: sector,
+            seamlessReturn: true
+          }
+        });
+      }
     }
   };
 
