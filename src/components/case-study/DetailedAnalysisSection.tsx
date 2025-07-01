@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Factory, Globe, Users, Briefcase, TrendingUp } from 'lucide-react';
+import { Building2, Factory, Globe, Users, Briefcase } from 'lucide-react';
 
 interface DetailedAnalysisSectionProps {
   publicSectorPolicy: string;
@@ -21,6 +21,18 @@ const DetailedAnalysisSection = ({
   externalActorContribution
 }: DetailedAnalysisSectionProps) => {
   
+  const formatBulletPoints = (text: string) => {
+    return text.split('●').map((point, index) => {
+      if (index === 0 && !point.trim()) return null;
+      return (
+        <div key={index} className="flex items-start mb-2">
+          <span className="text-gray-600 mr-2 mt-1">●</span>
+          <span className="flex-1">{point.trim()}</span>
+        </div>
+      );
+    }).filter(Boolean);
+  };
+
   const sections = [
     {
       title: 'Public Sector Analysis',
@@ -55,7 +67,7 @@ const DetailedAnalysisSection = ({
         },
         {
           title: 'Industry Growth',
-          icon: TrendingUp,
+          icon: Briefcase,
           content: privateSectorIndustryGrowth
         }
       ]
@@ -69,7 +81,7 @@ const DetailedAnalysisSection = ({
       subsections: [
         {
           title: 'Market Factors',
-          icon: TrendingUp,
+          icon: Globe,
           content: externalMarketFactors
         },
         {
@@ -102,9 +114,12 @@ const DetailedAnalysisSection = ({
                       <subsection.icon size={20} className="mr-2" />
                       <h4 className="text-lg font-semibold">{subsection.title}</h4>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">
-                      {subsection.content}
-                    </p>
+                    <div className="text-gray-700 leading-relaxed">
+                      {subsection.content.includes('●') ? 
+                        formatBulletPoints(subsection.content) : 
+                        <p>{subsection.content}</p>
+                      }
+                    </div>
                   </div>
                 ))}
               </div>

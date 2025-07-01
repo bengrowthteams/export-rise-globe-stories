@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { ArrowLeft, Award, TrendingUp, DollarSign } from 'lucide-react';
+import { ArrowLeft, Award, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { getSectorColor } from '@/data/sectorColors';
 import ReturnStateService from '@/services/returnStateService';
@@ -74,81 +75,93 @@ const EnhancedCaseStudyHeader = ({
     <>
       {/* Sticky Return Button */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-1">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
           <Button 
             onClick={handleReturnToMap}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-xs font-medium w-full sm:w-auto"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm font-medium"
             size="sm"
           >
-            <ArrowLeft className="mr-1" size={12} />
+            <ArrowLeft className="mr-2" size={16} />
             Return to Map
           </Button>
         </div>
       </div>
 
-      {/* Header Content with Navy Background */}
-      <div className="relative overflow-hidden pt-10 bg-gradient-to-r from-slate-800 to-slate-900">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col lg:flex-row items-center justify-center space-y-3 lg:space-y-0 lg:space-x-6">
-            {/* Left Side - Country Info */}
-            <div className="flex items-start space-x-3 text-center lg:text-left">
-              <div className="text-3xl drop-shadow-lg">{flag}</div>
-              <div>
-                <h1 className="text-2xl font-bold text-white mb-2">
-                  {country} <span className="text-white/70">/</span> {sector}
+      {/* New Clean Header Design */}
+      <div className="bg-white pt-16 pb-8 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {/* Main Title Section */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <span className="text-6xl">{flag}</span>
+              <div className="text-left">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                  {country}
                 </h1>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                  <p className="text-sm text-white">
-                    <span className="font-semibold text-white">Successful Product:</span> {successfulProduct}
-                  </p>
-                </div>
+                <p className="text-xl text-gray-600">{sector}</p>
               </div>
             </div>
+            
+            {/* Successful Product Card */}
+            <Card className="max-w-md mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+              <CardContent className="p-4">
+                <p className="text-sm font-medium text-blue-700 mb-1">Success Story</p>
+                <p className="text-lg font-semibold text-gray-900">{successfulProduct}</p>
+              </CardContent>
+            </Card>
+          </div>
 
-            {/* Right Side - Performance Metrics 2x2 Grid */}
-            <div className="grid grid-cols-2 gap-3 w-80">
-              <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-400/30 rounded-lg p-3 h-20">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-white">2022 Global Rank</p>
-                    <Award className="text-orange-300" size={14} />
+          {/* Performance Metrics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <Award className="text-orange-600" size={24} />
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-orange-700">2022 Global Rank</p>
+                    <p className="text-3xl font-bold text-orange-900">#{rank2022}</p>
                   </div>
-                  <p className="text-xl font-bold text-white">#{rank2022}</p>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-400/30 rounded-lg p-3 h-20">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-white">Ranking Improvement (1995-2022)</p>
-                    <TrendingUp className="text-blue-300" size={14} />
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <TrendingUp className="text-green-600" size={24} />
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-green-700">Ranking Improvement (1995-2022)</p>
+                    <p className="text-3xl font-bold text-green-900">
+                      {rankChange > 0 ? '+' : ''}{rankChange}
+                    </p>
                   </div>
-                  <p className="text-xl font-bold text-white">
-                    {rankChange > 0 ? '+' : ''}{rankChange}
-                  </p>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg p-3 h-20">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-white">Current Exports</p>
-                    <DollarSign className="text-purple-300" size={14} />
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <DollarSign className="text-purple-600" size={24} />
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-purple-700">Current Exports</p>
+                    <p className="text-3xl font-bold text-purple-900">{formatCurrency(currentExports2022)}</p>
                   </div>
-                  <p className="text-xl font-bold text-white">{formatCurrency(currentExports2022)}</p>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-400/30 rounded-lg p-3 h-20">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-white">Export Growth (1995-2022)</p>
-                    <TrendingUp className="text-green-300" size={14} />
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <BarChart3 className="text-blue-600" size={24} />
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-blue-700">Export Growth (1995-2022)</p>
+                    <p className="text-3xl font-bold text-blue-900">{exportGrowthMultiple}x</p>
                   </div>
-                  <p className="text-xl font-bold text-white">{exportGrowthMultiple}x</p>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
