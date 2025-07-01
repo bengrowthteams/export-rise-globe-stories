@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface CaseStudyHeaderProps {
   flag: string;
@@ -14,34 +14,33 @@ interface CaseStudyHeaderProps {
 
 const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateBack }: CaseStudyHeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleReturnToMap = () => {
-    console.log('Return to Map clicked - using simple working approach');
+    console.log('Regular Return to Map clicked - checking for saved state');
+    console.log('Location state:', location.state);
     
-    // Save current filter state before navigating
-    const currentFilters = sessionStorage.getItem('selectedSectors');
-    if (currentFilters) {
-      sessionStorage.setItem('filtersToRestore', currentFilters);
+    // Check if we have saved state from navigation
+    if (location.state) {
+      console.log('Found saved state, navigating back with state restoration');
+      navigate('/', { 
+        state: {
+          ...location.state,
+          scrollToMap: true
+        }
+      });
+    } else {
+      // Fallback: navigate to country location on map
+      console.log('No saved state, using fallback navigation to country location');
+      navigate('/', { 
+        state: {
+          returnedFromCaseStudy: true,
+          scrollToMap: true,
+          countryToFocus: country,
+          sectorToFocus: sector
+        }
+      });
     }
-    
-    // Use the same simple approach that works for the 404 page
-    navigate('/');
-    
-    // Ensure we scroll to map section after navigation
-    setTimeout(() => {
-      const mapSection = document.getElementById('map-section');
-      if (mapSection) {
-        const navHeight = 56;
-        const elementPosition = mapSection.offsetTop;
-        const offsetPosition = elementPosition - navHeight;
-        
-        window.scrollTo({ 
-          top: offsetPosition, 
-          behavior: 'smooth' 
-        });
-        console.log('Scrolled to map section from case study');
-      }
-    }, 100);
   };
 
   return (

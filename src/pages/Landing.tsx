@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -35,25 +36,13 @@ const Landing = () => {
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Enhanced state restoration - check for saved filters when component mounts
+  // Enhanced state restoration with fallback country focusing
   React.useEffect(() => {
     const restoreState = () => {
       console.log('Landing component mounted - checking for state to restore');
+      console.log('Location state:', location.state);
       
-      // Check for filters to restore (from case study return)
-      const filtersToRestore = sessionStorage.getItem('filtersToRestore');
-      if (filtersToRestore) {
-        try {
-          const parsedFilters = JSON.parse(filtersToRestore);
-          console.log('Restoring filters from case study return:', parsedFilters);
-          setSelectedSectors(parsedFilters);
-          sessionStorage.removeItem('filtersToRestore');
-        } catch (error) {
-          console.error('Failed to parse saved filters:', error);
-        }
-      }
-
-      // Priority 1: React Router state (from case study return)
+      // Check for React Router state (primary method)
       if (location.state?.returnedFromCaseStudy) {
         const state = location.state;
         console.log('Restoring state from router:', state);
@@ -70,8 +59,37 @@ const Landing = () => {
           console.log('Restored filters:', state.selectedSectors);
         }
         
-        // Handle scroll restoration
-        if (state.scrollPosition && state.scrollPosition > 0) {
+        // Handle country focusing fallback
+        if (state.countryToFocus && (!state.mapState || !state.selectedSectors)) {
+          console.log('Using country focusing fallback for:', state.countryToFocus);
+          setTimeout(() => {
+            // Find the country story
+            const countryStory = successStories.find(story => 
+              story.country === state.countryToFocus && 
+              (!state.sectorToFocus || story.sector === state.sectorToFocus)
+            );
+            
+            const countryMultiStory = countryStories.find(story => 
+              story.country === state.countryToFocus
+            );
+            
+            if (countryStory || countryMultiStory) {
+              console.log('Found country story, triggering selection');
+              if (countryStory) {
+                handleCountrySelect(countryStory, countryMultiStory);
+              } else if (countryMultiStory && state.sectorToFocus) {
+                const sectorStory = countryMultiStory.sectors.find(s => s.sector === state.sectorToFocus);
+                if (sectorStory) {
+                  handleCountrySelect(null, countryMultiStory);
+                  setSelectedSector(sectorStory);
+                }
+              }
+            }
+          }, 1000);
+        }
+        
+        // Handle scroll restoration with proper timing
+        if (state.scrollToMap || state.scrollPosition) {
           setTimeout(() => {
             const mapSection = document.getElementById('map-section');
             if (mapSection) {
@@ -85,7 +103,7 @@ const Landing = () => {
               });
               console.log('Scrolled to map section after case study return');
             }
-          }, 300);
+          }, 500);
         }
         
         // Clean up state
@@ -93,7 +111,19 @@ const Landing = () => {
         return;
       }
       
-      // Priority 2: Session storage fallback
+      // Fallback: check session storage
+      const filtersToRestore = sessionStorage.getItem('filtersToRestore');
+      if (filtersToRestore) {
+        try {
+          const parsedFilters = JSON.parse(filtersToRestore);
+          console.log('Restoring filters from session storage:', parsedFilters);
+          setSelectedSectors(parsedFilters);
+          sessionStorage.removeItem('filtersToRestore');
+        } catch (error) {
+          console.error('Failed to parse saved filters:', error);
+        }
+      }
+
       const savedMapState = sessionStorage.getItem('mapState');
       const savedFilters = sessionStorage.getItem('selectedSectors');
       
@@ -124,13 +154,14 @@ const Landing = () => {
     };
 
     restoreState();
-  }, [location]);
+  }, [location, successStories, countryStories]);
 
   // Also check for case study returns and scroll to map when URL suggests we should
   React.useEffect(() => {
     // If there are any signs we should be at the map section, scroll there
     const shouldScrollToMap = 
       location.state?.returnedFromCaseStudy || 
+      location.state?.scrollToMap ||
       sessionStorage.getItem('filtersToRestore') ||
       window.location.hash === '#map' ||
       new URLSearchParams(window.location.search).has('returnToMap');
@@ -330,29 +361,24 @@ const Landing = () => {
       currentMapState = mapState;
     }
     
-    if (currentMapState) {
-      // Save comprehensive state to session storage
-      sessionStorage.setItem('mapState', JSON.stringify({
-        ...currentMapState,
-        timestamp: Date.now(),
-        fromStoryId: story.id
-      }));
-      
-      // Save filter state
-      sessionStorage.setItem('selectedSectors', JSON.stringify(selectedSectors));
-      
-      // Save scroll position
-      sessionStorage.setItem('mapScrollPosition', currentScrollY.toString());
-      
-      console.log('Saving comprehensive state before case study navigation:', {
-        mapState: currentMapState,
-        selectedSectors,
-        scrollPosition: currentScrollY
-      });
+    const stateToSave = {
+      mapState: currentMapState,
+      selectedSectors: selectedSectors,
+      scrollPosition: currentScrollY,
+      returnedFromCaseStudy: true,
+      timestamp: Date.now()
+    };
+    
+    console.log('Saving comprehensive state before case study navigation:', stateToSave);
+    
+    // Navigate to case study with state in router
+    if (story.id && story.id.toString().match(/^\d+$/)) {
+      // Enhanced case study
+      navigate(`/enhanced-case-study/${story.id}`, { state: stateToSave });
+    } else {
+      // Regular case study
+      navigate(`/case-study/${story.id}`, { state: stateToSave });
     }
-
-    // Navigate to case study
-    navigate(`/case-study/${story.id}`);
   };
 
   const handleTutorialDemo = (story: SuccessStory | null) => {

@@ -221,13 +221,17 @@ const MultiSectorStoryCard: React.FC<{
   });
 
   const handleViewCaseStudy = () => {
-    console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories);
+    console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories.country, selectedSector.sector);
     
-    // Check if the country has an enhanced case study using the country name
-    const mockStory = { country: countryStories.country, id: countryStories.id };
+    // Create a story object with both country and sector for enhanced case study checking
+    const sectorSpecificStory = {
+      country: countryStories.country,
+      sector: selectedSector.sector,
+      id: `${countryStories.country}-${selectedSector.sector}`
+    };
     
-    if (hasEnhancedCaseStudy(mockStory)) {
-      const enhancedId = getEnhancedCaseStudyId(mockStory);
+    if (hasEnhancedCaseStudy(sectorSpecificStory)) {
+      const enhancedId = getEnhancedCaseStudyId(sectorSpecificStory);
       console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
       navigate(`/enhanced-case-study/${enhancedId}`);
     } else {
@@ -239,6 +243,14 @@ const MultiSectorStoryCard: React.FC<{
   const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
+
+  // Check if current sector has enhanced case study
+  const sectorSpecificStory = {
+    country: countryStories.country,
+    sector: selectedSector.sector,
+    id: `${countryStories.country}-${selectedSector.sector}`
+  };
+  const hasEnhanced = hasEnhancedCaseStudy(sectorSpecificStory);
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
@@ -344,7 +356,7 @@ const MultiSectorStoryCard: React.FC<{
           className="w-full text-white bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
-          {hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) ? 'View Enhanced Case Study' : 'View Full Case Study'}
+          {hasEnhanced ? 'View Enhanced Case Study' : 'View Full Case Study'}
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
