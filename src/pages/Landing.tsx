@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -469,21 +468,23 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Tutorial Button and Map View Toggle */}
-          <div className="absolute top-4 right-2 sm:right-4 z-20 flex items-center gap-2">
-            <div className="tutorial-help-button">
-              <Button
-                onClick={handleStartTutorial}
-                variant="outline"
-                size="sm"
-                className="bg-white/90 hover:bg-white"
-              >
-                <HelpCircle size={16} className="mr-1" />
-                Tutorial
-              </Button>
-            </div>
-            <div className="tutorial-3d-toggle">
-              <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
+          {/* Tutorial Button and Map View Toggle - positioned to avoid zoom controls */}
+          <div className="absolute top-4 right-2 sm:right-4 z-20 flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
+              <div className="tutorial-help-button">
+                <Button
+                  onClick={handleStartTutorial}
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/90 hover:bg-white"
+                >
+                  <HelpCircle size={16} className="mr-1" />
+                  Tutorial
+                </Button>
+              </div>
+              <div className="tutorial-3d-toggle">
+                <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
+              </div>
             </div>
           </div>
 

@@ -45,6 +45,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'supabase' | 'fallback'>('supabase');
+  const [isViewTransitioning, setIsViewTransitioning] = useState(false);
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
   const dataLoadingRef = useRef(false);
@@ -221,51 +222,72 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return { filteredSingleStories, filteredCountryStories };
   };
 
-  // Handle 3D/2D view toggle - simplified version without flashing
+  // Handle 3D/2D view toggle with proper loading state to prevent flashing
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
     console.log('Switching to', is3DView ? '3D' : '2D', 'view');
     
+    // Set transitioning state to prevent flashing
+    setIsViewTransitioning(true);
+    
     const currentCenter = map.current.getCenter();
     const currentZoom = map.current.getZoom();
     
-    if (is3DView) {
-      map.current.setProjection('globe');
-      map.current.setPitch(0);
-      
-      map.current.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
-      });
-      
-      map.current.setMaxBounds(undefined);
-      
-      // Adjust for globe view
-      const constrainedLng = ((currentCenter.lng % 360) + 360) % 360;
-      const finalLng = constrainedLng > 180 ? constrainedLng - 360 : constrainedLng;
-      
-      map.current.setCenter([finalLng, currentCenter.lat]);
-      map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8)));
-    } else {
-      map.current.setProjection('mercator');
-      map.current.setPitch(0);
-      
-      map.current.setFog({});
-      
-      map.current.setMaxBounds([
-        [-180, -85],
-        [180, 85]
-      ]);
-      
-      // Restore to 2D view
-      const constrainedLng = Math.max(-180, Math.min(180, currentCenter.lng));
-      const constrainedLat = Math.max(-85, Math.min(85, currentCenter.lat));
-      
-      map.current.setCenter([constrainedLng, constrainedLat]);
-      map.current.setZoom(currentZoom);
+    // Hide the map container during transition
+    if (mapContainer.current) {
+      mapContainer.current.style.opacity = '0';
     }
+    
+    setTimeout(() => {
+      if (!map.current) return;
+      
+      if (is3DView) {
+        map.current.setProjection('globe');
+        map.current.setPitch(0);
+        
+        map.current.setFog({
+          color: 'rgb(255, 255, 255)',
+          'high-color': 'rgb(200, 200, 225)',
+          'horizon-blend': 0.2,
+        });
+        
+        map.current.setMaxBounds(undefined);
+        
+        // Adjust for globe view
+        const constrainedLng = ((currentCenter.lng % 360) + 360) % 360;
+        const finalLng = constrainedLng > 180 ? constrainedLng - 360 : constrainedLng;
+        
+        map.current.setCenter([finalLng, currentCenter.lat]);
+        map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8)));
+      } else {
+        map.current.setProjection('mercator');
+        map.current.setPitch(0);
+        
+        map.current.setFog({});
+        
+        map.current.setMaxBounds([
+          [-180, -85],
+          [180, 85]
+        ]);
+        
+        // Restore to 2D view
+        const constrainedLng = Math.max(-180, Math.min(180, currentCenter.lng));
+        const constrainedLat = Math.max(-85, Math.min(85, currentCenter.lat));
+        
+        map.current.setCenter([constrainedLng, constrainedLat]);
+        map.current.setZoom(currentZoom);
+      }
+      
+      // Show the map container after transition
+      setTimeout(() => {
+        if (mapContainer.current) {
+          mapContainer.current.style.opacity = '1';
+        }
+        setIsViewTransitioning(false);
+      }, 100);
+      
+    }, 50);
     
   }, [is3DView, mapInitialized]);
 
@@ -608,8 +630,18 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapContainer} className="absolute inset-0 rounded-lg shadow-lg" />
+      <div 
+        ref={mapContainer} 
+        className="absolute inset-0 rounded-lg shadow-lg transition-opacity duration-200" 
+        style={{ opacity: isViewTransitioning ? 0 : 1 }}
+      />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-background/5 rounded-lg" />
+      
+      {isViewTransitioning && (
+        <div className="absolute inset-0 bg-gray-100 rounded-lg flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      )}
       
       {dataSource === 'fallback' && (
         <div className="absolute top-4 left-4 z-10 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-2 rounded-lg text-sm">
