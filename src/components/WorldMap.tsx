@@ -47,11 +47,9 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [dataSource, setDataSource] = useState<'supabase' | 'fallback'>('supabase');
   const lastSelectedStory = useRef<SuccessStory | null>(null);
   const isFlying = useRef(false);
-  const stateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
-  const mapStateInitialized = useRef(false);
-  const initialMapStateApplied = useRef(false);
   const dataLoadingRef = useRef(false);
   const preservedMapState = useRef<{ center: [number, number]; zoom: number } | null>(null);
+  const mapStateChangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
@@ -124,18 +122,19 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     loadSuccessStories();
   }, []); // Remove onStoriesLoaded from dependencies to prevent infinite loop
 
+  // Debounced map state change handler to prevent flash effect
   const handleMapStateChange = () => {
-    if (stateChangeTimeout.current) {
-      clearTimeout(stateChangeTimeout.current);
+    if (mapStateChangeTimeout.current) {
+      clearTimeout(mapStateChangeTimeout.current);
     }
     
-    stateChangeTimeout.current = setTimeout(() => {
-      if (map.current && onMapStateChange && !isFlying.current && mapStateInitialized.current) {
+    mapStateChangeTimeout.current = setTimeout(() => {
+      if (map.current && onMapStateChange && !isFlying.current && mapInitialized) {
         const center = map.current.getCenter();
         const zoom = map.current.getZoom();
         onMapStateChange([center.lng, center.lat], zoom);
       }
-    }, 200);
+    }, 300); // Increased debounce to reduce flash effect
   };
 
   const getCurrentMapState = () => {
@@ -218,12 +217,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       
       if (matchingSectors.length === 0) return null;
       
-      // CRITICAL FIX: Update hasMutipleSectors based on filtered results
       return {
         ...countryStory,
         sectors: matchingSectors,
-        primarySector: matchingSectors[0], // Update primary sector to first matching
-        hasMutipleSectors: matchingSectors.length > 1 // This is the key fix!
+        primarySector: matchingSectors[0],
+        hasMutipleSectors: matchingSectors.length > 1
       };
     }).filter(Boolean) as CountrySuccessStories[];
 
@@ -236,7 +234,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     console.log('Switching to', is3DView ? '3D' : '2D', 'view');
     
-    // Store current position before switching
     const currentCenter = map.current.getCenter();
     const currentZoom = map.current.getZoom();
     preservedMapState.current = { 
@@ -247,42 +244,33 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     console.log('Preserving map state:', preservedMapState.current);
     
     if (is3DView) {
-      // Switch to 3D globe
       map.current.setProjection('globe');
       map.current.setPitch(0);
       
-      // Set fog effects for globe
       map.current.setFog({
         color: 'rgb(255, 255, 255)',
         'high-color': 'rgb(200, 200, 225)',
         'horizon-blend': 0.2,
       });
       
-      // Remove world boundaries for globe
       map.current.setMaxBounds(undefined);
       
-      // Preserve the user's current location when switching to 3D
-      // Constrain longitude to prevent over-rotation
       const constrainedLng = ((currentCenter.lng % 360) + 360) % 360;
       const finalLng = constrainedLng > 180 ? constrainedLng - 360 : constrainedLng;
       
       map.current.setCenter([finalLng, currentCenter.lat]);
-      map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8))); // Reasonable zoom range for 3D
+      map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8)));
     } else {
-      // Switch to 2D flat map
       map.current.setProjection('mercator');
       map.current.setPitch(0);
       
-      // Remove fog for flat map
       map.current.setFog({});
       
-      // Set world boundaries to prevent infinite scrolling
       map.current.setMaxBounds([
-        [-180, -85], // Southwest coordinates
-        [180, 85]    // Northeast coordinates
+        [-180, -85],
+        [180, 85]
       ]);
       
-      // Preserve the user's location when switching to 2D
       const constrainedLng = Math.max(-180, Math.min(180, preservedMapState.current?.center[0] || currentCenter.lng));
       const constrainedLat = Math.max(-85, Math.min(85, preservedMapState.current?.center[1] || currentCenter.lat));
       
@@ -292,7 +280,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
   }, [is3DView, mapInitialized]);
 
-  // Enhanced map initialization with better initial state handling
+  // Enhanced map initialization
   useEffect(() => {
     if (!mapContainer.current || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
@@ -300,12 +288,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
-    // Use initial map state if provided, otherwise use defaults
     let initialCenter: [number, number];
     let initialZoom: number;
     
     if (initialMapState && initialMapState.center && initialMapState.zoom) {
-      // Validate and use provided initial state
       const validLng = Math.max(-180, Math.min(180, initialMapState.center[0]));
       const validLat = Math.max(-85, Math.min(85, initialMapState.center[1]));
       const validZoom = Math.max(1, Math.min(20, initialMapState.zoom));
@@ -314,7 +300,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       initialZoom = validZoom;
       console.log('Using provided initial map state:', { center: initialCenter, zoom: initialZoom });
     } else {
-      // Use default initial state based on view type
       initialCenter = is3DView ? [0, 0] : [20, 20];
       initialZoom = is3DView ? 1.5 : 2;
       console.log('Using default initial map state:', { center: initialCenter, zoom: initialZoom });
@@ -327,7 +312,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       zoom: initialZoom,
       center: initialCenter,
       pitch: 0,
-      bearing: 0, // Ensure globe is properly oriented
+      bearing: 0,
       maxBounds: is3DView ? undefined : [[-180, -85], [180, 85]],
     });
 
@@ -350,7 +335,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
       
-      // Add atmosphere and fog effects for 3D view only
       if (is3DView) {
         map.current?.setFog({
           color: 'rgb(255, 255, 255)',
@@ -361,13 +345,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       
       updateMarkers();
       setMapInitialized(true);
-      
-      // Mark state as initialized after a short delay to ensure map is ready
-      setTimeout(() => {
-        mapStateInitialized.current = true;
-        initialMapStateApplied.current = true;
-        console.log('Map state initialization completed');
-      }, 500);
     });
 
     return () => {
@@ -377,8 +354,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         map.current.remove();
         map.current = null;
         setMapInitialized(false);
-        mapStateInitialized.current = false;
-        initialMapStateApplied.current = false;
       }
     };
   }, [successStories, countryStories, loading, is3DView, initialMapState]);
@@ -392,34 +367,27 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const updateMarkers = () => {
     if (!map.current) return;
 
-    // Clear existing markers
     markers.current.forEach(marker => marker.remove());
     markers.current = [];
 
     const { filteredSingleStories, filteredCountryStories } = getFilteredStories();
 
-    // Add markers for filtered single-sector countries
     filteredSingleStories.forEach((story) => {
       if (!map.current || !story.coordinates || (story.coordinates.lat === 0 && story.coordinates.lng === 0)) return;
       
-      // Use sector-specific color when filtering, or default green when no filter
       const markerColor = selectedSectors.length > 0 ? getSectorColor(story.sector) : '#10b981';
       addMarker(story, null, false, markerColor);
     });
 
-    // Add markers for filtered multi-sector countries
     filteredCountryStories.forEach((countryStory) => {
       if (!map.current || !countryStory.coordinates || (countryStory.coordinates.lat === 0 && countryStory.coordinates.lng === 0)) return;
       
-      // FIXED: Use the updated hasMutipleSectors flag from filtered results
       const hasMultipleFilteredSectors = countryStory.hasMutipleSectors;
       let markerColor;
       
       if (selectedSectors.length > 0) {
-        // When filtering, use sector color for single sector, green for multiple
         markerColor = hasMultipleFilteredSectors ? '#10b981' : getSectorColor(countryStory.sectors[0].sector);
       } else {
-        // When not filtering, always use green
         markerColor = '#10b981';
       }
       
@@ -433,7 +401,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     const coordinates = story?.coordinates || countryStory?.coordinates;
     const country = story?.country || countryStory?.country;
-    // Use the improved flag lookup function
     const flag = getCountryFlag(country || '');
     
     if (!coordinates || !country) {
@@ -463,7 +430,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       : `0 2px 8px ${color}66`;
     markerElement.style.transition = 'all 0.2s ease';
 
-    // Add multi-sector indicator only if it's actually multiple sectors
     if (isMultiSector) {
       const indicator = document.createElement('div');
       indicator.style.position = 'absolute';
@@ -496,7 +462,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       } else if (countryStory) {
         console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length, 'hasMutipleSectors:', countryStory.hasMutipleSectors);
         
-        // Use the first sector from the filtered sectors list
         const sectorToUse = countryStory.sectors[0];
         console.log('Using sector for primaryStory:', sectorToUse.sector);
         
@@ -526,7 +491,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }
     });
 
-    // Hover effects
     markerElement.addEventListener('mouseenter', () => {
       const darkerColor = color === '#10b981' ? '#059669' : color;
       markerElement.style.backgroundColor = darkerColor;
@@ -546,16 +510,13 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       markerElement.style.height = isMultiSector ? '24px' : '20px';
     });
 
-    // Popup logic - FIXED to handle filtered single-sector countries
     const popup = new mapboxgl.Popup({
       offset: 25,
       closeButton: false,
       closeOnClick: false
     });
 
-    // Check if this is a multi-sector country (either original or filtered)
     if (isMultiSector && countryStory && countryStory.sectors.length > 1) {
-      // Multi-sector popup
       popup.setHTML(`
         <div class="p-3 max-w-xs">
           <div class="flex items-center mb-2">
@@ -575,14 +536,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         </div>
       `);
     } else {
-      // Single-sector popup (either original single-sector or filtered to single-sector)
       let sectorData, rankingGain, gainText, gainColor;
       
       if (story) {
-        // Original single-sector story
         sectorData = story;
       } else if (countryStory && countryStory.sectors.length === 1) {
-        // Filtered to single-sector from multi-sector country
         const sector = countryStory.sectors[0];
         sectorData = {
           sector: sector.sector,
@@ -607,7 +565,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
           </div>
         `);
       } else {
-        // Fallback popup
         popup.setHTML(`
           <div class="p-3">
             <div class="flex items-center mb-1">
@@ -665,7 +622,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       <div ref={mapContainer} className="absolute inset-0 rounded-lg shadow-lg" />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-background/5 rounded-lg" />
       
-      {/* Data source indicator */}
       {dataSource === 'fallback' && (
         <div className="absolute top-4 left-4 z-10 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-2 rounded-lg text-sm">
           <div className="flex items-center gap-2">
@@ -687,7 +643,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         </div>
       )}
 
-      {/* Legend - updated for filtered view */}
       {(filteredCountryStories.length > 0 || selectedSectors.length > 0) && (
         <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs shadow-sm">
           <div className="flex items-center gap-4">
