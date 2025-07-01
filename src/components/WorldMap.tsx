@@ -49,6 +49,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const isFlying = useRef(false);
   const dataLoadingRef = useRef(false);
   const preservedMapState = useRef<{ center: [number, number]; zoom: number } | null>(null);
+  const isTransitioning = useRef(false);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('mapboxToken');
@@ -123,7 +124,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   // Simplified map state change handler - no debouncing to eliminate flash effect
   const handleMapStateChange = () => {
-    if (map.current && onMapStateChange && !isFlying.current && mapInitialized) {
+    if (map.current && onMapStateChange && !isFlying.current && mapInitialized && !isTransitioning.current) {
       const center = map.current.getCenter();
       const zoom = map.current.getZoom();
       onMapStateChange([center.lng, center.lat], zoom);
@@ -221,14 +222,19 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return { filteredSingleStories, filteredCountryStories };
   };
 
-  // Handle 3D/2D view toggle with improved location preservation
+  // Handle 3D/2D view toggle with improved stability
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
     console.log('Switching to', is3DView ? '3D' : '2D', 'view');
     
+    // Prevent state changes during transition
+    isTransitioning.current = true;
+    
     const currentCenter = map.current.getCenter();
     const currentZoom = map.current.getZoom();
+    
+    // Store current state before transition
     preservedMapState.current = { 
       center: [currentCenter.lng, currentCenter.lat], 
       zoom: currentZoom 
@@ -236,7 +242,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
     console.log('Preserving map state:', preservedMapState.current);
     
+    // Temporarily disable interactions during transition
+    map.current.getCanvas().style.pointerEvents = 'none';
+    
     if (is3DView) {
+      // Transition to 3D globe
       map.current.setProjection('globe');
       map.current.setPitch(0);
       
@@ -248,12 +258,17 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       
       map.current.setMaxBounds(undefined);
       
+      // Smooth transition to globe view
       const constrainedLng = ((currentCenter.lng % 360) + 360) % 360;
       const finalLng = constrainedLng > 180 ? constrainedLng - 360 : constrainedLng;
       
-      map.current.setCenter([finalLng, currentCenter.lat]);
-      map.current.setZoom(Math.max(1.5, Math.min(currentZoom, 8)));
+      map.current.easeTo({
+        center: [finalLng, currentCenter.lat],
+        zoom: Math.max(1.5, Math.min(currentZoom, 8)),
+        duration: 800
+      });
     } else {
+      // Transition to 2D map
       map.current.setProjection('mercator');
       map.current.setPitch(0);
       
@@ -267,9 +282,20 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       const constrainedLng = Math.max(-180, Math.min(180, preservedMapState.current?.center[0] || currentCenter.lng));
       const constrainedLat = Math.max(-85, Math.min(85, preservedMapState.current?.center[1] || currentCenter.lat));
       
-      map.current.setCenter([constrainedLng, constrainedLat]);
-      map.current.setZoom(preservedMapState.current?.zoom || currentZoom);
+      map.current.easeTo({
+        center: [constrainedLng, constrainedLat],
+        zoom: preservedMapState.current?.zoom || currentZoom,
+        duration: 800
+      });
     }
+    
+    // Re-enable interactions after transition
+    setTimeout(() => {
+      isTransitioning.current = false;
+      if (map.current) {
+        map.current.getCanvas().style.pointerEvents = 'auto';
+      }
+    }, 900);
     
   }, [is3DView, mapInitialized]);
 

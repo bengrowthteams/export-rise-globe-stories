@@ -471,9 +471,6 @@ const Landing = () => {
 
           {/* Map View Toggle and Tutorial Button */}
           <div className="absolute top-4 right-2 sm:right-4 z-20 flex items-center gap-2">
-            <div className="tutorial-3d-toggle">
-              <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
-            </div>
             <div className="tutorial-help-button">
               <Button
                 onClick={handleStartTutorial}
@@ -484,6 +481,9 @@ const Landing = () => {
                 <HelpCircle size={16} className="mr-1" />
                 Tutorial
               </Button>
+            </div>
+            <div className="tutorial-3d-toggle">
+              <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
             </div>
           </div>
 
