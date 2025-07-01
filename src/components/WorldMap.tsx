@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -17,7 +18,6 @@ interface WorldMapProps {
   selectedSectors?: string[];
   onStoriesLoaded?: (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => void;
   onClearPopupsCallback?: (clearFn: () => void) => void;
-  is3D?: boolean;
 }
 
 export interface WorldMapRef {
@@ -35,8 +35,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   initialMapState,
   selectedSectors = [],
   onStoriesLoaded,
-  onClearPopupsCallback,
-  is3D = false
+  onClearPopupsCallback
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -152,19 +151,19 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       console.log('Using provided initial map state:', { center: initialCenter, zoom: initialZoom });
     } else {
       initialCenter = [20, 20];
-      initialZoom = is3D ? 1.5 : 2;
+      initialZoom = 2;
       console.log('Using default initial map state:', { center: initialCenter, zoom: initialZoom });
     }
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      projection: is3D ? { name: 'globe' } : { name: 'mercator' },
+      projection: { name: 'mercator' },
       zoom: initialZoom,
       center: initialCenter,
-      pitch: is3D ? 30 : 0,
+      pitch: 0,
       bearing: 0,
-      maxBounds: is3D ? undefined : [[-180, -85], [180, 85]],
+      maxBounds: [[-180, -85], [180, 85]],
     });
 
     map.current.addControl(
@@ -173,19 +172,6 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       }),
       'top-right'
     );
-
-    // Add atmosphere and fog effects for 3D mode
-    if (is3D) {
-      map.current.on('style.load', () => {
-        map.current?.setFog({
-          color: 'rgb(186, 210, 235)',
-          'high-color': 'rgb(36, 92, 223)',
-          'horizon-blend': 0.02,
-          'space-color': 'rgb(11, 11, 25)',
-          'star-intensity': 0.6
-        });
-      });
-    }
 
     map.current.on('movestart', () => {
       isFlying.current = true;
@@ -209,32 +195,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         setMapInitialized(false);
       }
     };
-  }, [successStories, countryStories, loading, initialMapState, is3D]);
-
-  // Update map projection when 3D mode changes
-  useEffect(() => {
-    if (map.current && mapInitialized) {
-      console.log('Switching map projection to:', is3D ? '3D Globe' : '2D Mercator');
-      
-      map.current.setProjection(is3D ? { name: 'globe' } : { name: 'mercator' });
-      
-      if (is3D) {
-        map.current.setPitch(30);
-        map.current.setMaxBounds(null);
-        map.current.setFog({
-          color: 'rgb(186, 210, 235)',
-          'high-color': 'rgb(36, 92, 223)',
-          'horizon-blend': 0.02,
-          'space-color': 'rgb(11, 11, 25)',
-          'star-intensity': 0.6
-        });
-      } else {
-        map.current.setPitch(0);
-        map.current.setMaxBounds([[-180, -85], [180, 85]]);
-        map.current.setFog(null);
-      }
-    }
-  }, [is3D, mapInitialized]);
+  }, [successStories, countryStories, loading, initialMapState]);
 
   // Update markers when filters change
   useEffect(() => {
@@ -323,7 +284,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
             {selectedSectors.length > 0 
               ? `Filtered: ${totalCountries} of ${originalTotal} countries` 
-              : `${is3D ? '3D Globe' : '2D Map'} - Live data (${totalCountries} countries)`
+              : `Live data (${totalCountries} countries)`
             }
           </div>
         </div>

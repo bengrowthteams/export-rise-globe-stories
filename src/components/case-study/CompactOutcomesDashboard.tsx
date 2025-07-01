@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TrendingUp, TrendingDown, Award, DollarSign, BarChart3 } from 'lucide-react';
 
 interface CompactOutcomesDashboardProps {
   outcome: string;
@@ -22,7 +22,6 @@ const CompactOutcomesDashboard = ({
   globalShare1995,
   globalShare2022
 }: CompactOutcomesDashboardProps) => {
-  
   const formatCurrency = (amount: number): string => {
     if (amount >= 1000000000) {
       return `$${(amount / 1000000000).toFixed(1)}B`;
@@ -34,62 +33,85 @@ const CompactOutcomesDashboard = ({
     return `$${amount.toLocaleString()}`;
   };
 
+  const formatPercentage = (value: number): string => {
+    return `${value.toFixed(2)}%`;
+  };
+
   const rankChange = rank1995 - rank2022;
-  const exportGrowthAnnual = (Math.pow(currentExports2022 / initialExports1995, 1/27) - 1) * 100;
-  const shareChange = globalShare2022 - globalShare1995;
-  const shareChangeAnnual = shareChange / 27;
+  const exportGrowthMultiple = (currentExports2022 / initialExports1995);
+  const globalShareChange = globalShare2022 - globalShare1995;
+  const globalSharePercentIncrease = ((globalShare2022 - globalShare1995) / globalShare1995) * 100;
+
+  const metrics = [
+    {
+      title: 'Global Rank',
+      value: `#${rank2022}`,
+      change: rankChange > 0 ? `+${rankChange}` : `${rankChange}`,
+      icon: Award,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      isPositive: rankChange > 0,
+      suffix: ''
+    },
+    {
+      title: 'Export Value',
+      value: formatCurrency(currentExports2022),
+      change: `${exportGrowthMultiple.toFixed(1)}x`,
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      isPositive: exportGrowthMultiple > 1,
+      suffix: ''
+    },
+    {
+      title: 'Global Market Share',
+      value: formatPercentage(globalShare2022),
+      change: `${globalSharePercentIncrease.toFixed(1)}%`,
+      icon: BarChart3,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      isPositive: globalShareChange > 0,
+      suffix: ''
+    }
+  ];
 
   return (
     <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Outcomes</h2>
-      <Card>
-        <CardContent className="space-y-4 p-6">
-          <div className="prose max-w-none">
-            <p className="text-gray-700 leading-relaxed text-base">
-              {outcome}
-            </p>
-          </div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">Outcomes</h2>
+      
+      <div className="bg-gray-50 p-4 rounded-lg mb-4">
+        <p className="text-gray-700 leading-relaxed">
+          {outcome}
+        </p>
+      </div>
 
-          <div className="border-t pt-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="font-semibold text-sm">Metric</TableHead>
-                  <TableHead className="font-semibold text-sm">1995</TableHead>
-                  <TableHead className="font-semibold text-sm">2022</TableHead>
-                  <TableHead className="font-semibold text-sm">Change</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium text-sm">Global Export Ranking</TableCell>
-                  <TableCell className="text-sm">#{rank1995}</TableCell>
-                  <TableCell className="text-sm">#{rank2022}</TableCell>
-                  <TableCell className={`text-sm font-semibold ${rankChange > 0 ? "text-green-600" : "text-red-600"}`}>
-                    {rankChange > 0 ? '+' : ''}{rankChange} positions
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium text-sm">Export Value</TableCell>
-                  <TableCell className="text-sm">{formatCurrency(initialExports1995)}</TableCell>
-                  <TableCell className="text-sm">{formatCurrency(currentExports2022)}</TableCell>
-                  <TableCell className="text-green-600 font-semibold text-sm">
-                    +{exportGrowthAnnual.toFixed(1)}% per year
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium text-sm">Global Market Share</TableCell>
-                  <TableCell className="text-sm">{globalShare1995.toFixed(2)}%</TableCell>
-                  <TableCell className="text-sm">{globalShare2022.toFixed(2)}%</TableCell>
-                  <TableCell className={`text-sm font-semibold ${shareChangeAnnual > 0 ? "text-green-600" : "text-red-600"}`}>
-                    {shareChangeAnnual > 0 ? '+' : ''}{shareChangeAnnual.toFixed(3)}pp per year
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {metrics.map((metric, index) => (
+          <Card key={index} className={`${metric.bgColor} border-2 border-gray-200`}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  <metric.icon className={`${metric.color} mr-2`} size={20} />
+                  <h3 className="text-sm font-medium text-gray-700">{metric.title}</h3>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+                <div className="flex items-center">
+                  {metric.isPositive ? (
+                    <TrendingUp className="text-green-600 mr-1" size={16} />
+                  ) : (
+                    <TrendingDown className="text-red-600 mr-1" size={16} />
+                  )}
+                  <span className={`text-sm font-medium ${metric.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                    {metric.change}{metric.suffix}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

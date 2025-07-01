@@ -4,8 +4,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { fetchCaseStudyData, CaseStudyData, getAvailableCaseStudyIds } from '../services/caseStudyService';
 import EnhancedCaseStudyHeader from '../components/case-study/EnhancedCaseStudyHeader';
-import KeyHighlightsSection from '../components/case-study/KeyHighlightsSection';
 import CompactOutcomesDashboard from '../components/case-study/CompactOutcomesDashboard';
+import KeyHighlightsSection from '../components/case-study/KeyHighlightsSection';
 import DetailedAnalysisSection from '../components/case-study/DetailedAnalysisSection';
 import SourcesBibliography from '../components/case-study/SourcesBibliography';
 import ReturnStateService from '../services/returnStateService';
@@ -104,12 +104,6 @@ const EnhancedCaseStudy = () => {
       />
 
       <div className="max-w-7xl mx-auto px-6 py-4 space-y-4">
-        <KeyHighlightsSection
-          publicSectorSummary={caseStudyData.publicSectorSummary}
-          privateSectorSummary={caseStudyData.privateSectorSummary}
-          externalFactorsSummary={caseStudyData.externalFactorsSummary}
-        />
-
         <CompactOutcomesDashboard
           outcome={caseStudyData.outcome}
           rank1995={caseStudyData.rank1995}
@@ -118,6 +112,12 @@ const EnhancedCaseStudy = () => {
           currentExports2022={caseStudyData.currentExports2022}
           globalShare1995={caseStudyData.globalShare1995}
           globalShare2022={caseStudyData.globalShare2022}
+        />
+
+        <KeyHighlightsSection
+          publicSectorSummary={caseStudyData.publicSectorSummary}
+          privateSectorSummary={caseStudyData.privateSectorSummary}
+          externalFactorsSummary={caseStudyData.externalFactorsSummary}
         />
 
         <DetailedAnalysisSection

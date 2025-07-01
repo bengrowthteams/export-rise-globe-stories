@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Map, HelpCircle, X, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
-import MapViewToggle from '../components/MapViewToggle';
 import StoryCard from '../components/StoryCard';
 import SectorSelectionModal from '../components/SectorSelectionModal';
 import FilteredSectorModal from '../components/FilteredSectorModal';
@@ -28,7 +27,6 @@ const Landing = () => {
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [is3D, setIs3D] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -36,238 +34,6 @@ const Landing = () => {
   const [clearPopups, setClearPopups] = useState<(() => void) | null>(null);
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
-
-  // Handle return from case studies immediately without flashing
-  React.useEffect(() => {
-    const handleReturnFromCaseStudy = () => {
-      console.log('Landing - Checking for return state');
-      
-      if (ReturnStateService.hasReturnState()) {
-        const returnState = ReturnStateService.getReturnState();
-        
-        if (returnState) {
-          console.log('Landing - Found return state, restoring with filter context:', {
-            country: returnState.country,
-            sector: returnState.sector,
-            hasActiveFilters: returnState.hasActiveFilters,
-            filterCount: returnState.selectedSectors?.length || 0
-          });
-          
-          // Immediately scroll to map section without any delay
-          const mapSection = document.getElementById('map-section');
-          if (mapSection) {
-            window.scrollTo({ 
-              top: mapSection.offsetTop - 56, 
-              behavior: 'instant' 
-            });
-          }
-          
-          // Restore filters immediately
-          setSelectedSectors(returnState.selectedSectors);
-          
-          // Clear the return state immediately to prevent re-triggering
-          ReturnStateService.clearReturnState();
-          
-          // Store return state in session storage for story card restoration
-          sessionStorage.setItem('caseStudyReturnState', JSON.stringify(returnState));
-        }
-      }
-    };
-
-    // Run immediately on component mount
-    handleReturnFromCaseStudy();
-  }, []);
-
-  // Restore specific story card after stories are loaded with improved filter handling
-  React.useEffect(() => {
-    const restoreStoryCard = () => {
-      if (successStories.length === 0 && countryStories.length === 0) {
-        return;
-      }
-
-      // Get the stored return state from session storage
-      const storedState = sessionStorage.getItem('caseStudyReturnState');
-      if (!storedState) return;
-
-      try {
-        const returnState = JSON.parse(storedState);
-        console.log('Landing - Restoring story card with filter context:', {
-          country: returnState.country,
-          sector: returnState.sector,
-          hasActiveFilters: returnState.hasActiveFilters,
-          hasCountryStories: !!returnState.countryStories,
-          hasSelectedSector: !!returnState.selectedSector
-        });
-
-        if (returnState.countryStories && returnState.selectedSector) {
-          // Multi-sector country - restore specific sector
-          console.log('Landing - Restoring multi-sector country with filters');
-          
-          // Check if we have active filters and need to apply them
-          if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
-            const filteredCountryStories = {
-              ...returnState.countryStories,
-              sectors: returnState.countryStories.sectors.filter(sector => 
-                returnState.selectedSectors.includes(sector.sector)
-              )
-            };
-            
-            // Only restore if the selected sector is in the filtered results
-            if (filteredCountryStories.sectors.some(s => s.sector === returnState.selectedSector.sector)) {
-              setSelectedCountryStories(filteredCountryStories);
-              setSelectedSector(returnState.selectedSector);
-              
-              const primaryStory: SuccessStory = {
-                id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
-                country: returnState.countryStories.country,
-                sector: returnState.selectedSector.sector,
-                product: returnState.selectedSector.product,
-                description: returnState.selectedSector.description,
-                growthRate: returnState.selectedSector.growthRate,
-                timeframe: returnState.countryStories.timeframe,
-                exportValue: returnState.selectedSector.exportValue,
-                keyFactors: returnState.selectedSector.keyFactors,
-                coordinates: returnState.countryStories.coordinates,
-                flag: returnState.countryStories.flag,
-                marketDestinations: returnState.selectedSector.marketDestinations,
-                challenges: returnState.selectedSector.challenges,
-                impact: returnState.selectedSector.impact,
-                globalRanking1995: returnState.selectedSector.globalRanking1995,
-                globalRanking2022: returnState.selectedSector.globalRanking2022,
-                initialExports1995: returnState.selectedSector.initialExports1995,
-                initialExports2022: returnState.selectedSector.initialExports2022,
-                successfulProduct: returnState.selectedSector.successfulProduct,
-                successStorySummary: returnState.selectedSector.successStorySummary
-              };
-              
-              setSelectedStory(primaryStory);
-              
-              // Immediately center map on the country
-              if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
-                console.log('Landing - Centering map on filtered multi-sector country');
-                worldMapRef.current.flyToPosition(
-                  [returnState.countryStories.coordinates.lng, returnState.countryStories.coordinates.lat], 
-                  5
-                );
-              }
-            } else {
-              console.log('Landing - Selected sector not in filtered results, skipping restoration');
-            }
-          } else {
-            // No filters active, restore normally
-            setSelectedCountryStories(returnState.countryStories);
-            setSelectedSector(returnState.selectedSector);
-            
-            const primaryStory: SuccessStory = {
-              id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
-              country: returnState.countryStories.country,
-              sector: returnState.selectedSector.sector,
-              product: returnState.selectedSector.product,
-              description: returnState.selectedSector.description,
-              growthRate: returnState.selectedSector.growthRate,
-              timeframe: returnState.countryStories.timeframe,
-              exportValue: returnState.selectedSector.exportValue,
-              keyFactors: returnState.selectedSector.keyFactors,
-              coordinates: returnState.countryStories.coordinates,
-              flag: returnState.countryStories.flag,
-              marketDestinations: returnState.selectedSector.marketDestinations,
-              challenges: returnState.selectedSector.challenges,
-              impact: returnState.selectedSector.impact,
-              globalRanking1995: returnState.selectedSector.globalRanking1995,
-              globalRanking2022: returnState.selectedSector.globalRanking2022,
-              initialExports1995: returnState.selectedSector.initialExports1995,
-              initialExports2022: returnState.selectedSector.initialExports2022,
-              successfulProduct: returnState.selectedSector.successfulProduct,
-              successStorySummary: returnState.selectedSector.successStorySummary
-            };
-            
-            setSelectedStory(primaryStory);
-            
-            // Immediately center map on the country
-            if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
-              console.log('Landing - Centering map on unfiltered multi-sector country');
-              worldMapRef.current.flyToPosition(
-                [returnState.countryStories.coordinates.lng, returnState.countryStories.coordinates.lat], 
-                5
-              );
-            }
-          }
-        } else {
-          // Single-sector country - find and restore the story
-          console.log('Landing - Restoring single-sector country');
-          const targetStory = successStories.find(s => 
-            s.country === returnState.country && s.sector === returnState.sector
-          );
-          
-          if (targetStory) {
-            // Check if filters are active and this story matches
-            if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
-              if (returnState.selectedSectors.includes(targetStory.sector)) {
-                setSelectedStory(targetStory);
-                
-                // Immediately center map on the country
-                if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
-                  console.log('Landing - Centering map on filtered single-sector country');
-                  worldMapRef.current.flyToPosition(
-                    [targetStory.coordinates.lng, targetStory.coordinates.lat], 
-                    5
-                  );
-                }
-              } else {
-                console.log('Landing - Single-sector story not in filtered results, skipping restoration');
-              }
-            } else {
-              // No filters active, restore normally
-              setSelectedStory(targetStory);
-              
-              // Immediately center map on the country
-              if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
-                console.log('Landing - Centering map on unfiltered single-sector country');
-                worldMapRef.current.flyToPosition(
-                  [targetStory.coordinates.lng, targetStory.coordinates.lat], 
-                  5
-                );
-              }
-            }
-          }
-        }
-
-        // Clear the stored state after use
-        sessionStorage.removeItem('caseStudyReturnState');
-        
-      } catch (error) {
-        console.error('Landing - Failed to restore story card:', error);
-      }
-    };
-
-    restoreStoryCard();
-  }, [successStories, countryStories]);
-
-  React.useEffect(() => {
-    const shouldScrollToMap = 
-      location.state?.returnedFromCaseStudy || 
-      location.state?.scrollToMap ||
-      sessionStorage.getItem('filtersToRestore') ||
-      window.location.hash === '#map' ||
-      new URLSearchParams(window.location.search).has('returnToMap');
-
-    if (shouldScrollToMap) {
-      setTimeout(() => {
-        const mapSection = document.getElementById('map-section');
-        if (mapSection) {
-          const navHeight = 56;
-          const elementPosition = mapSection.offsetTop;
-          const offsetPosition = elementPosition - navHeight;
-          
-          window.scrollTo({ 
-            top: offsetPosition, 
-            behavior: 'smooth' 
-          });
-          console.log('Auto-scrolled to map section on component mount');
-        }
-      }, 500);
-    }
-  }, []);
 
   const handleStoriesLoaded = useCallback((stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
     console.log('Stories loaded in Landing component:', stories.length, 'single-sector,', countryStories.length, 'multi-sector');
@@ -497,9 +263,237 @@ const Landing = () => {
     setClearPopups(() => clearFn);
   }, []);
 
-  const handleMapViewToggle = (newIs3D: boolean) => {
-    setIs3D(newIs3D);
-  };
+  // Handle return from case studies immediately without flashing
+  React.useEffect(() => {
+    const handleReturnFromCaseStudy = () => {
+      console.log('Landing - Checking for return state');
+      
+      if (ReturnStateService.hasReturnState()) {
+        const returnState = ReturnStateService.getReturnState();
+        
+        if (returnState) {
+          console.log('Landing - Found return state, restoring with filter context:', {
+            country: returnState.country,
+            sector: returnState.sector,
+            hasActiveFilters: returnState.hasActiveFilters,
+            filterCount: returnState.selectedSectors?.length || 0
+          });
+          
+          // Immediately scroll to map section without any delay
+          const mapSection = document.getElementById('map-section');
+          if (mapSection) {
+            window.scrollTo({ 
+              top: mapSection.offsetTop - 56, 
+              behavior: 'instant' 
+            });
+          }
+          
+          // Restore filters immediately
+          setSelectedSectors(returnState.selectedSectors);
+          
+          // Clear the return state immediately to prevent re-triggering
+          ReturnStateService.clearReturnState();
+          
+          // Store return state in session storage for story card restoration
+          sessionStorage.setItem('caseStudyReturnState', JSON.stringify(returnState));
+        }
+      }
+    };
+
+    // Run immediately on component mount
+    handleReturnFromCaseStudy();
+  }, []);
+
+  // Restore specific story card after stories are loaded with improved filter handling
+  React.useEffect(() => {
+    const restoreStoryCard = () => {
+      if (successStories.length === 0 && countryStories.length === 0) {
+        return;
+      }
+
+      // Get the stored return state from session storage
+      const storedState = sessionStorage.getItem('caseStudyReturnState');
+      if (!storedState) return;
+
+      try {
+        const returnState = JSON.parse(storedState);
+        console.log('Landing - Restoring story card with filter context:', {
+          country: returnState.country,
+          sector: returnState.sector,
+          hasActiveFilters: returnState.hasActiveFilters,
+          hasCountryStories: !!returnState.countryStories,
+          hasSelectedSector: !!returnState.selectedSector
+        });
+
+        if (returnState.countryStories && returnState.selectedSector) {
+          // Multi-sector country - restore specific sector
+          console.log('Landing - Restoring multi-sector country with filters');
+          
+          // Check if we have active filters and need to apply them
+          if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
+            const filteredCountryStories = {
+              ...returnState.countryStories,
+              sectors: returnState.countryStories.sectors.filter(sector => 
+                returnState.selectedSectors.includes(sector.sector)
+              )
+            };
+            
+            // Only restore if the selected sector is in the filtered results
+            if (filteredCountryStories.sectors.some(s => s.sector === returnState.selectedSector.sector)) {
+              setSelectedCountryStories(filteredCountryStories);
+              setSelectedSector(returnState.selectedSector);
+              
+              const primaryStory: SuccessStory = {
+                id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
+                country: returnState.countryStories.country,
+                sector: returnState.selectedSector.sector,
+                product: returnState.selectedSector.product,
+                description: returnState.selectedSector.description,
+                growthRate: returnState.selectedSector.growthRate,
+                timeframe: returnState.countryStories.timeframe,
+                exportValue: returnState.selectedSector.exportValue,
+                keyFactors: returnState.selectedSector.keyFactors,
+                coordinates: returnState.countryStories.coordinates,
+                flag: returnState.countryStories.flag,
+                marketDestinations: returnState.selectedSector.marketDestinations,
+                challenges: returnState.selectedSector.challenges,
+                impact: returnState.selectedSector.impact,
+                globalRanking1995: returnState.selectedSector.globalRanking1995,
+                globalRanking2022: returnState.selectedSector.globalRanking2022,
+                initialExports1995: returnState.selectedSector.initialExports1995,
+                initialExports2022: returnState.selectedSector.initialExports2022,
+                successfulProduct: returnState.selectedSector.successfulProduct,
+                successStorySummary: returnState.selectedSector.successStorySummary
+              };
+              
+              setSelectedStory(primaryStory);
+              
+              // Immediately center map on the country
+              if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
+                console.log('Landing - Centering map on filtered multi-sector country');
+                worldMapRef.current.flyToPosition(
+                  [returnState.countryStories.coordinates.lng, returnState.countryStories.coordinates.lat], 
+                  5
+                );
+              }
+            } else {
+              console.log('Landing - Selected sector not in filtered results, skipping restoration');
+            }
+          } else {
+            // No filters active, restore normally
+            setSelectedCountryStories(returnState.countryStories);
+            setSelectedSector(returnState.selectedSector);
+            
+            const primaryStory: SuccessStory = {
+              id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
+              country: returnState.countryStories.country,
+              sector: returnState.selectedSector.sector,
+              product: returnState.selectedSector.product,
+              description: returnState.selectedSector.description,
+              growthRate: returnState.selectedSector.growthRate,
+              timeframe: returnState.countryStories.timeframe,
+              exportValue: returnState.selectedSector.exportValue,
+              keyFactors: returnState.selectedSector.keyFactors,
+              coordinates: returnState.countryStories.coordinates,
+              flag: returnState.countryStories.flag,
+              marketDestinations: returnState.selectedSector.marketDestinations,
+              challenges: returnState.selectedSector.challenges,
+              impact: returnState.selectedSector.impact,
+              globalRanking1995: returnState.selectedSector.globalRanking1995,
+              globalRanking2022: returnState.selectedSector.globalRanking2022,
+              initialExports1995: returnState.selectedSector.initialExports2022,
+              initialExports2022: returnState.selectedSector.initialExports2022,
+              successfulProduct: returnState.selectedSector.successfulProduct,
+              successStorySummary: returnState.selectedSector.successStorySummary
+            };
+            
+            setSelectedStory(primaryStory);
+            
+            // Immediately center map on the country
+            if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
+              console.log('Landing - Centering map on unfiltered multi-sector country');
+              worldMapRef.current.flyToPosition(
+                [returnState.countryStories.coordinates.lng, returnState.countryStories.coordinates.lat], 
+                5
+              );
+            }
+          }
+        } else {
+          // Single-sector country - find and restore the story
+          console.log('Landing - Restoring single-sector country');
+          const targetStory = successStories.find(s => 
+            s.country === returnState.country && s.sector === returnState.sector
+          );
+          
+          if (targetStory) {
+            // Check if filters are active and this story matches
+            if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
+              if (returnState.selectedSectors.includes(targetStory.sector)) {
+                setSelectedStory(targetStory);
+                
+                // Immediately center map on the country
+                if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
+                  console.log('Landing - Centering map on filtered single-sector country');
+                  worldMapRef.current.flyToPosition(
+                    [targetStory.coordinates.lng, targetStory.coordinates.lat], 
+                    5
+                  );
+                }
+              } else {
+                console.log('Landing - Single-sector story not in filtered results, skipping restoration');
+              }
+            } else {
+              // No filters active, restore normally
+              setSelectedStory(targetStory);
+              
+              // Immediately center map on the country
+              if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
+                console.log('Landing - Centering map on unfiltered single-sector country');
+                worldMapRef.current.flyToPosition(
+                  [targetStory.coordinates.lng, targetStory.coordinates.lat], 
+                  5
+                );
+              }
+            }
+          }
+        }
+
+        // Clear the stored state after use
+        sessionStorage.removeItem('caseStudyReturnState');
+        
+      } catch (error) {
+        console.error('Landing - Failed to restore story card:', error);
+      }
+    };
+
+    restoreStoryCard();
+  }, [successStories, countryStories]);
+
+  React.useEffect(() => {
+    const shouldScrollToMap = 
+      location.state?.returnedFromCaseStudy || 
+      location.state?.scrollToMap ||
+      sessionStorage.getItem('filtersToRestore') ||
+      window.location.hash === '#map' ||
+      new URLSearchParams(window.location.search).has('returnToMap');
+
+    if (shouldScrollToMap) {
+      setTimeout(() => {
+        const mapSection = document.getElementById('map-section');
+        if (mapSection) {
+          const navHeight = 56;
+          const elementPosition = mapSection.offsetTop;
+          const offsetPosition = elementPosition - navHeight;
+          
+          window.scrollTo({ 
+            top: offsetPosition, 
+            behavior: 'smooth' 
+          });
+          console.log('Auto-scrolled to map section on component mount');
+        }
+      }, 500);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -577,9 +571,8 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle and Tutorial Button - positioned to avoid zoom controls */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-            <MapViewToggle is3D={is3D} onToggle={handleMapViewToggle} />
+          {/* Tutorial Button - positioned to avoid zoom controls */}
+          <div className="absolute top-4 right-4 z-20">
             <div className="tutorial-help-button">
               <Button
                 onClick={handleStartTutorial}
@@ -603,7 +596,6 @@ const Landing = () => {
               selectedSectors={selectedSectors}
               onStoriesLoaded={handleStoriesLoaded}
               onClearPopupsCallback={handleClearPopupsCallback}
-              is3D={is3D}
             />
           </div>
           
