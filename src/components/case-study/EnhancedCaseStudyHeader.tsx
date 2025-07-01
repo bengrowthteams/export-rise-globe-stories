@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getSectorColor } from '@/data/sectorColors';
 
 interface EnhancedCaseStudyHeaderProps {
@@ -17,44 +17,37 @@ const EnhancedCaseStudyHeader = ({ flag, country, sector, successfulProduct }: E
   const sectorColor = getSectorColor(sector);
 
   const handleReturnToMap = () => {
-    console.log('Enhanced Return to Map clicked - using simplified approach');
+    console.log('Enhanced Return to Map clicked - using simple working approach');
     
-    // Get saved state from session storage (set when navigating to case study)
-    const savedMapState = sessionStorage.getItem('mapState');
-    const savedFilters = sessionStorage.getItem('selectedSectors');
-    const savedScrollPosition = sessionStorage.getItem('mapScrollPosition');
-    
-    let navigationState = {};
-    
-    if (savedMapState) {
-      try {
-        const mapState = JSON.parse(savedMapState);
-        const filters = savedFilters ? JSON.parse(savedFilters) : [];
-        
-        navigationState = {
-          mapState: mapState,
-          selectedSectors: filters,
-          scrollPosition: savedScrollPosition ? parseInt(savedScrollPosition) : 0,
-          returnedFromCaseStudy: true,
-          timestamp: Date.now()
-        };
-        
-        console.log('Enhanced: Restoring complete state:', navigationState);
-      } catch (error) {
-        console.error('Enhanced: Failed to parse saved state:', error);
-      }
+    // Save current filter state before navigating
+    const currentFilters = sessionStorage.getItem('selectedSectors');
+    if (currentFilters) {
+      sessionStorage.setItem('filtersToRestore', currentFilters);
     }
-
-    // Use simple navigation approach (like the working error button)
-    navigate('/', {
-      state: navigationState,
-      replace: false
-    });
+    
+    // Use the same simple approach that works for the 404 page
+    navigate('/');
+    
+    // Ensure we scroll to map section after navigation
+    setTimeout(() => {
+      const mapSection = document.getElementById('map-section');
+      if (mapSection) {
+        const navHeight = 56;
+        const elementPosition = mapSection.offsetTop;
+        const offsetPosition = elementPosition - navHeight;
+        
+        window.scrollTo({ 
+          top: offsetPosition, 
+          behavior: 'smooth' 
+        });
+        console.log('Scrolled to map section from enhanced case study');
+      }
+    }, 100);
   };
 
   return (
     <>
-      {/* Sticky Return Button - Fixed responsive positioning */}
+      {/* Sticky Return Button */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <Button 
@@ -68,7 +61,7 @@ const EnhancedCaseStudyHeader = ({ flag, country, sector, successfulProduct }: E
         </div>
       </div>
 
-      {/* Main Header Content - Enhanced responsive improvements with fixed positioning */}
+      {/* Main Header Content */}
       <div className="relative overflow-hidden pt-20" style={{ background: `linear-gradient(135deg, ${sectorColor}15 0%, ${sectorColor}25 100%)` }}>
         <div className="absolute inset-0 bg-gradient-to-r from-white/90 to-transparent"></div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface CaseStudyHeaderProps {
   flag: string;
@@ -16,44 +16,37 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
   const navigate = useNavigate();
 
   const handleReturnToMap = () => {
-    console.log('Return to Map clicked - using simplified approach');
+    console.log('Return to Map clicked - using simple working approach');
     
-    // Get saved state from session storage (set when navigating to case study)
-    const savedMapState = sessionStorage.getItem('mapState');
-    const savedFilters = sessionStorage.getItem('selectedSectors');
-    const savedScrollPosition = sessionStorage.getItem('mapScrollPosition');
-    
-    let navigationState = {};
-    
-    if (savedMapState) {
-      try {
-        const mapState = JSON.parse(savedMapState);
-        const filters = savedFilters ? JSON.parse(savedFilters) : [];
-        
-        navigationState = {
-          mapState: mapState,
-          selectedSectors: filters,
-          scrollPosition: savedScrollPosition ? parseInt(savedScrollPosition) : 0,
-          returnedFromCaseStudy: true,
-          timestamp: Date.now()
-        };
-        
-        console.log('Restoring complete state:', navigationState);
-      } catch (error) {
-        console.error('Failed to parse saved state:', error);
-      }
+    // Save current filter state before navigating
+    const currentFilters = sessionStorage.getItem('selectedSectors');
+    if (currentFilters) {
+      sessionStorage.setItem('filtersToRestore', currentFilters);
     }
-
-    // Use simple navigation approach (like the working error button)
-    navigate('/', {
-      state: navigationState,
-      replace: false
-    });
+    
+    // Use the same simple approach that works for the 404 page
+    navigate('/');
+    
+    // Ensure we scroll to map section after navigation
+    setTimeout(() => {
+      const mapSection = document.getElementById('map-section');
+      if (mapSection) {
+        const navHeight = 56;
+        const elementPosition = mapSection.offsetTop;
+        const offsetPosition = elementPosition - navHeight;
+        
+        window.scrollTo({ 
+          top: offsetPosition, 
+          behavior: 'smooth' 
+        });
+        console.log('Scrolled to map section from case study');
+      }
+    }, 100);
   };
 
   return (
     <>
-      {/* Sticky Return Button - Fixed responsive positioning */}
+      {/* Sticky Return Button */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <Button 
@@ -67,7 +60,7 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
         </div>
       </div>
 
-      {/* Main Header Content - Fixed responsive positioning */}
+      {/* Main Header Content */}
       <div className="bg-white shadow-sm border-b pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">

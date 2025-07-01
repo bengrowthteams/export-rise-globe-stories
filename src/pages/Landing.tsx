@@ -35,11 +35,24 @@ const Landing = () => {
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Enhanced state restoration with filter support
+  // Enhanced state restoration - check for saved filters when component mounts
   React.useEffect(() => {
-    const restoreCompleteState = async () => {
-      console.log('Checking for state to restore...');
+    const restoreState = () => {
+      console.log('Landing component mounted - checking for state to restore');
       
+      // Check for filters to restore (from case study return)
+      const filtersToRestore = sessionStorage.getItem('filtersToRestore');
+      if (filtersToRestore) {
+        try {
+          const parsedFilters = JSON.parse(filtersToRestore);
+          console.log('Restoring filters from case study return:', parsedFilters);
+          setSelectedSectors(parsedFilters);
+          sessionStorage.removeItem('filtersToRestore');
+        } catch (error) {
+          console.error('Failed to parse saved filters:', error);
+        }
+      }
+
       // Priority 1: React Router state (from case study return)
       if (location.state?.returnedFromCaseStudy) {
         const state = location.state;
@@ -110,8 +123,35 @@ const Landing = () => {
       sessionStorage.removeItem('mapScrollPosition');
     };
 
-    restoreCompleteState();
+    restoreState();
   }, [location]);
+
+  // Also check for case study returns and scroll to map when URL suggests we should
+  React.useEffect(() => {
+    // If there are any signs we should be at the map section, scroll there
+    const shouldScrollToMap = 
+      location.state?.returnedFromCaseStudy || 
+      sessionStorage.getItem('filtersToRestore') ||
+      window.location.hash === '#map' ||
+      new URLSearchParams(window.location.search).has('returnToMap');
+
+    if (shouldScrollToMap) {
+      setTimeout(() => {
+        const mapSection = document.getElementById('map-section');
+        if (mapSection) {
+          const navHeight = 56;
+          const elementPosition = mapSection.offsetTop;
+          const offsetPosition = elementPosition - navHeight;
+          
+          window.scrollTo({ 
+            top: offsetPosition, 
+            behavior: 'smooth' 
+          });
+          console.log('Auto-scrolled to map section on component mount');
+        }
+      }, 500);
+    }
+  }, []);
 
   const handleStoriesLoaded = useCallback((stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
     console.log('Stories loaded in Landing component:', stories.length, 'single-sector,', countryStories.length, 'multi-sector');
@@ -352,7 +392,7 @@ const Landing = () => {
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
       
-      {/* Hero Section - Fixed responsive positioning */}
+      {/* Hero Section */}
       <div className="min-h-screen relative overflow-hidden pt-14">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -387,10 +427,10 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* Map Section - Fixed responsive positioning */}
+      {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="h-[calc(100vh-3.5rem)] bg-gray-50">
         <div className="relative h-full">
-          {/* Search Bar and Filter - Fixed responsive positioning */}
+          {/* Search Bar and Filter */}
           <div className="absolute top-4 left-2 sm:left-4 z-20 space-y-2 w-[calc(100vw-1rem)] sm:w-auto max-w-[280px] sm:max-w-none">
             <div className="tutorial-search-bar">
               <SearchBar onCountrySelect={handleCountrySelect} />
@@ -424,7 +464,7 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle and Tutorial Button - Fixed responsive positioning */}
+          {/* Map View Toggle and Tutorial Button */}
           <div className="absolute top-4 right-2 sm:right-4 z-20 flex items-center gap-2">
             <div className="tutorial-3d-toggle">
               <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
@@ -455,7 +495,7 @@ const Landing = () => {
             />
           </div>
           
-          {/* Story Card Overlay - Fixed responsive positioning */}
+          {/* Story Card Overlay */}
           {(selectedStory || (selectedCountryStories && selectedSector)) && (
             <>
               <div 
