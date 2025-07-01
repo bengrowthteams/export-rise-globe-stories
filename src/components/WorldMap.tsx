@@ -221,33 +221,52 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     return { filteredSingleStories, filteredCountryStories };
   };
 
-  // Simplified 3D/2D view toggle without flashing
+  // Enhanced 3D/2D view toggle with proper error handling
   useEffect(() => {
     if (!map.current || !mapInitialized) return;
 
     console.log('Switching to', is3DView ? '3D' : '2D', 'view');
     
-    if (is3DView) {
-      map.current.setProjection('globe');
-      map.current.setPitch(0);
-      
-      map.current.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
-      });
-      
-      map.current.setMaxBounds(undefined);
-    } else {
-      map.current.setProjection('mercator');
-      map.current.setPitch(0);
-      
-      map.current.setFog({});
-      
-      map.current.setMaxBounds([
-        [-180, -85],
-        [180, 85]
-      ]);
+    try {
+      if (is3DView) {
+        // Apply 3D-specific settings
+        map.current.setProjection({ name: 'globe' });
+        map.current.setPitch(0);
+        
+        // Wait for projection to be set before applying fog
+        setTimeout(() => {
+          if (map.current) {
+            map.current.setFog({
+              color: 'rgb(255, 255, 255)',
+              'high-color': 'rgb(200, 200, 225)',
+              'horizon-blend': 0.2,
+            });
+          }
+        }, 100);
+        
+        // Remove bounds for globe view
+        map.current.setMaxBounds(undefined);
+        
+        // Adjust initial view for 3D
+        if (map.current.getZoom() < 1) {
+          map.current.setZoom(1.5);
+        }
+      } else {
+        // Apply 2D-specific settings
+        map.current.setProjection({ name: 'mercator' });
+        map.current.setPitch(0);
+        
+        // Clear fog for 2D view
+        map.current.setFog({});
+        
+        // Set bounds for 2D view
+        map.current.setMaxBounds([
+          [-180, -85],
+          [180, 85]
+        ]);
+      }
+    } catch (error) {
+      console.error('Error switching map projection:', error);
     }
     
   }, [is3DView, mapInitialized]);
@@ -280,7 +299,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      projection: is3DView ? 'globe' : 'mercator',
+      projection: is3DView ? { name: 'globe' } : { name: 'mercator' },
       zoom: initialZoom,
       center: initialCenter,
       pitch: 0,
@@ -307,8 +326,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
       
-      if (is3DView) {
-        map.current?.setFog({
+      if (is3DView && map.current) {
+        map.current.setFog({
           color: 'rgb(255, 255, 255)',
           'high-color': 'rgb(200, 200, 225)',
           'horizon-blend': 0.2,
