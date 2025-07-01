@@ -5,9 +5,10 @@ import { Loader2 } from 'lucide-react';
 import { fetchCaseStudyData, CaseStudyData, getAvailableCaseStudyIds } from '../services/caseStudyService';
 import EnhancedCaseStudyHeader from '../components/case-study/EnhancedCaseStudyHeader';
 import KeyHighlightsSection from '../components/case-study/KeyHighlightsSection';
-import QuantitativeDashboard from '../components/case-study/QuantitativeDashboard';
+import CompactOutcomesDashboard from '../components/case-study/CompactOutcomesDashboard';
 import DetailedAnalysisSection from '../components/case-study/DetailedAnalysisSection';
 import SourcesBibliography from '../components/case-study/SourcesBibliography';
+import ReturnStateService from '../services/returnStateService';
 
 const EnhancedCaseStudy = () => {
   const { id } = useParams();
@@ -23,8 +24,8 @@ const EnhancedCaseStudy = () => {
     
     if (location.state) {
       // Store the comprehensive state for return navigation
-      sessionStorage.setItem('enhancedCaseStudyReturnState', JSON.stringify(location.state));
-      console.log('Enhanced Case Study - Stored return state in session storage');
+      ReturnStateService.saveReturnState(location.state);
+      console.log('Enhanced Case Study - Stored return state via service');
     }
   }, [location.state]);
 
@@ -94,40 +95,30 @@ const EnhancedCaseStudy = () => {
         country={caseStudyData.country}
         sector={caseStudyData.sector}
         successfulProduct={caseStudyData.successfulProduct}
+        rank1995={caseStudyData.rank1995}
+        rank2022={caseStudyData.rank2022}
+        initialExports1995={caseStudyData.initialExports1995}
+        currentExports2022={caseStudyData.currentExports2022}
+        globalShare1995={caseStudyData.globalShare1995}
+        globalShare2022={caseStudyData.globalShare2022}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         <KeyHighlightsSection
           publicSectorSummary={caseStudyData.publicSectorSummary}
           privateSectorSummary={caseStudyData.privateSectorSummary}
           externalFactorsSummary={caseStudyData.externalFactorsSummary}
         />
 
-        {/* Performance Dashboard with Outcome */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Performance Dashboard</h2>
-          
-          {/* Outcome Section */}
-          <div className="mb-6">
-            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Impact & Outcomes</h3>
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {caseStudyData.outcome}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <QuantitativeDashboard
-            rank1995={caseStudyData.rank1995}
-            rank2022={caseStudyData.rank2022}
-            initialExports1995={caseStudyData.initialExports1995}
-            currentExports2022={caseStudyData.currentExports2022}
-            globalShare1995={caseStudyData.globalShare1995}
-            globalShare2022={caseStudyData.globalShare2022}
-          />
-        </div>
+        <CompactOutcomesDashboard
+          outcome={caseStudyData.outcome}
+          rank1995={caseStudyData.rank1995}
+          rank2022={caseStudyData.rank2022}
+          initialExports1995={caseStudyData.initialExports1995}
+          currentExports2022={caseStudyData.currentExports2022}
+          globalShare1995={caseStudyData.globalShare1995}
+          globalShare2022={caseStudyData.globalShare2022}
+        />
 
         <DetailedAnalysisSection
           publicSectorPolicy={caseStudyData.publicSectorPolicy}

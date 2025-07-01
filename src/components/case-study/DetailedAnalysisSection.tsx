@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Factory, Globe, Users, Briefcase, TrendingUp } from 'lucide-react';
+import { FileText, Briefcase, ArrowRight } from 'lucide-react';
 
 interface DetailedAnalysisSectionProps {
   publicSectorPolicy: string;
@@ -20,121 +20,68 @@ const DetailedAnalysisSection = ({
   externalMarketFactors,
   externalActorContribution
 }: DetailedAnalysisSectionProps) => {
-  
-  // Function to format text with bullet points
-  const formatTextWithBullets = (text: string) => {
-    // Split text by bullet points and create proper formatting
-    const parts = text.split('●').filter(part => part.trim().length > 0);
-    
-    if (parts.length <= 1) {
-      // No bullet points found, return original text
-      return <p className="text-gray-700 leading-relaxed">{text}</p>;
-    }
-
-    return (
-      <div className="text-gray-700 leading-relaxed">
-        {parts.map((part, index) => (
-          <div key={index} className={index === 0 ? "mb-4" : "mb-3"}>
-            {index === 0 ? (
-              // First part is usually intro text before bullets
-              <p className="mb-4">{part.trim()}</p>
-            ) : (
-              // Subsequent parts are bullet points
-              <div className="flex items-start space-x-3 mb-3">
-                <span className="text-gray-500 mt-1 text-lg">●</span>
-                <p className="flex-1">{part.trim()}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   const sections = [
     {
-      title: 'Public Sector Role',
+      icon: FileText,
+      title: 'Policy Framework',
+      subtitle: 'Government Strategy & Implementation',
+      content: publicSectorPolicy,
+      actor: publicSectorActor,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      icon: Building2,
-      subsections: [
-        {
-          title: 'Policy Framework',
-          icon: Briefcase,
-          content: publicSectorPolicy
-        },
-        {
-          title: 'Key Actors',
-          icon: Users,
-          content: publicSectorActor
-        }
-      ]
+      borderColor: 'border-blue-200'
     },
     {
-      title: 'Private Sector Role',
+      icon: Briefcase,
+      title: 'Industry Growth',
+      subtitle: 'Private Sector Development',
+      content: privateSectorIndustryGrowth,
+      actor: privateSectorPioneeringFirm,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
-      icon: Factory,
-      subsections: [
-        {
-          title: 'Pioneering Firms',
-          icon: Factory,
-          content: privateSectorPioneeringFirm
-        },
-        {
-          title: 'Industry Growth',
-          icon: TrendingUp,
-          content: privateSectorIndustryGrowth
-        }
-      ]
+      borderColor: 'border-orange-200'
     },
     {
-      title: 'External Factors Role',
+      icon: ArrowRight,
+      title: 'Market Factors',
+      subtitle: 'External Opportunities & Challenges',
+      content: externalMarketFactors,
+      actor: externalActorContribution,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      icon: Globe,
-      subsections: [
-        {
-          title: 'Market Factors',
-          icon: TrendingUp,
-          content: externalMarketFactors
-        },
-        {
-          title: 'External Actor Contribution',
-          icon: Users,
-          content: externalActorContribution
-        }
-      ]
+      borderColor: 'border-green-200'
     }
   ];
 
   return (
     <div className="mb-8">
       <h2 className="text-3xl font-bold text-gray-900 mb-6">Understanding the Story</h2>
-      
-      <div className="space-y-8">
-        {sections.map((section, sectionIndex) => (
-          <Card key={sectionIndex} className={`${section.bgColor} ${section.borderColor} border-2`}>
+      <div className="space-y-6">
+        {sections.map((section, index) => (
+          <Card key={index} className={`${section.bgColor} ${section.borderColor} border-2`}>
             <CardHeader>
-              <CardTitle className={`flex items-center space-x-3 text-2xl ${section.color}`}>
-                <section.icon size={28} />
-                <span>{section.title}</span>
+              <CardTitle className="flex items-center space-x-3">
+                <section.icon className={section.color} size={24} />
+                <div>
+                  <h3 className={`text-xl font-bold ${section.color}`}>
+                    {section.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 font-normal">{section.subtitle}</p>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {section.subsections.map((subsection, subIndex) => (
-                  <div key={subIndex} className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-white/50">
-                    <div className={`flex items-center mb-3 ${section.color}`}>
-                      <subsection.icon size={20} className="mr-2" />
-                      <h4 className="text-lg font-semibold">{subsection.title}</h4>
-                    </div>
-                    {formatTextWithBullets(subsection.content)}
-                  </div>
-                ))}
+            <CardContent className="space-y-4">
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed">
+                  {section.content}
+                </p>
+              </div>
+              
+              <div className="bg-white/50 p-4 rounded-lg">
+                <h4 className={`font-semibold ${section.color} mb-2`}>Key Actor/Implementation</h4>
+                <p className="text-gray-700 text-sm leading-relaxed">
+                  {section.actor}
+                </p>
               </div>
             </CardContent>
           </Card>
