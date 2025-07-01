@@ -88,17 +88,17 @@ const EnhancedCaseStudyHeader = ({
 
       {/* Header Content with Navy Background */}
       <div className="relative overflow-hidden pt-10 bg-gradient-to-r from-slate-800 to-slate-900">
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-2">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-4">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-3">
+          <div className="flex flex-col lg:flex-row items-center justify-center space-y-3 lg:space-y-0 lg:space-x-6">
             {/* Left Side - Country Info */}
-            <div className="flex items-start space-x-3 flex-1">
-              <div className="text-2xl drop-shadow-lg">{flag}</div>
+            <div className="flex items-start space-x-3 text-center lg:text-left">
+              <div className="text-3xl drop-shadow-lg">{flag}</div>
               <div>
-                <h1 className="text-lg font-bold text-white mb-1">
-                  {country} <span className="text-gray-300">/</span> {sector}
+                <h1 className="text-2xl font-bold text-white mb-2">
+                  {country} <span className="text-white/70">/</span> {sector}
                 </h1>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
-                  <p className="text-xs text-white">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                  <p className="text-sm text-white">
                     <span className="font-semibold text-white">Successful Product:</span> {successfulProduct}
                   </p>
                 </div>
@@ -106,51 +106,46 @@ const EnhancedCaseStudyHeader = ({
             </div>
 
             {/* Right Side - Performance Metrics 2x2 Grid */}
-            <div className="grid grid-cols-2 gap-2 lg:w-72">
-              <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-400/30 rounded-lg p-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-white">2022 Global</p>
-                    <p className="text-xs font-medium text-white">Rank</p>
-                    <p className="text-lg font-bold text-white">#{rank2022}</p>
+            <div className="grid grid-cols-2 gap-3 w-80">
+              <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-400/30 rounded-lg p-3 h-20">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white">2022 Global Rank</p>
+                    <Award className="text-orange-300" size={14} />
                   </div>
-                  <Award className="text-orange-300" size={16} />
+                  <p className="text-xl font-bold text-white">#{rank2022}</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-400/30 rounded-lg p-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-white">Ranking</p>
-                    <p className="text-xs font-medium text-white">Improvement</p>
-                    <p className="text-xs font-medium text-white">(1995-2022)</p>
-                    <p className="text-lg font-bold text-white">
-                      {rankChange > 0 ? '+' : ''}{rankChange}
-                    </p>
+              <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-400/30 rounded-lg p-3 h-20">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white">Ranking Improvement (1995-2022)</p>
+                    <TrendingUp className="text-blue-300" size={14} />
                   </div>
-                  <TrendingUp className="text-blue-300" size={16} />
+                  <p className="text-xl font-bold text-white">
+                    {rankChange > 0 ? '+' : ''}{rankChange}
+                  </p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg p-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-white">Current</p>
-                    <p className="text-xs font-medium text-white">Exports</p>
-                    <p className="text-lg font-bold text-white">{formatCurrency(currentExports2022)}</p>
+              <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg p-3 h-20">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white">Current Exports</p>
+                    <DollarSign className="text-purple-300" size={14} />
                   </div>
-                  <DollarSign className="text-purple-300" size={16} />
+                  <p className="text-xl font-bold text-white">{formatCurrency(currentExports2022)}</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-400/30 rounded-lg p-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-white">Export Growth</p>
-                    <p className="text-xs font-medium text-white">(1995-2022)</p>
-                    <p className="text-lg font-bold text-white">{exportGrowthMultiple}x</p>
+              <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-400/30 rounded-lg p-3 h-20">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white">Export Growth (1995-2022)</p>
+                    <TrendingUp className="text-green-300" size={14} />
                   </div>
-                  <TrendingUp className="text-green-300" size={16} />
+                  <p className="text-xl font-bold text-white">{exportGrowthMultiple}x</p>
                 </div>
               </div>
             </div>

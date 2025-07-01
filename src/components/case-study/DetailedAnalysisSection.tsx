@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Briefcase, Globe } from 'lucide-react';
+import { Building2, Factory, Globe } from 'lucide-react';
 
 interface DetailedAnalysisSectionProps {
   publicSectorPolicy: string;
@@ -21,122 +21,145 @@ const DetailedAnalysisSection = ({
   externalActorContribution
 }: DetailedAnalysisSectionProps) => {
   
-  const formatText = (text: string): string[] => {
-    return text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+  // Helper function to format text into paragraphs and bullet points
+  const formatContent = (text: string) => {
+    const paragraphs = text.split('\n\n').filter(p => p.trim().length > 0);
+    return paragraphs.map((paragraph, index) => {
+      if (paragraph.includes('•') || paragraph.includes('-')) {
+        // Handle bullet points
+        const bullets = paragraph.split(/[•-]/).filter(bullet => bullet.trim().length > 0);
+        return (
+          <ul key={index} className="space-y-3 text-gray-700 mb-6">
+            {bullets.map((bullet, bulletIndex) => (
+              <li key={bulletIndex} className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{bullet.trim()}</span>
+              </li>
+            ))}
+          </ul>
+        );
+      } else {
+        // Handle regular paragraphs
+        return (
+          <p key={index} className="text-gray-700 mb-4">
+            {paragraph.trim()}
+          </p>
+        );
+      }
+    });
   };
 
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-3">Understanding the Story</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Public Sector Section */}
-        <Card className="bg-blue-50 border-blue-200 border-2 h-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="text-blue-600" size={20} />
-              <div>
-                <h3 className="text-sm font-bold text-blue-600">Public Sector Role</h3>
-                <p className="text-xs text-gray-600 font-normal">Government Strategy & Implementation</p>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-0">
+    <div className="mb-8 space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Understanding the Story</h2>
+      
+      {/* Public Sector Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Building2 className="text-blue-600" size={24} />
+            <span>Public Sector Policy & Actors</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-blue-600 mb-2 text-sm">Policy Framework</h4>
-              <div className="space-y-2">
-                {formatText(publicSectorPolicy).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">Policy Framework</h3>
+              {formatContent(publicSectorPolicy)}
             </div>
             
             <div>
-              <h4 className="font-semibold text-blue-600 mb-2 text-sm">Key Actor</h4>
-              <div className="space-y-2">
-                {formatText(publicSectorActor).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">Key Actors</h3>
+              {formatContent(publicSectorActor)}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800 font-medium">Sources:</p>
+            <p className="text-sm text-blue-700 mt-1">
+              <a href="https://www.eria.org/uploads/media/Books/2023-VietNam-2045/16_ch.12-Textile-and-Garment-Industry-in-GVC.pdf" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                ERIA (2023). Textile and Garment Industry in GVC - Vietnam 2045
+              </a>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Private Sector Section */}
-        <Card className="bg-orange-50 border-orange-200 border-2 h-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
-              <Briefcase className="text-orange-600" size={20} />
-              <div>
-                <h3 className="text-sm font-bold text-orange-600">Private Sector Role</h3>
-                <p className="text-xs text-gray-600 font-normal">Industry Development</p>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-0">
+      {/* Private Sector Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Factory className="text-purple-600" size={24} />
+            <span>Private Sector Pioneering Firms & Industrial Growth</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-orange-600 mb-2 text-sm">Pioneering Firm</h4>
-              <div className="space-y-2">
-                {formatText(privateSectorPioneeringFirm).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">Pioneering Firms</h3>
+              {formatContent(privateSectorPioneeringFirm)}
             </div>
             
             <div>
-              <h4 className="font-semibold text-orange-600 mb-2 text-sm">Industry Growth</h4>
-              <div className="space-y-2">
-                {formatText(privateSectorIndustryGrowth).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">Industry Growth</h3>
+              {formatContent(privateSectorIndustryGrowth)}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          
+          <div className="mt-6 p-4 bg-purple-50 rounded-lg">
+            <p className="text-sm text-purple-800 font-medium">Sources:</p>
+            <p className="text-sm text-purple-700 mt-1">
+              <a href="https://labourlinkvn.com/nikes-impact-on-vietnamese-workers-and-the-economy-2/" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                Labour Link VN. Nike's Impact on Vietnamese Workers and the Economy
+              </a>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* External Factors Section */}
-        <Card className="bg-green-50 border-green-200 border-2 h-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2">
-              <Globe className="text-green-600" size={20} />
-              <div>
-                <h3 className="text-sm font-bold text-green-600">External Factors</h3>
-                <p className="text-xs text-gray-600 font-normal">Market Opportunities & Challenges</p>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-0">
+      {/* External Factors Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Globe className="text-green-600" size={24} />
+            <span>External Market Factors & Actors</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-green-600 mb-2 text-sm">Market Factors</h4>
-              <div className="space-y-2">
-                {formatText(externalMarketFactors).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">Market Factors</h3>
+              {formatContent(externalMarketFactors)}
             </div>
             
             <div>
-              <h4 className="font-semibold text-green-600 mb-2 text-sm">External Actor Contribution</h4>
-              <div className="space-y-2">
-                {formatText(externalActorContribution).map((sentence, index) => (
-                  <p key={index} className="text-gray-700 text-sm leading-relaxed">
-                    {sentence.trim()}.
-                  </p>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">External Actor Contribution</h3>
+              {formatContent(externalActorContribution)}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+          
+          <div className="mt-6 p-4 bg-green-50 rounded-lg">
+            <p className="text-sm text-green-800 font-medium">Sources:</p>
+            <div className="text-sm text-green-700 mt-1 space-y-1">
+              <p>
+                <a href="https://www.oecd.org/content/dam/oecd/en/publications/reports/2004/12/mobilising-investment-for-development_g17a1670/310312530030.pdf" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  OECD (2004). Mobilising Investment for Development
+                </a>
+              </p>
+              <p>
+                <a href="https://www.eria.org/uploads/media/Books/2023-VietNam-2045/16_ch.12-Textile-and-Garment-Industry-in-GVC.pdf" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  ERIA (2023). Textile and Garment Industry in GVC - Vietnam 2045
+                </a>
+              </p>
+              <p>
+                <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1471-0374.2011.00330.x" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  Wiley Online Library (2011). Economic Development Analysis
+                </a>
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
