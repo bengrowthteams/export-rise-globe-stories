@@ -26,26 +26,26 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
 
   const steps = [
     {
-      title: "Welcome to the Transformation Atlas",
-      content: "Discover how developing countries achieved remarkable export growth. This interactive map shows success stories across different sectors.",
+      title: "Welcome to the Sector Transformation Atlas",
+      content: "Discover how countries achieved rapid export growth. This interactive map shows success stories across different sectors.",
       position: "center",
       highlight: null
     },
     {
       title: "Explore Success Stories",
-      content: "Green dots mark countries with transformation stories. Countries with multiple sectors show an orange indicator. Click any dot to explore their journey.",
+      content: "Green dots mark countries with case studies. Countries with examples in multiple sectors show an orange indicator. Click any dot to explore their journey.",
       position: "left",
       highlight: "dots"
     },
     {
-      title: "Filter by Sector",
-      content: "Use the sector filter to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories. Notice how markers change color by sector!",
+      title: "Search & Filter",
+      content: "Search for a specific country using the search bar in the top left. Use the sector filter below to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories.",
       position: "bottom-right",
       highlight: "search"
     },
     {
-      title: "Story Cards & Case Studies",
-      content: "When you select a country, a detailed story card appears showing key outcomes and transformation details. Click 'View Full Case Study' to dive deeper into their complete journey.",
+      title: "Story Cards & Detailed Case Studies",
+      content: "When you select a country and sector, a card appears showing key metrics. Click 'View Full Case Study' to read our detailed insights on how the country achieved sector growth.",
       position: "right",
       highlight: "story-card"
     }
