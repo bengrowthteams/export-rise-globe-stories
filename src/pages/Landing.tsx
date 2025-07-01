@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,6 @@ const Landing = () => {
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [is3DView, setIs3DView] = useState(false);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [isReturningFromCaseStudy, setIsReturningFromCaseStudy] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -47,7 +47,6 @@ const Landing = () => {
         
         if (returnState) {
           console.log('Landing - Found return state, restoring immediately:', returnState);
-          setIsReturningFromCaseStudy(true);
           
           // Immediately scroll to map section without any delay
           const mapSection = document.getElementById('map-section');
@@ -61,13 +60,11 @@ const Landing = () => {
           // Restore filters immediately
           setSelectedSectors(returnState.selectedSectors);
           
-          // Set a default map state for restoration when closing story card
-          const defaultMapState = { center: [30, 15] as [number, number], zoom: 1.5 };
-          setStoredMapState(defaultMapState);
-          setMapState(defaultMapState);
-          
           // Clear the return state immediately to prevent re-triggering
           ReturnStateService.clearReturnState();
+          
+          // Store return state in session storage for story card restoration
+          sessionStorage.setItem('caseStudyReturnState', JSON.stringify(returnState));
         }
       }
     };
@@ -79,11 +76,11 @@ const Landing = () => {
   // Restore specific story card after stories are loaded
   React.useEffect(() => {
     const restoreStoryCard = () => {
-      if (!isReturningFromCaseStudy || (successStories.length === 0 && countryStories.length === 0)) {
+      if (successStories.length === 0 && countryStories.length === 0) {
         return;
       }
 
-      // Get the stored return state from session storage as backup
+      // Get the stored return state from session storage
       const storedState = sessionStorage.getItem('caseStudyReturnState');
       if (!storedState) return;
 
@@ -133,16 +130,14 @@ const Landing = () => {
 
         // Clear the stored state after use
         sessionStorage.removeItem('caseStudyReturnState');
-        setIsReturningFromCaseStudy(false);
         
       } catch (error) {
         console.error('Landing - Failed to restore story card:', error);
-        setIsReturningFromCaseStudy(false);
       }
     };
 
     restoreStoryCard();
-  }, [successStories, countryStories, isReturningFromCaseStudy]);
+  }, [successStories, countryStories]);
 
   React.useEffect(() => {
     const shouldScrollToMap = 
@@ -274,13 +269,21 @@ const Landing = () => {
   };
 
   const handleClosePanel = () => {
-    console.log('handleClosePanel called, storedMapState:', storedMapState);
+    console.log('handleClosePanel called - centering on selected country');
     
-    // Always restore map state when closing panel, whether it's stored or default
+    // Get the coordinates of the currently selected story
+    let countryCoordinates: [number, number] = [30, 15]; // Default coordinates
+    
+    if (selectedStory?.coordinates) {
+      countryCoordinates = selectedStory.coordinates;
+    } else if (selectedCountryStories?.coordinates) {
+      countryCoordinates = selectedCountryStories.coordinates;
+    }
+    
+    // Zoom out and center on the selected country
     if (worldMapRef.current && worldMapRef.current.flyToPosition) {
-      const mapStateToRestore = storedMapState || { center: [30, 15] as [number, number], zoom: 1.5 };
-      console.log('Restoring map state:', mapStateToRestore);
-      worldMapRef.current.flyToPosition(mapStateToRestore.center, mapStateToRestore.zoom);
+      console.log('Centering map on country coordinates:', countryCoordinates);
+      worldMapRef.current.flyToPosition(countryCoordinates, 3); // Zoom level 3 for country view
     }
     
     setSelectedStory(null);
@@ -339,14 +342,6 @@ const Landing = () => {
 
   const handleReadMore = (story: SuccessStory) => {
     console.log('Landing - handleReadMore called for story:', story);
-    
-    // Get current map state for restoration
-    let currentMapState = null;
-    if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
-      currentMapState = worldMapRef.current.getCurrentMapState();
-    } else if (mapState) {
-      currentMapState = mapState;
-    }
     
     // Save return state before navigation
     ReturnStateService.saveReturnState({
