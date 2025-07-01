@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Map, HelpCircle, X, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
+import MapViewToggle from '../components/MapViewToggle';
 import StoryCard from '../components/StoryCard';
 import SectorSelectionModal from '../components/SectorSelectionModal';
 import FilteredSectorModal from '../components/FilteredSectorModal';
@@ -27,6 +28,7 @@ const Landing = () => {
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  const [is3D, setIs3D] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -495,6 +497,10 @@ const Landing = () => {
     setClearPopups(() => clearFn);
   }, []);
 
+  const handleMapViewToggle = (newIs3D: boolean) => {
+    setIs3D(newIs3D);
+  };
+
   return (
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
@@ -571,8 +577,9 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Tutorial Button - positioned to avoid zoom controls */}
-          <div className="absolute top-4 right-20 z-20">
+          {/* Map View Toggle and Tutorial Button - positioned to avoid zoom controls */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            <MapViewToggle is3D={is3D} onToggle={handleMapViewToggle} />
             <div className="tutorial-help-button">
               <Button
                 onClick={handleStartTutorial}
@@ -596,6 +603,7 @@ const Landing = () => {
               selectedSectors={selectedSectors}
               onStoriesLoaded={handleStoriesLoaded}
               onClearPopupsCallback={handleClearPopupsCallback}
+              is3D={is3D}
             />
           </div>
           
