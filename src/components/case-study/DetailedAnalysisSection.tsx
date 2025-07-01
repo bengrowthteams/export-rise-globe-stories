@@ -51,7 +51,7 @@ const DetailedAnalysisSection = ({
 
   const sections = [
     {
-      title: 'Public Sector Analysis',
+      title: 'Public Sector Role',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
@@ -70,7 +70,7 @@ const DetailedAnalysisSection = ({
       ]
     },
     {
-      title: 'Private Sector Analysis',
+      title: 'Private Sector Role',
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200',
@@ -89,7 +89,7 @@ const DetailedAnalysisSection = ({
       ]
     },
     {
-      title: 'External Factors Analysis',
+      title: 'External Factors Role',
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       borderColor: 'border-green-200',
