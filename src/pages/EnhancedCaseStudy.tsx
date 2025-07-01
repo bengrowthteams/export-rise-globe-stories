@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { fetchCaseStudyData, CaseStudyData, getAvailableCaseStudyIds } from '../services/caseStudyService';
 import EnhancedCaseStudyHeader from '../components/case-study/EnhancedCaseStudyHeader';
@@ -12,9 +12,21 @@ import SourcesBibliography from '../components/case-study/SourcesBibliography';
 const EnhancedCaseStudy = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [caseStudyData, setCaseStudyData] = useState<CaseStudyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Capture and preserve incoming state for seamless return
+  useEffect(() => {
+    console.log('Enhanced Case Study - Capturing incoming state:', location.state);
+    
+    if (location.state) {
+      // Store the comprehensive state for return navigation
+      sessionStorage.setItem('enhancedCaseStudyReturnState', JSON.stringify(location.state));
+      console.log('Enhanced Case Study - Stored return state in session storage');
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const loadCaseStudy = async () => {
@@ -46,11 +58,6 @@ const EnhancedCaseStudy = () => {
 
     loadCaseStudy();
   }, [id]);
-
-  // Save scroll position when navigating to case study
-  useEffect(() => {
-    sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
-  }, []);
 
   if (loading) {
     return (

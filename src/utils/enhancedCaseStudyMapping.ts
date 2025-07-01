@@ -5,6 +5,7 @@ const COUNTRY_SECTOR_TO_ENHANCED_ID: Record<string, number> = {
   'Bangladesh-Textile': 2, 
   'Cambodia-Textile': 3,
   'UAE-Textile': 4,
+  'United Arab Emirates-Textile': 4, // Handle database name variation
   'Myanmar-Textile': 5
 };
 
@@ -35,6 +36,20 @@ export const getEnhancedCaseStudyId = (story: any): number | null => {
     if (COUNTRY_SECTOR_TO_ENHANCED_ID[key]) {
       console.log('Found country-sector mapping:', key, '→', COUNTRY_SECTOR_TO_ENHANCED_ID[key]);
       return COUNTRY_SECTOR_TO_ENHANCED_ID[key];
+    }
+    
+    // Try alternative country name formats
+    const alternativeKeys = [
+      `${story.country.replace(/\s+/g, '')}-${story.sector}`, // Remove spaces
+      `${story.country.toLowerCase()}-${story.sector}`, // Lowercase
+      `${story.country.toUpperCase()}-${story.sector}` // Uppercase
+    ];
+    
+    for (const altKey of alternativeKeys) {
+      if (COUNTRY_SECTOR_TO_ENHANCED_ID[altKey]) {
+        console.log('Found alternative country-sector mapping:', altKey, '→', COUNTRY_SECTOR_TO_ENHANCED_ID[altKey]);
+        return COUNTRY_SECTOR_TO_ENHANCED_ID[altKey];
+      }
     }
   }
   

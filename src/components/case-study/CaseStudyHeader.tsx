@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface CaseStudyHeaderProps {
   flag: string;
@@ -14,58 +14,45 @@ interface CaseStudyHeaderProps {
 
 const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateBack }: CaseStudyHeaderProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleReturnToMap = () => {
-    console.log('Regular Return to Map - preserving comprehensive state');
-    console.log('Current location state:', location.state);
+    console.log('Regular Case Study Header - Return to Map clicked');
     
-    // Preserve all existing state and ensure comprehensive restoration
-    if (location.state) {
-      console.log('Found comprehensive state, navigating back with full preservation');
-      navigate('/', { 
-        state: {
-          ...location.state,
-          returnedFromCaseStudy: true,
-          scrollToMap: true,
-          // Ensure all state is preserved for seamless restoration
-          preserveFilters: true,
-          seamlessReturn: true
-        }
-      });
-    } else {
-      // Enhanced fallback - try session storage restoration
-      const savedState = sessionStorage.getItem('comprehensiveState');
-      if (savedState) {
-        try {
-          const parsedState = JSON.parse(savedState);
-          console.log('Using session storage comprehensive state');
-          navigate('/', { 
-            state: {
-              ...parsedState,
-              returnedFromCaseStudy: true,
-              scrollToMap: true,
-              seamlessReturn: true
-            }
-          });
-          sessionStorage.removeItem('comprehensiveState');
-        } catch (error) {
-          console.error('Failed to parse session storage state:', error);
-        }
-      } else {
-        // Final fallback: navigate to country location
-        console.log('No saved state, using country location fallback');
+    // Get the stored return state (similar to enhanced case study)
+    const storedReturnState = sessionStorage.getItem('comprehensiveState');
+    
+    if (storedReturnState) {
+      try {
+        const returnState = JSON.parse(storedReturnState);
+        console.log('Regular Case Study Header - Found stored return state:', returnState);
+        
+        // Navigate back with the preserved state
         navigate('/', { 
           state: {
+            ...returnState,
             returnedFromCaseStudy: true,
-            scrollToMap: true,
-            countryToFocus: country,
-            sectorToFocus: sector,
-            seamlessReturn: true
+            instantPositioning: true
           }
         });
+        
+        // Clean up session storage
+        sessionStorage.removeItem('comprehensiveState');
+        return;
+      } catch (error) {
+        console.error('Regular Case Study Header - Failed to parse stored return state:', error);
       }
     }
+    
+    // Fallback: Navigate back to country location
+    console.log('Regular Case Study Header - No stored state, using fallback');
+    navigate('/', { 
+      state: {
+        returnedFromCaseStudy: true,
+        instantPositioning: true,
+        countryToFocus: country,
+        sectorToFocus: sector
+      }
+    });
   };
 
   return (

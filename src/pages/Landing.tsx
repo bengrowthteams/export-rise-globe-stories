@@ -35,38 +35,32 @@ const Landing = () => {
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Enhanced state restoration for seamless return from case studies
+  // Enhanced seamless state restoration for returns from case studies
   React.useEffect(() => {
     const restoreState = () => {
-      console.log('Landing component mounted - checking for comprehensive state restoration');
-      console.log('Location state:', location.state);
+      console.log('Landing - Checking for state restoration, location state:', location.state);
       
-      if (location.state?.returnedFromCaseStudy) {
+      if (location.state?.returnedFromEnhancedCaseStudy || location.state?.returnedFromCaseStudy) {
         const state = location.state;
-        console.log('Comprehensive state restoration from case study:', state);
+        console.log('Landing - Enhanced Case Study return detected:', state);
         
-        // Restore filters first
-        if (state.selectedSectors) {
-          console.log('Restoring filters:', state.selectedSectors);
-          setSelectedSectors(state.selectedSectors);
-        }
-        
-        // Restore map state
-        if (state.mapState) {
-          console.log('Restoring map state:', state.mapState);
-          setMapState(state.mapState);
-        }
-        
-        // Handle direct sector restoration for multi-sector countries
-        if (state.selectedSector && state.selectedCountryStories) {
-          console.log('Direct sector restoration for multi-sector country');
+        // Instant positioning without animations for seamless experience
+        if (state.instantPositioning) {
+          // Apply all state immediately and position user at map
+          if (state.selectedSectors) {
+            setSelectedSectors(state.selectedSectors);
+          }
           
-          // Wait for stories to load, then restore sector context
-          setTimeout(() => {
+          if (state.mapState) {
+            setMapState(state.mapState);
+          }
+          
+          // Direct sector restoration for multi-sector countries
+          if (state.selectedSector && state.selectedCountryStories) {
             setSelectedCountryStories(state.selectedCountryStories);
             setSelectedSector(state.selectedSector);
             
-            // Create primary story for sector
+            // Create story from sector context
             const primaryStory: SuccessStory = {
               id: `${state.selectedCountryStories.id}-${state.selectedSector.sector}`,
               country: state.selectedCountryStories.country,
@@ -91,11 +85,73 @@ const Landing = () => {
             };
             
             setSelectedStory(primaryStory);
-            console.log('Direct sector restoration complete');
+          }
+          
+          // Instant scroll to map section without animation
+          setTimeout(() => {
+            const mapSection = document.getElementById('map-section');
+            if (mapSection) {
+              const navHeight = 56;
+              const elementPosition = mapSection.offsetTop;
+              const offsetPosition = elementPosition - navHeight;
+              
+              // Instant positioning
+              window.scrollTo({ 
+                top: offsetPosition, 
+                behavior: 'instant' 
+              });
+              console.log('Landing - Instant positioning completed');
+            }
+          }, 0);
+          
+          // Clean up state
+          window.history.replaceState({}, '', window.location.pathname);
+          return;
+        }
+        
+        // Legacy smooth restoration for older returns
+        if (state.selectedSectors) {
+          setSelectedSectors(state.selectedSectors);
+        }
+        
+        if (state.mapState) {
+          setMapState(state.mapState);
+        }
+        
+        // Handle sector restoration for multi-sector countries
+        if (state.selectedSector && state.selectedCountryStories) {
+          setTimeout(() => {
+            setSelectedCountryStories(state.selectedCountryStories);
+            setSelectedSector(state.selectedSector);
+            
+            const primaryStory: SuccessStory = {
+              id: `${state.selectedCountryStories.id}-${state.selectedSector.sector}`,
+              country: state.selectedCountryStories.country,
+              sector: state.selectedSector.sector,
+              product: state.selectedSector.product,
+              description: state.selectedSector.description,
+              growthRate: state.selectedSector.growthRate,
+              timeframe: state.selectedCountryStories.timeframe,
+              exportValue: state.selectedSector.exportValue,
+              keyFactors: state.selectedSector.keyFactors,
+              coordinates: state.selectedCountryStories.coordinates,
+              flag: state.selectedCountryStories.flag,
+              marketDestinations: state.selectedSector.marketDestinations,
+              challenges: state.selectedSector.challenges,
+              impact: state.selectedSector.impact,
+              globalRanking1995: state.selectedSector.globalRanking1995,
+              globalRanking2022: state.selectedSector.globalRanking2022,
+              initialExports1995: state.selectedSector.initialExports1995,
+              initialExports2022: state.selectedSector.initialExports2022,
+              successfulProduct: state.selectedSector.successfulProduct,
+              successStorySummary: state.selectedSector.successStorySummary
+            };
+            
+            setSelectedStory(primaryStory);
           }, 100);
         }
         
-        // Seamless positioning - scroll to map immediately without animation
+        // Scroll to map section
         setTimeout(() => {
           const mapSection = document.getElementById('map-section');
           if (mapSection) {
@@ -103,21 +159,19 @@ const Landing = () => {
             const elementPosition = mapSection.offsetTop;
             const offsetPosition = elementPosition - navHeight;
             
-            // Instant scroll without animation for seamless experience
             window.scrollTo({ 
               top: offsetPosition, 
-              behavior: 'instant' 
+              behavior: 'smooth' 
             });
-            console.log('Seamless positioning to map section completed');
           }
-        }, 50);
+        }, 200);
         
         // Clean up state
         window.history.replaceState({}, '', window.location.pathname);
         return;
       }
       
-      // Fallback restoration logic
+      // ... keep existing code (fallback restoration logic)
       const savedMapState = sessionStorage.getItem('mapState');
       const savedFilters = sessionStorage.getItem('selectedSectors');
       
@@ -149,9 +203,8 @@ const Landing = () => {
     restoreState();
   }, [location, successStories, countryStories]);
 
-  // Also check for case study returns and scroll to map when URL suggests we should
+  // ... keep existing code (auto-scroll effect)
   React.useEffect(() => {
-    // If there are any signs we should be at the map section, scroll there
     const shouldScrollToMap = 
       location.state?.returnedFromCaseStudy || 
       location.state?.scrollToMap ||
@@ -183,6 +236,7 @@ const Landing = () => {
     setCountryStories(countryStories);
   }, []);
 
+  // ... keep existing code (handleExploreMap, handleCountrySelect, etc.)
   const handleExploreMap = () => {
     const mapSection = document.getElementById('map-section');
     if (mapSection) {
@@ -266,6 +320,7 @@ const Landing = () => {
     }
   };
 
+  // ... keep existing code (modal and panel handlers)
   const handleSectorSelectFromModal = (sector: SectorStory) => {
     setSelectedSector(sector);
     setShowSectorModal(false);
@@ -340,9 +395,9 @@ const Landing = () => {
     setShowSectorFilter(true);
   };
 
-  // Comprehensive state preservation for case study navigation
+  // Enhanced comprehensive state preservation for case study navigation
   const handleReadMore = (story: SuccessStory) => {
-    console.log('Enhanced handleReadMore - preserving comprehensive state');
+    console.log('Landing - Enhanced handleReadMore - capturing complete state for story:', story);
     
     // Get current scroll position
     const currentScrollY = window.scrollY;
@@ -355,7 +410,7 @@ const Landing = () => {
       currentMapState = mapState;
     }
     
-    // Comprehensive state preservation including sector context
+    // Comprehensive state preservation including all context
     const comprehensiveState = {
       mapState: currentMapState,
       selectedSectors: selectedSectors,
@@ -364,12 +419,13 @@ const Landing = () => {
       isMultiSector: selectedCountryStories?.hasMutipleSectors || false,
       scrollPosition: currentScrollY,
       returnedFromCaseStudy: true,
+      instantPositioning: true, // Flag for seamless return
       timestamp: Date.now()
     };
     
-    console.log('Saving comprehensive state for seamless return:', comprehensiveState);
+    console.log('Landing - Saving comprehensive state for enhanced case study navigation:', comprehensiveState);
     
-    // Also save to session storage as backup
+    // Store in session storage as backup
     sessionStorage.setItem('comprehensiveState', JSON.stringify(comprehensiveState));
     
     // Navigate with comprehensive state
@@ -380,6 +436,7 @@ const Landing = () => {
     }
   };
 
+  // ... keep existing code (remaining handlers and tutorial functions)
   const handleTutorialDemo = (story: SuccessStory | null) => {
     setSelectedStory(story);
   };
