@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { getAvailableCaseStudyIds } from '@/services/caseStudyService';
+import { hasEnhancedCaseStudy, getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
 
 interface StoryCardProps {
   story: SuccessStory | null;
@@ -66,18 +67,15 @@ const LegacyStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
-  // Check if this story has enhanced case study data
-  const hasEnhancedCaseStudy = () => {
-    const availableIds = getAvailableCaseStudyIds();
-    const storyId = typeof story.id === 'string' ? parseInt(story.id) : story.id;
-    return availableIds.includes(storyId);
-  };
-
   const handleViewCaseStudy = () => {
-    if (hasEnhancedCaseStudy()) {
-      const numericId = typeof story.id === 'string' ? parseInt(story.id) : story.id;
-      navigate(`/enhanced-case-study/${numericId}`);
+    console.log('Legacy Story Card - handleViewCaseStudy called for:', story);
+    
+    if (hasEnhancedCaseStudy(story)) {
+      const enhancedId = getEnhancedCaseStudyId(story);
+      console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
+      navigate(`/enhanced-case-study/${enhancedId}`);
     } else {
+      console.log('Legacy Story Card - No enhanced case study, using onReadMore');
       onReadMore(story);
     }
   };
@@ -107,7 +105,7 @@ const LegacyStoryCard: React.FC<{
         </div>
 
         {/* Enhanced Case Study Badge */}
-        {hasEnhancedCaseStudy() && (
+        {hasEnhancedCaseStudy(story) && (
           <div className="mb-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center gap-2">
@@ -177,10 +175,10 @@ const LegacyStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={handleViewCaseStudy}
-          className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`w-full text-white ${hasEnhancedCaseStudy(story) ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
-          {hasEnhancedCaseStudy() ? 'View Enhanced Case Study' : 'View Full Case Study'}
+          {hasEnhancedCaseStudy(story) ? 'View Enhanced Case Study' : 'View Full Case Study'}
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
@@ -235,18 +233,18 @@ const MultiSectorStoryCard: React.FC<{
     successStorySummary: selectedSector.successStorySummary
   });
 
-  // Check if this story has enhanced case study data
-  const hasEnhancedCaseStudy = () => {
-    const availableIds = getAvailableCaseStudyIds();
-    const storyId = typeof countryStories.id === 'string' ? parseInt(countryStories.id) : countryStories.id;
-    return availableIds.includes(storyId);
-  };
-
   const handleViewCaseStudy = () => {
-    if (hasEnhancedCaseStudy()) {
-      const numericId = typeof countryStories.id === 'string' ? parseInt(countryStories.id) : countryStories.id;
-      navigate(`/enhanced-case-study/${numericId}`);
+    console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories);
+    
+    // Check if the country has an enhanced case study using the country name
+    const mockStory = { country: countryStories.country, id: countryStories.id };
+    
+    if (hasEnhancedCaseStudy(mockStory)) {
+      const enhancedId = getEnhancedCaseStudyId(mockStory);
+      console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
+      navigate(`/enhanced-case-study/${enhancedId}`);
     } else {
+      console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
       onReadMore(convertToLegacyStory());
     }
   };
@@ -276,7 +274,7 @@ const MultiSectorStoryCard: React.FC<{
         </div>
 
         {/* Enhanced Case Study Badge */}
-        {hasEnhancedCaseStudy() && (
+        {hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) && (
           <div className="mb-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center gap-2">
@@ -369,10 +367,10 @@ const MultiSectorStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={handleViewCaseStudy}
-          className={`w-full text-white ${hasEnhancedCaseStudy() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`w-full text-white ${hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           size="lg"
         >
-          {hasEnhancedCaseStudy() ? 'View Enhanced Case Study' : 'View Full Case Study'}
+          {hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) ? 'View Enhanced Case Study' : 'View Full Case Study'}
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
