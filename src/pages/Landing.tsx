@@ -469,7 +469,7 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Map View Toggle and Tutorial Button */}
+          {/* Tutorial Button and Map View Toggle */}
           <div className="absolute top-4 right-2 sm:right-4 z-20 flex items-center gap-2">
             <div className="tutorial-help-button">
               <Button
