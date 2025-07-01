@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -116,6 +117,15 @@ const Landing = () => {
           };
           
           setSelectedStory(primaryStory);
+          
+          // Immediately center map on the country
+          if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
+            console.log('Landing - Immediately centering map on country for multi-sector story');
+            worldMapRef.current.flyToPosition(
+              [returnState.countryStories.coordinates.lng, returnState.countryStories.coordinates.lat], 
+              5
+            );
+          }
         } else {
           // Single-sector country - find and restore the story
           const targetStory = successStories.find(s => 
@@ -124,6 +134,15 @@ const Landing = () => {
           
           if (targetStory) {
             setSelectedStory(targetStory);
+            
+            // Immediately center map on the country
+            if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
+              console.log('Landing - Immediately centering map on country for single-sector story');
+              worldMapRef.current.flyToPosition(
+                [targetStory.coordinates.lng, targetStory.coordinates.lat], 
+                5
+              );
+            }
           }
         }
 
@@ -469,7 +488,7 @@ const Landing = () => {
           </div>
 
           {/* Tutorial Button and Map View Toggle - positioned to avoid zoom controls */}
-          <div className="absolute top-4 right-2 sm:right-4 z-20 flex flex-col items-end gap-2">
+          <div className="absolute top-4 right-20 z-20 flex flex-col items-end gap-2">
             <div className="flex items-center gap-2">
               <div className="tutorial-help-button">
                 <Button
