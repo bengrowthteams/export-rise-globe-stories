@@ -6,6 +6,7 @@ interface ReturnState {
   country: string;
   sector: string;
   timestamp: number;
+  hasActiveFilters?: boolean;
 }
 
 class ReturnStateService {
@@ -20,7 +21,8 @@ class ReturnStateService {
   }): void {
     const returnState: ReturnState = {
       ...state,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      hasActiveFilters: state.selectedSectors.length > 0
     };
     
     console.log('ReturnStateService - Saving return state:', returnState);
