@@ -11,28 +11,37 @@ interface StoryCardProps {
   story: SuccessStory | null;
   countryStories?: CountrySuccessStories | null;
   selectedSector?: SectorStory | null;
-  selectedSectors?: string[]; // Add selected sectors prop
+  selectedSectors?: string[];
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
   onSectorChange?: (sector: SectorStory) => void;
+  onClearPopups?: () => void; // Add prop to clear popups
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({ 
   story, 
   countryStories,
   selectedSector,
-  selectedSectors = [], // Default to empty array
+  selectedSectors = [],
   onClose, 
   onReadMore,
-  onSectorChange
+  onSectorChange,
+  onClearPopups
 }) => {
+  const handleClose = () => {
+    if (onClearPopups) {
+      onClearPopups();
+    }
+    onClose();
+  };
+
   // Handle legacy single-sector stories
   if (story && !countryStories) {
     return (
       <LegacyStoryCard 
         story={story} 
         selectedSectors={selectedSectors}
-        onClose={onClose} 
+        onClose={handleClose} 
         onReadMore={onReadMore} 
       />
     );
@@ -45,7 +54,7 @@ const StoryCard: React.FC<StoryCardProps> = ({
         countryStories={countryStories}
         selectedSector={selectedSector}
         selectedSectors={selectedSectors}
-        onClose={onClose}
+        onClose={handleClose}
         onReadMore={onReadMore}
         onSectorChange={onSectorChange}
       />
@@ -183,7 +192,7 @@ const LegacyStoryCard: React.FC<{
           className="w-full text-white bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
-          {hasEnhancedCaseStudy(story) ? 'View Enhanced Case Study' : 'View Full Case Study'}
+          View Full Success Story
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>
@@ -384,7 +393,7 @@ const MultiSectorStoryCard: React.FC<{
           className="w-full text-white bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
-          {hasEnhanced ? 'View Enhanced Case Study' : 'View Full Case Study'}
+          View Full Success Story
           <ArrowRight className="ml-2" size={16} />
         </Button>
       </div>

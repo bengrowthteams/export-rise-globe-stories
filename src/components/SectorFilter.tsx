@@ -44,7 +44,7 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
   }
 
   return (
-    <div className={`bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-72'}`}>
+    <div className={`bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg ${isCompact ? 'w-full' : 'absolute left-4 top-32 z-30 w-72'}`}>
       <div className={`flex items-center justify-between border-b border-gray-200 ${isCompact ? 'p-2' : 'p-3'}`}>
         <h3 className={`font-semibold ${isCompact ? 'text-sm' : 'text-base'}`}>Filter by Sector</h3>
         <button
@@ -71,7 +71,7 @@ const SectorFilter: React.FC<SectorFilterProps> = ({
           </Button>
         </div>
 
-        <div className="space-y-1">
+        <div className="grid grid-cols-1 gap-1 max-h-none">
           {allSectors.map((sector) => {
             const isSelected = selectedSectors.includes(sector);
             const sectorColor = getSectorColor(sector);

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -17,6 +16,7 @@ interface WorldMapProps {
   initialMapState?: { center: [number, number]; zoom: number };
   selectedSectors?: string[];
   onStoriesLoaded?: (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => void;
+  onClearPopupsCallback?: (clearFn: () => void) => void;
 }
 
 export interface WorldMapRef {
@@ -33,7 +33,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   onMapStateChange,
   initialMapState,
   selectedSectors = [],
-  onStoriesLoaded
+  onStoriesLoaded,
+  onClearPopupsCallback
 }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -53,13 +54,20 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     flyToPosition
   } = useMapState(map, mapInitialized, onMapStateChange);
 
-  const { updateMarkers } = useMapMarkers(map, onCountrySelect);
+  const { updateMarkers, clearAllPopups } = useMapMarkers(map, onCountrySelect);
 
   useImperativeHandle(ref, () => ({
     resetToInitialPosition,
     flyToPosition,
     getCurrentMapState
   }));
+
+  // Pass clear popups function to parent
+  useEffect(() => {
+    if (onClearPopupsCallback && clearAllPopups) {
+      onClearPopupsCallback(clearAllPopups);
+    }
+  }, [onClearPopupsCallback, clearAllPopups]);
 
   // Load success stories
   useEffect(() => {

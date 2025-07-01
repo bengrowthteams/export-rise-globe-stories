@@ -11,10 +11,19 @@ export const useMapMarkers = (
   onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void
 ) => {
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const activePopups = useRef<mapboxgl.Popup[]>([]);
 
   const clearMarkers = useCallback(() => {
     markers.current.forEach(marker => marker.remove());
     markers.current = [];
+    // Clear all active popups
+    activePopups.current.forEach(popup => popup.remove());
+    activePopups.current = [];
+  }, []);
+
+  const clearAllPopups = useCallback(() => {
+    activePopups.current.forEach(popup => popup.remove());
+    activePopups.current = [];
   }, []);
 
   const addMarker = useCallback((
@@ -205,10 +214,12 @@ export const useMapMarkers = (
 
     markerElement.addEventListener('mouseenter', () => {
       popup.setLngLat([coordinates.lng, coordinates.lat]).addTo(map.current!);
+      activePopups.current.push(popup);
     });
 
     markerElement.addEventListener('mouseleave', () => {
       popup.remove();
+      activePopups.current = activePopups.current.filter(p => p !== popup);
     });
   }, [map, onCountrySelect]);
 
@@ -278,6 +289,7 @@ export const useMapMarkers = (
     markers: markers.current,
     clearMarkers,
     addMarker,
-    updateMarkers
+    updateMarkers,
+    clearAllPopups
   };
 };

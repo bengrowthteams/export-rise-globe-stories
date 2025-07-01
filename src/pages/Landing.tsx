@@ -31,6 +31,7 @@ const Landing = () => {
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
+  const [clearPopups, setClearPopups] = useState<(() => void) | null>(null);
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
@@ -404,6 +405,10 @@ const Landing = () => {
     closeTutorial();
   };
 
+  const handleClearPopupsCallback = useCallback((clearFn: () => void) => {
+    setClearPopups(() => clearFn);
+  }, []);
+
   return (
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
@@ -504,6 +509,7 @@ const Landing = () => {
               initialMapState={mapState}
               selectedSectors={selectedSectors}
               onStoriesLoaded={handleStoriesLoaded}
+              onClearPopupsCallback={handleClearPopupsCallback}
             />
           </div>
           
@@ -526,6 +532,7 @@ const Landing = () => {
                   onClose={handleClosePanel}
                   onReadMore={handleReadMore}
                   onSectorChange={handleSectorSelect}
+                  onClearPopups={clearPopups || undefined}
                 />
               </div>
             </>

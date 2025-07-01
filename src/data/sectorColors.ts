@@ -1,16 +1,22 @@
-
-// Color mapping for different sectors - no green colors for individual sectors
+// Color mapping for different sectors
 export const sectorColors: Record<string, string> = {
-  'Agriculture': '#f59e0b', // amber-500 (changed from green)
-  'Textiles': '#3b82f6', // blue-500
+  'Services': '#B73E69', // Dark rose
+  'Agriculture': '#88D6AA', // Light mint green
+  'Textiles': '#E8BD33', // Golden yellow
+  'Stone': '#D7A86E', // Warm tan
+  'Stones': '#D7A86E', // Warm tan (alternate name)
+  'Minerals': '#B7836E', // Earthy brown
+  'Metals': '#D0746B', // Dusty red
+  'Chemicals': '#C38AD7', // Lavender purple
+  'Vehicles': '#8C77D4', // Medium purple
+  'Machinery': '#6E91C7', // Muted blue
+  'Electronics': '#77D3D6', // Bright cyan
+  // Keep existing colors for other sectors
   'Manufacturing': '#f97316', // orange-500
-  'Electronics': '#8b5cf6', // violet-500
-  'Chemicals': '#ef4444', // red-500
   'Automotive': '#06b6d4', // cyan-500
   'Food Processing': '#84cc16', // lime-500
   'Mining': '#a855f7', // purple-500
   'Energy': '#dc2626', // red-600
-  'Services': '#ec4899', // pink-500
   'Tourism': '#14b8a6', // teal-500
   'Technology': '#6366f1', // indigo-500
   'Pharmaceuticals': '#0891b2', // sky-600
@@ -20,16 +26,11 @@ export const sectorColors: Record<string, string> = {
   'Fishing': '#0ea5e9', // sky-500
   'Steel': '#374151', // gray-700
   'Petroleum': '#b91c1c', // red-700
-  'Machinery': '#7c3aed', // violet-600
-  'Metals': '#92400e', // amber-700
   'Plastics': '#be185d', // pink-700
   'Rubber': '#166534', // green-700
   'Paper': '#7c2d12', // orange-800
   'Glass': '#1e40af', // blue-700
-  // Added distinct colors for potentially conflicting sectors
-  'Stones': '#78350f', // amber-900 - distinct from other materials
-  'Vehicles': '#1f2937', // gray-800 - distinct from automotive and transportation
-  'Wood': '#365314', // green-800 - distinct from forestry
+  'Wood': '#365314', // green-800
   'Leather': '#7c2d12', // orange-800
   'Ceramics': '#581c87', // purple-800
   'Gems': '#701a75', // fuchsia-800
