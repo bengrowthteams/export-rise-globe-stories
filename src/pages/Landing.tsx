@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,6 @@ import FilteredSectorModal from '../components/FilteredSectorModal';
 import SectorFilter from '../components/SectorFilter';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
-import MapViewToggle from '../components/MapViewToggle';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
@@ -28,7 +26,6 @@ const Landing = () => {
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [is3DView, setIs3DView] = useState(false);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -407,10 +404,6 @@ const Landing = () => {
     closeTutorial();
   };
 
-  const handleMapViewToggle = (is3D: boolean) => {
-    setIs3DView(is3D);
-  };
-
   return (
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
@@ -487,23 +480,18 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Tutorial Button and Map View Toggle - positioned to avoid zoom controls */}
-          <div className="absolute top-4 right-20 z-20 flex flex-col items-end gap-2">
-            <div className="flex items-center gap-2">
-              <div className="tutorial-help-button">
-                <Button
-                  onClick={handleStartTutorial}
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/90 hover:bg-white"
-                >
-                  <HelpCircle size={16} className="mr-1" />
-                  Tutorial
-                </Button>
-              </div>
-              <div className="tutorial-3d-toggle">
-                <MapViewToggle is3D={is3DView} onToggle={handleMapViewToggle} />
-              </div>
+          {/* Tutorial Button - positioned to avoid zoom controls */}
+          <div className="absolute top-4 right-20 z-20">
+            <div className="tutorial-help-button">
+              <Button
+                onClick={handleStartTutorial}
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white"
+              >
+                <HelpCircle size={16} className="mr-1" />
+                Tutorial
+              </Button>
             </div>
           </div>
 
@@ -516,7 +504,6 @@ const Landing = () => {
               initialMapState={mapState}
               selectedSectors={selectedSectors}
               onStoriesLoaded={handleStoriesLoaded}
-              is3DView={is3DView}
             />
           </div>
           
