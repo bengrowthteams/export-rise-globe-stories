@@ -1,8 +1,8 @@
 
 interface ReturnState {
   selectedSectors: string[];
-  countryStories: any;
-  selectedSector: any;
+  countryStories?: any;
+  selectedSector?: any;
   country: string;
   sector: string;
   timestamp: number;
