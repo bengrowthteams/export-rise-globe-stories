@@ -275,9 +275,9 @@ const Landing = () => {
     let countryCoordinates: [number, number] = [30, 15]; // Default coordinates
     
     if (selectedStory?.coordinates) {
-      countryCoordinates = selectedStory.coordinates;
+      countryCoordinates = [selectedStory.coordinates[1], selectedStory.coordinates[0]]; // [lng, lat] format
     } else if (selectedCountryStories?.coordinates) {
-      countryCoordinates = selectedCountryStories.coordinates;
+      countryCoordinates = [selectedCountryStories.coordinates[1], selectedCountryStories.coordinates[0]]; // [lng, lat] format
     }
     
     // Zoom out and center on the selected country
