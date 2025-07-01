@@ -35,12 +35,13 @@ const CompactOutcomesDashboard = ({
   };
 
   const rankChange = rank1995 - rank2022;
-  const exportGrowthAnnual = (Math.pow(currentExports2022 / initialExports1995, 1/27) - 1) * 100; // 1995 to 2022 = 27 years
+  const exportGrowthAnnual = (Math.pow(currentExports2022 / initialExports1995, 1/27) - 1) * 100;
   const shareChange = globalShare2022 - globalShare1995;
-  const shareChangeAnnual = shareChange / 27; // Annual change in percentage points
+  const shareChangeAnnual = shareChange / 27;
 
   return (
     <div className="mb-4">
+      <h2 className="text-lg font-bold text-gray-900 mb-3">Outcomes</h2>
       <Card>
         <CardContent className="space-y-3 p-4">
           <div className="prose max-w-none">
