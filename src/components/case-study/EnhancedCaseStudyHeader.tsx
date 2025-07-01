@@ -17,36 +17,29 @@ const EnhancedCaseStudyHeader = ({ flag, country, sector, successfulProduct }: E
   const sectorColor = getSectorColor(sector);
 
   const handleReturnToMap = () => {
-    navigate('/');
-    setTimeout(() => {
-      const mapSection = document.getElementById('map-section');
-      if (mapSection) {
-        const savedPosition = sessionStorage.getItem('mapScrollPosition');
-        const savedMapState = sessionStorage.getItem('mapState');
-        
-        console.log('Restoring scroll position:', savedPosition);
-        console.log('Map state available:', !!savedMapState);
-        
-        if (savedPosition) {
-          window.scrollTo(0, parseInt(savedPosition));
-          sessionStorage.removeItem('mapScrollPosition');
-        } else {
-          mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        // Restore map state if available
-        if (savedMapState) {
-          try {
-            const mapState = JSON.parse(savedMapState);
-            // Trigger map state restoration via a custom event
-            window.dispatchEvent(new CustomEvent('restoreMapState', { detail: mapState }));
-            sessionStorage.removeItem('mapState');
-          } catch (error) {
-            console.error('Failed to restore map state:', error);
-          }
-        }
+    // Get saved map state from multiple sources
+    const savedMapState = sessionStorage.getItem('mapState');
+    const savedScrollPosition = sessionStorage.getItem('mapScrollPosition');
+    
+    let mapParams = '';
+    if (savedMapState) {
+      try {
+        const mapState = JSON.parse(savedMapState);
+        // Add map state to URL parameters for immediate availability
+        mapParams = `?lat=${mapState.center[1]}&lng=${mapState.center[0]}&zoom=${mapState.zoom}`;
+      } catch (error) {
+        console.error('Failed to parse saved map state:', error);
       }
-    }, 100);
+    }
+
+    // Navigate with both URL params and React Router state
+    navigate(`/${mapParams}`, {
+      state: {
+        mapState: savedMapState ? JSON.parse(savedMapState) : null,
+        scrollPosition: savedScrollPosition,
+        returnedFromCaseStudy: true
+      }
+    });
   };
 
   return (
@@ -56,10 +49,10 @@ const EnhancedCaseStudyHeader = ({ flag, country, sector, successfulProduct }: E
         <div className="max-w-6xl mx-auto px-6 py-3">
           <Button 
             onClick={handleReturnToMap}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-base font-medium"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-medium"
             size="lg"
           >
-            <ArrowLeft className="mr-2" size={18} />
+            <ArrowLeft className="mr-3" size={20} />
             Return to Map
           </Button>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Map, HelpCircle, X, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
@@ -29,43 +29,93 @@ const Landing = () => {
   const [is3DView, setIs3DView] = useState(false);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Restore map state on page load
+  // Enhanced map state restoration with multiple fallback sources
   React.useEffect(() => {
-    const savedMapState = sessionStorage.getItem('mapState');
-    if (savedMapState) {
-      try {
-        const parsedState = JSON.parse(savedMapState);
-        console.log('Restoring saved map state:', parsedState);
-        if (parsedState.zoom > 4) {
-          parsedState.zoom = 4; // Set to a more reasonable zoom level
+    const restoreMapState = () => {
+      let restoredState = null;
+      
+      // Priority 1: URL parameters (most reliable for return from case study)
+      const urlParams = new URLSearchParams(location.search);
+      const lat = urlParams.get('lat');
+      const lng = urlParams.get('lng');
+      const zoom = urlParams.get('zoom');
+      
+      if (lat && lng && zoom) {
+        restoredState = {
+          center: [parseFloat(lng), parseFloat(lat)] as [number, number],
+          zoom: parseFloat(zoom)
+        };
+        console.log('Restored map state from URL params:', restoredState);
+        
+        // Clean up URL parameters after extraction
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
+      
+      // Priority 2: React Router state (passed from navigation)
+      else if (location.state?.mapState) {
+        restoredState = location.state.mapState;
+        console.log('Restored map state from router state:', restoredState);
+      }
+      
+      // Priority 3: Session storage (fallback)
+      else {
+        const savedMapState = sessionStorage.getItem('mapState');
+        if (savedMapState) {
+          try {
+            restoredState = JSON.parse(savedMapState);
+            console.log('Restored map state from session storage:', restoredState);
+          } catch (error) {
+            console.error('Failed to parse saved map state:', error);
+          }
         }
-        setMapState(parsedState);
-        sessionStorage.removeItem('mapState');
-      } catch (error) {
-        console.error('Failed to parse saved map state:', error);
       }
-    }
 
-    // Listen for map state restoration events from case study pages
-    const handleRestoreMapState = (event: CustomEvent) => {
-      console.log('Received map state restoration event:', event.detail);
-      if (worldMapRef.current && worldMapRef.current.flyToPosition) {
-        const { center, zoom } = event.detail;
-        worldMapRef.current.flyToPosition(center, zoom);
+      // Apply restored state
+      if (restoredState) {
+        // Validate coordinates
+        if (restoredState.center && restoredState.zoom && 
+            restoredState.center[0] >= -180 && restoredState.center[0] <= 180 &&
+            restoredState.center[1] >= -85 && restoredState.center[1] <= 85 &&
+            restoredState.zoom >= 1 && restoredState.zoom <= 20) {
+          
+          setMapState(restoredState);
+          
+          // Handle scroll restoration for return from case study
+          if (location.state?.scrollPosition || location.state?.returnedFromCaseStudy) {
+            setTimeout(() => {
+              const savedScrollPosition = location.state?.scrollPosition || sessionStorage.getItem('mapScrollPosition');
+              if (savedScrollPosition) {
+                window.scrollTo(0, parseInt(savedScrollPosition));
+                console.log('Restored scroll position:', savedScrollPosition);
+              } else if (location.state?.returnedFromCaseStudy) {
+                // Scroll to map section for case study returns
+                const mapSection = document.getElementById('map-section');
+                if (mapSection) {
+                  const navHeight = 56;
+                  const elementPosition = mapSection.offsetTop;
+                  const offsetPosition = elementPosition - navHeight;
+                  window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+              }
+              
+              // Clean up session storage
+              sessionStorage.removeItem('mapScrollPosition');
+              sessionStorage.removeItem('mapState');
+            }, 100);
+          }
+        }
       }
     };
 
-    window.addEventListener('restoreMapState', handleRestoreMapState as EventListener);
-
-    return () => {
-      window.removeEventListener('restoreMapState', handleRestoreMapState as EventListener);
-    };
-  }, []);
+    restoreMapState();
+  }, [location]);
 
   // Add callback to receive stories from WorldMap - wrapped in useCallback to prevent infinite loops
   const handleStoriesLoaded = useCallback((stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
@@ -247,23 +297,29 @@ const Landing = () => {
     setShowSectorFilter(true);
   };
 
+  // Enhanced handleReadMore with better state persistence
   const handleReadMore = (story: SuccessStory) => {
-    // Save current scroll position and map state before navigating
+    // Save current scroll position
     sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
     
-    // Get current map state from the map component
+    // Get and save current map state with timestamp for reliability
     if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
       const currentMapState = worldMapRef.current.getCurrentMapState();
-      sessionStorage.setItem('mapState', JSON.stringify(currentMapState));
-      console.log('Saving current map state before navigation:', currentMapState);
-    } else if (mapState) {
-      // Fallback to stored map state if map ref is not available
-      const adjustedMapState = {
-        ...mapState,
-        zoom: Math.min(mapState.zoom, 4)
+      const stateWithTimestamp = {
+        ...currentMapState,
+        timestamp: Date.now()
       };
-      sessionStorage.setItem('mapState', JSON.stringify(adjustedMapState));
-      console.log('Saving fallback map state before navigation:', adjustedMapState);
+      sessionStorage.setItem('mapState', JSON.stringify(stateWithTimestamp));
+      console.log('Saving enhanced map state before navigation:', stateWithTimestamp);
+    } else if (mapState) {
+      // Fallback to stored map state
+      const stateWithTimestamp = {
+        ...mapState,
+        zoom: Math.min(mapState.zoom, 4),
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem('mapState', JSON.stringify(stateWithTimestamp));
+      console.log('Saving fallback map state before navigation:', stateWithTimestamp);
     }
     
     navigate(`/case-study/${story.id}`);

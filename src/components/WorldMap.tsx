@@ -177,10 +177,16 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const flyToPosition = (center: [number, number], zoom: number) => {
     if (map.current && mapInitialized) {
       console.log('Flying to position:', center, 'zoom:', zoom);
+      
+      // Validate coordinates before flying
+      const validLng = Math.max(-180, Math.min(180, center[0]));
+      const validLat = Math.max(-85, Math.min(85, center[1]));
+      const validZoom = Math.max(1, Math.min(20, zoom));
+      
       isFlying.current = true;
       map.current.flyTo({
-        center: center,
-        zoom: zoom,
+        center: [validLng, validLat],
+        zoom: validZoom,
         duration: 1500
       });
       
@@ -286,6 +292,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
   }, [is3DView, mapInitialized]);
 
+  // Enhanced map initialization with better initial state handling
   useEffect(() => {
     if (!mapContainer.current || map.current || loading || (successStories.length === 0 && countryStories.length === 0)) return;
 
@@ -293,9 +300,25 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
-    // Different initial settings based on view type
-    const initialCenter = is3DView ? [0, 0] as [number, number] : [20, 20] as [number, number];
-    const initialZoom = is3DView ? 1.5 : 2;
+    // Use initial map state if provided, otherwise use defaults
+    let initialCenter: [number, number];
+    let initialZoom: number;
+    
+    if (initialMapState && initialMapState.center && initialMapState.zoom) {
+      // Validate and use provided initial state
+      const validLng = Math.max(-180, Math.min(180, initialMapState.center[0]));
+      const validLat = Math.max(-85, Math.min(85, initialMapState.center[1]));
+      const validZoom = Math.max(1, Math.min(20, initialMapState.zoom));
+      
+      initialCenter = [validLng, validLat];
+      initialZoom = validZoom;
+      console.log('Using provided initial map state:', { center: initialCenter, zoom: initialZoom });
+    } else {
+      // Use default initial state based on view type
+      initialCenter = is3DView ? [0, 0] : [20, 20];
+      initialZoom = is3DView ? 1.5 : 2;
+      console.log('Using default initial map state:', { center: initialCenter, zoom: initialZoom });
+    }
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -339,32 +362,12 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       updateMarkers();
       setMapInitialized(true);
       
-      if (initialMapState && !initialMapStateApplied.current) {
-        setTimeout(() => {
-          if (map.current) {
-            console.log('Applying initial map state:', initialMapState);
-            
-            if (is3DView) {
-              // For 3D, center the globe properly
-              map.current.setCenter([0, 0]);
-              map.current.setZoom(Math.max(1.5, initialMapState.zoom));
-            } else {
-              // For 2D, use the saved state but constrain to boundaries
-              const constrainedLng = Math.max(-180, Math.min(180, initialMapState.center[0]));
-              const constrainedLat = Math.max(-85, Math.min(85, initialMapState.center[1]));
-              map.current.setCenter([constrainedLng, constrainedLat]);
-              map.current.setZoom(initialMapState.zoom);
-            }
-            
-            initialMapStateApplied.current = true;
-          }
-          mapStateInitialized.current = true;
-        }, 500);
-      } else {
-        setTimeout(() => {
-          mapStateInitialized.current = true;
-        }, 500);
-      }
+      // Mark state as initialized after a short delay to ensure map is ready
+      setTimeout(() => {
+        mapStateInitialized.current = true;
+        initialMapStateApplied.current = true;
+        console.log('Map state initialization completed');
+      }, 500);
     });
 
     return () => {
@@ -378,7 +381,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         initialMapStateApplied.current = false;
       }
     };
-  }, [successStories, countryStories, loading, is3DView]);
+  }, [successStories, countryStories, loading, is3DView, initialMapState]);
 
   useEffect(() => {
     if (mapInitialized) {
