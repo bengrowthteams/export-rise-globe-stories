@@ -104,19 +104,6 @@ const LegacyStoryCard: React.FC<{
           </button>
         </div>
 
-        {/* Enhanced Case Study Badge */}
-        {hasEnhancedCaseStudy(story) && (
-          <div className="mb-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-sm font-medium text-blue-800">Enhanced Case Study Available</span>
-              </div>
-              <p className="text-xs text-blue-600 mt-1">Detailed analysis with professional insights</p>
-            </div>
-          </div>
-        )}
-
         {/* Global Ranking Gain */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Global Ranking Gain 1995-2022</h3>
@@ -175,7 +162,7 @@ const LegacyStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={handleViewCaseStudy}
-          className={`w-full text-white ${hasEnhancedCaseStudy(story) ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className="w-full text-white bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
           {hasEnhancedCaseStudy(story) ? 'View Enhanced Case Study' : 'View Full Case Study'}
@@ -273,19 +260,6 @@ const MultiSectorStoryCard: React.FC<{
           </button>
         </div>
 
-        {/* Enhanced Case Study Badge */}
-        {hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) && (
-          <div className="mb-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-sm font-medium text-blue-800">Enhanced Case Study Available</span>
-              </div>
-              <p className="text-xs text-blue-600 mt-1">Detailed analysis with professional insights</p>
-            </div>
-          </div>
-        )}
-
         {/* Sector Navigation */}
         {countryStories.sectors.length > 1 && onSectorChange && (
           <div className="mb-6">
@@ -367,7 +341,7 @@ const MultiSectorStoryCard: React.FC<{
         {/* Read More Button */}
         <Button 
           onClick={handleViewCaseStudy}
-          className={`w-full text-white ${hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className="w-full text-white bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
           {hasEnhancedCaseStudy({ country: countryStories.country, id: countryStories.id }) ? 'View Enhanced Case Study' : 'View Full Case Study'}

@@ -16,10 +16,7 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
   const navigate = useNavigate();
 
   const handleReturnToMap = () => {
-    // Navigate to the landing page (which contains the map)
     navigate('/');
-    
-    // After navigation, scroll to the map section and restore both scroll position and map state
     setTimeout(() => {
       const mapSection = document.getElementById('map-section');
       if (mapSection) {
@@ -35,33 +32,53 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
         } else {
           mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
+        // Restore map state if available
+        if (savedMapState) {
+          try {
+            const mapState = JSON.parse(savedMapState);
+            // Trigger map state restoration via a custom event
+            window.dispatchEvent(new CustomEvent('restoreMapState', { detail: mapState }));
+            sessionStorage.removeItem('mapState');
+          } catch (error) {
+            console.error('Failed to restore map state:', error);
+          }
+        }
       }
     }, 100);
   };
 
   return (
-    <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-      <div className="max-w-6xl mx-auto px-6 py-4">
-        <Button 
-          variant="ghost" 
-          onClick={handleReturnToMap}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2" size={16} />
-          Return to Map
-        </Button>
-        
-        <div className="flex items-center space-x-4">
-          <span className="text-4xl">{flag}</span>
-          <div>
-            <h1 className="text-4xl font-bold">{country} / {sector}</h1>
-            <p className="text-xl text-gray-600 mt-2">
-              <span className="font-semibold">Successful Product:</span> {successfulProduct}
-            </p>
+    <>
+      {/* Sticky Return Button */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Button 
+            onClick={handleReturnToMap}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-base font-medium"
+            size="lg"
+          >
+            <ArrowLeft className="mr-2" size={18} />
+            Return to Map
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Header Content */}
+      <div className="bg-white shadow-sm border-b pt-20">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex items-center space-x-4">
+            <span className="text-4xl">{flag}</span>
+            <div>
+              <h1 className="text-4xl font-bold">{country} / {sector}</h1>
+              <p className="text-xl text-gray-600 mt-2">
+                <span className="font-semibold">Successful Product:</span> {successfulProduct}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

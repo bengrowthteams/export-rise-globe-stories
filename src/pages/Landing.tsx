@@ -50,6 +50,21 @@ const Landing = () => {
         console.error('Failed to parse saved map state:', error);
       }
     }
+
+    // Listen for map state restoration events from case study pages
+    const handleRestoreMapState = (event: CustomEvent) => {
+      console.log('Received map state restoration event:', event.detail);
+      if (worldMapRef.current && worldMapRef.current.flyToPosition) {
+        const { center, zoom } = event.detail;
+        worldMapRef.current.flyToPosition(center, zoom);
+      }
+    };
+
+    window.addEventListener('restoreMapState', handleRestoreMapState as EventListener);
+
+    return () => {
+      window.removeEventListener('restoreMapState', handleRestoreMapState as EventListener);
+    };
   }, []);
 
   // Add callback to receive stories from WorldMap - wrapped in useCallback to prevent infinite loops
@@ -235,23 +250,22 @@ const Landing = () => {
   const handleReadMore = (story: SuccessStory) => {
     // Save current scroll position and map state before navigating
     sessionStorage.setItem('mapScrollPosition', window.scrollY.toString());
-    if (mapState) {
-      // Save map state with adjusted zoom for better return experience
+    
+    // Get current map state from the map component
+    if (worldMapRef.current && worldMapRef.current.getCurrentMapState) {
+      const currentMapState = worldMapRef.current.getCurrentMapState();
+      sessionStorage.setItem('mapState', JSON.stringify(currentMapState));
+      console.log('Saving current map state before navigation:', currentMapState);
+    } else if (mapState) {
+      // Fallback to stored map state if map ref is not available
       const adjustedMapState = {
         ...mapState,
-        zoom: Math.min(mapState.zoom, 4) // Ensure zoom doesn't exceed 4 for return
+        zoom: Math.min(mapState.zoom, 4)
       };
       sessionStorage.setItem('mapState', JSON.stringify(adjustedMapState));
-      console.log('Saving adjusted map state before navigation:', adjustedMapState);
-    } else if (selectedStory) {
-      // If no current map state, create one based on selected story with moderate zoom
-      const fallbackMapState = {
-        center: [selectedStory.coordinates.lng, selectedStory.coordinates.lat] as [number, number],
-        zoom: 4
-      };
-      sessionStorage.setItem('mapState', JSON.stringify(fallbackMapState));
-      console.log('Saving fallback map state based on selected story:', fallbackMapState);
+      console.log('Saving fallback map state before navigation:', adjustedMapState);
     }
+    
     navigate(`/case-study/${story.id}`);
   };
 
