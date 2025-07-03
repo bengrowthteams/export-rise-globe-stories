@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -183,7 +184,7 @@ const LegacyStoryCard: React.FC<{
         {/* Success Story Summary */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed">{story.successStorySummary}</p>
+          <p className="text-gray-700 leading-relaxed">{story.description}</p>
         </div>
 
         {/* Read More Button */}
@@ -384,7 +385,7 @@ const MultiSectorStoryCard: React.FC<{
         {/* Success Story Summary */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed">{selectedSector.successStorySummary}</p>
+          <p className="text-gray-700 leading-relaxed">{selectedSector.description}</p>
         </div>
 
         {/* Read More Button */}

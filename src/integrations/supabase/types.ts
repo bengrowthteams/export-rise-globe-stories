@@ -32,6 +32,7 @@ export type Database = {
           "Ranks Change (absolute)": number | null
           Sector: string | null
           Sources: string | null
+          "Success Story (1 sentence summary)": string | null
           "Successful product": string | null
         }
         Insert: {
@@ -56,6 +57,7 @@ export type Database = {
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
           Sources?: string | null
+          "Success Story (1 sentence summary)"?: string | null
           "Successful product"?: string | null
         }
         Update: {
@@ -80,6 +82,7 @@ export type Database = {
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
           Sources?: string | null
+          "Success Story (1 sentence summary)"?: string | null
           "Successful product"?: string | null
         }
         Relationships: []
