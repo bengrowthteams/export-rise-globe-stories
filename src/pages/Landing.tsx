@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,6 @@ const Landing = () => {
   
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
-  // Handle return from case studies immediately without flashing
   React.useEffect(() => {
     const handleReturnFromCaseStudy = () => {
       console.log('Landing - Checking for return state');
@@ -73,18 +71,15 @@ const Landing = () => {
       }
     };
 
-    // Run immediately on component mount
     handleReturnFromCaseStudy();
   }, []);
 
-  // Restore specific story card after stories are loaded with improved filter handling
   React.useEffect(() => {
     const restoreStoryCard = () => {
       if (successStories.length === 0 && countryStories.length === 0) {
         return;
       }
 
-      // Get the stored return state from session storage
       const storedState = sessionStorage.getItem('caseStudyReturnState');
       if (!storedState) return;
 
@@ -99,10 +94,8 @@ const Landing = () => {
         });
 
         if (returnState.countryStories && returnState.selectedSector) {
-          // Multi-sector country - restore specific sector
           console.log('Landing - Restoring multi-sector country with filters');
           
-          // Check if we have active filters and need to apply them
           if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
             const filteredCountryStories = {
               ...returnState.countryStories,
@@ -111,7 +104,6 @@ const Landing = () => {
               )
             };
             
-            // Only restore if the selected sector is in the filtered results
             if (filteredCountryStories.sectors.some(s => s.sector === returnState.selectedSector.sector)) {
               setSelectedCountryStories(filteredCountryStories);
               setSelectedSector(returnState.selectedSector);
@@ -141,7 +133,6 @@ const Landing = () => {
               
               setSelectedStory(primaryStory);
               
-              // Immediately center map on the country
               if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
                 console.log('Landing - Centering map on filtered multi-sector country');
                 worldMapRef.current.flyToPosition(
@@ -153,7 +144,6 @@ const Landing = () => {
               console.log('Landing - Selected sector not in filtered results, skipping restoration');
             }
           } else {
-            // No filters active, restore normally
             setSelectedCountryStories(returnState.countryStories);
             setSelectedSector(returnState.selectedSector);
             
@@ -182,7 +172,6 @@ const Landing = () => {
             
             setSelectedStory(primaryStory);
             
-            // Immediately center map on the country
             if (worldMapRef.current && worldMapRef.current.flyToPosition && returnState.countryStories.coordinates) {
               console.log('Landing - Centering map on unfiltered multi-sector country');
               worldMapRef.current.flyToPosition(
@@ -192,19 +181,16 @@ const Landing = () => {
             }
           }
         } else {
-          // Single-sector country - find and restore the story
           console.log('Landing - Restoring single-sector country');
           const targetStory = successStories.find(s => 
             s.country === returnState.country && s.sector === returnState.sector
           );
           
           if (targetStory) {
-            // Check if filters are active and this story matches
             if (returnState.hasActiveFilters && returnState.selectedSectors.length > 0) {
               if (returnState.selectedSectors.includes(targetStory.sector)) {
                 setSelectedStory(targetStory);
                 
-                // Immediately center map on the country
                 if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
                   console.log('Landing - Centering map on filtered single-sector country');
                   worldMapRef.current.flyToPosition(
@@ -216,10 +202,8 @@ const Landing = () => {
                 console.log('Landing - Single-sector story not in filtered results, skipping restoration');
               }
             } else {
-              // No filters active, restore normally
               setSelectedStory(targetStory);
               
-              // Immediately center map on the country
               if (worldMapRef.current && worldMapRef.current.flyToPosition && targetStory.coordinates) {
                 console.log('Landing - Centering map on unfiltered single-sector country');
                 worldMapRef.current.flyToPosition(
@@ -231,7 +215,6 @@ const Landing = () => {
           }
         }
 
-        // Clear the stored state after use
         sessionStorage.removeItem('caseStudyReturnState');
         
       } catch (error) {
@@ -374,19 +357,17 @@ const Landing = () => {
   const handleClosePanel = () => {
     console.log('handleClosePanel called - centering on selected country');
     
-    // Get the coordinates of the currently selected story
-    let countryCoordinates: [number, number] = [30, 15]; // Default coordinates
+    let countryCoordinates: [number, number] = [30, 15];
     
     if (selectedStory?.coordinates) {
-      countryCoordinates = [selectedStory.coordinates.lng, selectedStory.coordinates.lat]; // [lng, lat] format
+      countryCoordinates = [selectedStory.coordinates.lng, selectedStory.coordinates.lat];
     } else if (selectedCountryStories?.coordinates) {
-      countryCoordinates = [selectedCountryStories.coordinates.lng, selectedCountryStories.coordinates.lat]; // [lng, lat] format
+      countryCoordinates = [selectedCountryStories.coordinates.lng, selectedCountryStories.coordinates.lat];
     }
     
-    // Zoom out and center on the selected country
     if (worldMapRef.current && worldMapRef.current.flyToPosition) {
       console.log('Centering map on country coordinates:', countryCoordinates);
-      worldMapRef.current.flyToPosition(countryCoordinates, 3); // Zoom level 3 for country view
+      worldMapRef.current.flyToPosition(countryCoordinates, 3);
     }
     
     setSelectedStory(null);
@@ -446,7 +427,6 @@ const Landing = () => {
   const handleReadMore = (story: SuccessStory) => {
     console.log('Landing - handleReadMore called for story:', story);
     
-    // Save return state before navigation
     ReturnStateService.saveReturnState({
       selectedSectors,
       countryStories: selectedCountryStories,
@@ -455,7 +435,6 @@ const Landing = () => {
       sector: story.sector
     });
     
-    // Navigate to case study
     if (story.id && story.id.toString().match(/^\d+$/)) {
       navigate(`/enhanced-case-study/${story.id}`);
     } else {
@@ -600,7 +579,7 @@ const Landing = () => {
             />
           </div>
           
-          {/* Story Card Overlay - expanded width */}
+          {/* Story Card Overlay - expanded width to ~700px */}
           {(selectedStory || (selectedCountryStories && selectedSector)) && (
             <>
               <div 
@@ -608,7 +587,7 @@ const Landing = () => {
                 onClick={handleClosePanel}
               />
               
-              <div className={`absolute right-0 top-0 h-full w-full sm:w-[28rem] z-40 transform transition-transform duration-300 tutorial-story-card ${
+              <div className={`absolute right-0 top-0 h-full w-full sm:w-[44rem] z-40 transform transition-transform duration-300 tutorial-story-card ${
                 (selectedStory || selectedSector) ? 'translate-x-0' : 'translate-x-full'
               }`}>
                 <StoryCard 

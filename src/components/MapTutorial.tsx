@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,7 +39,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     {
       title: "Search & Filter",
       content: "Search for a specific country using the search bar in the top left. Use the sector filter below to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories.",
-      position: "top-left",
+      position: "middle-left",
       highlight: "search"
     },
     {
@@ -51,7 +50,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     }
   ];
 
-  // Load a demo story from the actual data
   useEffect(() => {
     const loadDemoStory = async () => {
       try {
@@ -67,10 +65,8 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     loadDemoStory();
   }, []);
 
-  // Apply visual effects and demo functionality based on current step
   useEffect(() => {
     const applyHighlights = () => {
-      // Remove all existing highlights first
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
         searchBar.style.boxShadow = '';
@@ -79,15 +75,11 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
         searchBar.style.background = '';
       }
 
-      // Apply highlights based on current step
       if (currentStep === 1) {
-        // Show global view for dots step - don't zoom into any country
         onDemoCountrySelect(null);
       } else if (currentStep === 2) {
-        // Clear any existing demo selection to show global view for filter demo
         onDemoCountrySelect(null);
         
-        // Highlight search bar and demonstrate filter
         if (searchBar) {
           searchBar.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 24px rgba(59, 130, 246, 0.4)';
           searchBar.style.border = '2px solid #3b82f6';
@@ -95,26 +87,22 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           searchBar.style.background = 'rgba(59, 130, 246, 0.1)';
         }
         
-        // Demonstrate filtering by Electronics sector
         if (!selectedSectors.includes('Electronics')) {
           setTimeout(() => {
             onSectorToggle('Electronics');
           }, 1000);
         }
       } else if (currentStep === 3 && demoStoryData) {
-        // Clear any sector filters from demo
         if (selectedSectors.length > 0) {
           selectedSectors.forEach(sector => onSectorToggle(sector));
         }
         
-        // Show demo story card for case study step - NOW zoom into country
         onDemoCountrySelect(demoStoryData);
       }
     };
 
     applyHighlights();
 
-    // Cleanup function
     return () => {
       const searchBar = document.querySelector('.tutorial-search-bar') as HTMLElement;
       if (searchBar) {
@@ -141,7 +129,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
   };
 
   const handleSkip = () => {
-    // Clear any demo filters
     if (selectedSectors.length > 0) {
       selectedSectors.forEach(sector => onSectorToggle(sector));
     }
@@ -150,7 +137,6 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
   };
 
   const handleClose = () => {
-    // Clear any demo filters when closing
     if (selectedSectors.length > 0) {
       selectedSectors.forEach(sector => onSectorToggle(sector));
     }
@@ -172,6 +158,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 z-40 ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
+        currentStepData.position === 'middle-left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
         currentStepData.position === 'top-left' ? 'top-20 left-8' :
         currentStepData.position === 'bottom-right' ? 'bottom-8 right-8' :
         currentStepData.position === 'bottom-left' ? 'bottom-8 left-8' :
