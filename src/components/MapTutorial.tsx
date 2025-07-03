@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuccessStory } from '../types/SuccessStory';
 import { fetchSuccessStories } from '../services/countryDataService';
@@ -40,7 +40,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     {
       title: "Search & Filter",
       content: "Search for a specific country using the search bar in the top left. Use the sector filter below to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories.",
-      position: "bottom-right",
+      position: "top-left",
       highlight: "search"
     },
     {
@@ -134,6 +134,12 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     }
   };
 
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const handleSkip = () => {
     // Clear any demo filters
     if (selectedSectors.length > 0) {
@@ -166,6 +172,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 z-40 ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
+        currentStepData.position === 'top-left' ? 'top-20 left-8' :
         currentStepData.position === 'bottom-right' ? 'bottom-8 right-8' :
         currentStepData.position === 'bottom-left' ? 'bottom-8 left-8' :
         'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
@@ -202,6 +209,16 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           </div>
           
           <div className="flex space-x-2">
+            {currentStep > 0 && (
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                className="text-gray-600"
+              >
+                <ArrowLeft size={16} className="mr-1" />
+                Back
+              </Button>
+            )}
             {currentStep === 0 && (
               <Button
                 variant="outline"
