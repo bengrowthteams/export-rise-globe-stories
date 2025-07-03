@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -579,7 +580,7 @@ const Landing = () => {
             />
           </div>
           
-          {/* Story Card Overlay - expanded width to ~700px */}
+          {/* Story Card Overlay - reduced width to ~500px */}
           {(selectedStory || (selectedCountryStories && selectedSector)) && (
             <>
               <div 
@@ -587,7 +588,7 @@ const Landing = () => {
                 onClick={handleClosePanel}
               />
               
-              <div className={`absolute right-0 top-0 h-full w-full sm:w-[44rem] z-40 transform transition-transform duration-300 tutorial-story-card ${
+              <div className={`absolute right-0 top-0 h-full w-full sm:w-[32rem] z-40 transform transition-transform duration-300 tutorial-story-card ${
                 (selectedStory || selectedSector) ? 'translate-x-0' : 'translate-x-full'
               }`}>
                 <StoryCard 
