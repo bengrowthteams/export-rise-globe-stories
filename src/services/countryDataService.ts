@@ -14,6 +14,7 @@ interface CountryDataRow {
   'Initial Exports - 1995 (USD)': number | null;
   'Current Exports - 2022 (USD)': number | null;
   'Ranks Change (absolute)': number | null;
+  'Success Story (1 sentence summary)': string | null;
 }
 
 // Cache for the transformed data
@@ -39,10 +40,10 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
     
     console.log('Attempting main data fetch...');
     
-    // Main query with extensive logging
+    // Main query with extensive logging - now including the success story summary column
     const { data, error, count, status, statusText } = await supabase
       .from('Country Data')
-      .select('*', { count: 'exact' })
+      .select('*, "Success Story (1 sentence summary)"', { count: 'exact' })
       .order('Country');
 
     console.log('=== MAIN QUERY RESULTS ===');

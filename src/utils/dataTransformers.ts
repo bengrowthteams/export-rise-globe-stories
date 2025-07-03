@@ -1,4 +1,3 @@
-
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { countryCoordinates } from '../data/countryCoordinates';
@@ -16,7 +15,7 @@ interface CountryDataRow {
   'Ranks Change (absolute)': number | null;
 }
 
-export const transformToSectorStory = (row: CountryDataRow): SectorStory => {
+export const transformToSectorStory = (row: CountryDataRow & { 'Success Story (1 sentence summary)': string | null }): SectorStory => {
   const sector = row.Sector!;
   const product = row['Successful product'] || 'specialized products';
   const rank1995 = row['Rank (1995)'] || 50;
@@ -24,11 +23,12 @@ export const transformToSectorStory = (row: CountryDataRow): SectorStory => {
   const initial = row['Initial Exports - 1995 (USD)'] || 0;
   const current = row['Current Exports - 2022 (USD)'] || 0;
   const growthRate = calculateGrowthRate(initial, current);
+  const successStory = row['Success Story (1 sentence summary)'] || `Strategic development in ${sector} through export-oriented growth and specialization in ${product}.`;
 
   return {
     sector,
     product,
-    description: `Strategic development in ${sector} through export-oriented growth and specialization in ${product}.`,
+    description: successStory,
     growthRate,
     exportValue: formatCurrency(current),
     keyFactors: [
@@ -52,7 +52,7 @@ export const transformToSectorStory = (row: CountryDataRow): SectorStory => {
   };
 };
 
-export const transformCountryData = (data: CountryDataRow[]): { 
+export const transformCountryData = (data: (CountryDataRow & { 'Success Story (1 sentence summary)': string | null })[]): { 
   legacyStories: SuccessStory[], 
   countryStories: CountrySuccessStories[] 
 } => {
@@ -67,7 +67,7 @@ export const transformCountryData = (data: CountryDataRow[]): {
   });
 
   // Group by country
-  const countryGroups = new Map<string, CountryDataRow[]>();
+  const countryGroups = new Map<string, (CountryDataRow & { 'Success Story (1 sentence summary)': string | null })[]>();
   filteredData.forEach(row => {
     const country = row.Country!;
     if (!countryGroups.has(country)) {
@@ -91,7 +91,7 @@ export const transformCountryData = (data: CountryDataRow[]): {
         country,
         sector: sectorStory.sector,
         product: sectorStory.product,
-        description: sectorStory.description,
+        description: sectorStory.description, // This now contains the success story summary
         growthRate: sectorStory.growthRate,
         timeframe: '1995-2022',
         exportValue: sectorStory.exportValue,
