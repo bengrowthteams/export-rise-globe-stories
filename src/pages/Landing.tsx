@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -109,8 +108,10 @@ const Landing = () => {
               setSelectedCountryStories(filteredCountryStories);
               setSelectedSector(returnState.selectedSector);
               
+              // Create primary story with preserved primaryKey
               const primaryStory: SuccessStory = {
                 id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
+                primaryKey: returnState.selectedSector.primaryKey, // Preserve primaryKey
                 country: returnState.countryStories.country,
                 sector: returnState.selectedSector.sector,
                 product: returnState.selectedSector.product,
@@ -148,8 +149,10 @@ const Landing = () => {
             setSelectedCountryStories(returnState.countryStories);
             setSelectedSector(returnState.selectedSector);
             
+            // Create primary story with preserved primaryKey  
             const primaryStory: SuccessStory = {
               id: `${returnState.countryStories.id}-${returnState.selectedSector.sector}`,
+              primaryKey: returnState.selectedSector.primaryKey, // Preserve primaryKey
               country: returnState.countryStories.country,
               sector: returnState.selectedSector.sector,
               product: returnState.selectedSector.product,
@@ -312,7 +315,33 @@ const Landing = () => {
         } else if (filteredCountryStories.sectors.length === 1) {
           console.log('Only one filtered sector, showing directly');
           setSelectedSector(filteredCountryStories.sectors[0]);
-          setSelectedStory(story);
+          
+          // Create story with preserved primaryKey when filtering results in single sector
+          const filteredStory: SuccessStory = {
+            id: `${countryStories.id}-${filteredCountryStories.sectors[0].sector}`,
+            primaryKey: filteredCountryStories.sectors[0].primaryKey, // Preserve primaryKey
+            country: countryStories.country,
+            sector: filteredCountryStories.sectors[0].sector,
+            product: filteredCountryStories.sectors[0].product,
+            description: filteredCountryStories.sectors[0].description,
+            growthRate: filteredCountryStories.sectors[0].growthRate,
+            timeframe: countryStories.timeframe,
+            exportValue: filteredCountryStories.sectors[0].exportValue,
+            keyFactors: filteredCountryStories.sectors[0].keyFactors,
+            coordinates: countryStories.coordinates,
+            flag: countryStories.flag,
+            marketDestinations: filteredCountryStories.sectors[0].marketDestinations,
+            challenges: filteredCountryStories.sectors[0].challenges,
+            impact: filteredCountryStories.sectors[0].impact,
+            globalRanking1995: filteredCountryStories.sectors[0].globalRanking1995,
+            globalRanking2022: filteredCountryStories.sectors[0].globalRanking2022,
+            initialExports1995: filteredCountryStories.sectors[0].initialExports1995,
+            initialExports2022: filteredCountryStories.sectors[0].initialExports2022,
+            successfulProduct: filteredCountryStories.sectors[0].successfulProduct,
+            successStorySummary: filteredCountryStories.sectors[0].successStorySummary
+          };
+          
+          setSelectedStory(filteredStory);
           setShowFilteredSectorModal(false);
           setShowSectorModal(false);
         } else {

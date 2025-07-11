@@ -111,9 +111,9 @@ const LegacyStoryCard: React.FC<{
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
   return (
-    <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
-      <div className="p-6">
-        {/* Header */}
+    <div className="h-full w-full bg-white shadow-2xl flex flex-col">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <span className="text-3xl">{story.flag}</span>
@@ -129,76 +129,81 @@ const LegacyStoryCard: React.FC<{
             <X size={20} />
           </button>
         </div>
-
-        {/* Global Ranking Gain */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Global Ranking Gain</h3>
-          <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-red-600">#{story.globalRanking1995}</p>
-                <p className="text-sm text-red-700">1995</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
-                <span className={`text-lg font-bold ${gainColor}`}>
-                  {gainPrefix}{rankingGain} positions
-                </span>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">#{story.globalRanking2022}</p>
-                <p className="text-sm text-green-700">2022</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Export Value Comparison */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Export Value Growth</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-lg font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
-              <p className="text-sm text-gray-600">1995</p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="text-blue-600" size={16} />
-                <p className="text-lg font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
-              </div>
-              <p className="text-sm text-blue-700">2022</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Successful Product */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Successful Product</h3>
-          <div className="bg-purple-50 p-3 rounded-lg">
-            <p className="font-medium text-purple-800 capitalize text-sm">{story.successfulProduct}</p>
-          </div>
-        </div>
-
-        {/* Success Story Summary */}
-        <div className="mb-6">
-          <h3 className="text-base font-semibold mb-2">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed text-sm">{story.description}</p>
-        </div>
-
-        {/* Read More Button - Always show if primaryKey exists */}
-        {story.primaryKey && (
-          <div className="border-t pt-4">
-            <Button 
-              onClick={handleViewCaseStudy}
-              className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-              size="lg"
-            >
-              View Full Success Story
-              <ArrowRight className="ml-2" size={16} />
-            </Button>
-          </div>
-        )}
       </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6 space-y-4">
+          {/* Global Ranking Gain */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Global Ranking Gain</h3>
+            <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-600">#{story.globalRanking1995}</p>
+                  <p className="text-xs text-red-700">1995</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
+                  <span className={`text-lg font-bold ${gainColor}`}>
+                    {gainPrefix}{rankingGain} positions
+                  </span>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">#{story.globalRanking2022}</p>
+                  <p className="text-xs text-green-700">2022</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Export Value Comparison */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Export Value Growth</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-lg font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
+                <p className="text-xs text-gray-600">1995</p>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="text-blue-600" size={16} />
+                  <p className="text-lg font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
+                </div>
+                <p className="text-xs text-blue-700">2022</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Successful Product */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Successful Product</h3>
+            <div className="bg-purple-50 p-3 rounded-lg">
+              <p className="font-medium text-purple-800 capitalize text-xs">{story.successfulProduct}</p>
+            </div>
+          </div>
+
+          {/* Success Story Summary */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-xs">{story.description}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Button at Bottom - Always show if primaryKey exists */}
+      {story.primaryKey && (
+        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
+          <Button 
+            onClick={handleViewCaseStudy}
+            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            size="lg"
+          >
+            View Full Success Story
+            <ArrowRight className="ml-2" size={16} />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
@@ -230,7 +235,7 @@ const MultiSectorStoryCard: React.FC<{
 
   const convertToLegacyStory = (): SuccessStory => ({
     id: `${countryStories.id}-${selectedSector.sector}`,
-    primaryKey: selectedSector.primaryKey,
+    primaryKey: selectedSector.primaryKey, // Ensure primaryKey is preserved
     country: countryStories.country,
     sector: selectedSector.sector,
     product: selectedSector.product,
@@ -278,9 +283,9 @@ const MultiSectorStoryCard: React.FC<{
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
   return (
-    <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
-      <div className="p-6">
-        {/* Header */}
+    <div className="h-full w-full bg-white shadow-2xl flex flex-col">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <span className="text-3xl">{countryStories.flag}</span>
@@ -296,99 +301,104 @@ const MultiSectorStoryCard: React.FC<{
             <X size={20} />
           </button>
         </div>
-
-        {/* Sector Navigation */}
-        {countryStories.sectors.length > 1 && onSectorChange && (
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <Building2 size={16} className="mr-2" />
-              Other Sectors ({countryStories.sectors.length - 1} more)
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {countryStories.sectors
-                .filter(sector => sector.sector !== selectedSector.sector)
-                .map((sector, index) => (
-                  <button
-                    key={index}
-                    onClick={() => onSectorChange(sector)}
-                    className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                  >
-                    {sector.sector}
-                  </button>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* Global Ranking Gain */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Global Ranking Gain</h3>
-          <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
-                <p className="text-sm text-red-700">1995</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
-                <span className={`text-lg font-bold ${gainColor}`}>
-                  {gainPrefix}{rankingGain} positions
-                </span>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
-                <p className="text-sm text-green-700">2022</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Export Value Comparison */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Export Value Growth</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-lg font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
-              <p className="text-sm text-gray-600">1995</p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="text-blue-600" size={16} />
-                <p className="text-lg font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
-              </div>
-              <p className="text-sm text-blue-700">2022</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Successful Product */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold mb-2">Successful Product</h3>
-          <div className="bg-purple-50 p-3 rounded-lg">
-            <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
-          </div>
-        </div>
-
-        {/* Success Story Summary */}
-        <div className="mb-6">
-          <h3 className="text-base font-semibold mb-2">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
-        </div>
-
-        {/* Read More Button - Always show if primaryKey exists */}
-        {selectedSector.primaryKey && (
-          <div className="border-t pt-4">
-            <Button 
-              onClick={handleViewCaseStudy}
-              className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-              size="lg"
-            >
-              View Full Success Story
-              <ArrowRight className="ml-2" size={16} />
-            </Button>
-          </div>
-        )}
       </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6 space-y-4">
+          {/* Sector Navigation */}
+          {countryStories.sectors.length > 1 && onSectorChange && (
+            <div>
+              <h3 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                <Building2 size={16} className="mr-2" />
+                Other Sectors ({countryStories.sectors.length - 1} more)
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {countryStories.sectors
+                  .filter(sector => sector.sector !== selectedSector.sector)
+                  .map((sector, index) => (
+                    <button
+                      key={index}
+                      onClick={() => onSectorChange(sector)}
+                      className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                    >
+                      {sector.sector}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Global Ranking Gain */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Global Ranking Gain</h3>
+            <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
+                  <p className="text-xs text-red-700">1995</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
+                  <span className={`text-lg font-bold ${gainColor}`}>
+                    {gainPrefix}{rankingGain} positions
+                  </span>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
+                  <p className="text-xs text-green-700">2022</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Export Value Comparison */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Export Value Growth</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-lg font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
+                <p className="text-xs text-gray-600">1995</p>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="text-blue-600" size={16} />
+                  <p className="text-lg font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
+                </div>
+                <p className="text-xs text-blue-700">2022</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Successful Product */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Successful Product</h3>
+            <div className="bg-purple-50 p-3 rounded-lg">
+              <p className="font-medium text-purple-800 capitalize text-xs">{selectedSector.successfulProduct}</p>
+            </div>
+          </div>
+
+          {/* Success Story Summary */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-xs">{selectedSector.description}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Button at Bottom - Always show if primaryKey exists */}
+      {selectedSector.primaryKey && (
+        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
+          <Button 
+            onClick={handleViewCaseStudy}
+            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            size="lg"
+          >
+            View Full Success Story
+            <ArrowRight className="ml-2" size={16} />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
