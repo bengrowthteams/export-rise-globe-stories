@@ -132,11 +132,18 @@ export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<strin
           'Country' in row && 
           'Sector' in row && 
           'Primary key' in row) {
+        
+        // Extract values with additional null checks
         const country = row.Country;
         const sector = row.Sector;
         const primaryKey = row['Primary key'];
         
-        if (country && sector && typeof primaryKey === 'number') {
+        // Ensure all required values exist and are valid
+        if (country && 
+            sector && 
+            typeof country === 'string' && 
+            typeof sector === 'string' && 
+            typeof primaryKey === 'number') {
           const key = `${country}-${sector}`;
           mappings[key] = primaryKey;
         }
