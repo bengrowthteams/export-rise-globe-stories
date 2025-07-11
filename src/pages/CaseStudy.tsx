@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { successStories } from '../data/successStories';
 import { getAvailableCaseStudyIds } from '../services/caseStudyService';
+import { getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
 import CaseStudyHeader from '../components/case-study/CaseStudyHeader';
 import TransformationOverview from '../components/case-study/TransformationOverview';
 import SuccessStorySummary from '../components/case-study/SuccessStorySummary';
@@ -21,13 +22,30 @@ const CaseStudy = () => {
   // Check if this ID should use the enhanced version
   useEffect(() => {
     const checkAvailability = async () => {
-      const primaryKey = parseInt(id || '0');
-      const ids = await getAvailableCaseStudyIds();
-      setAvailableIds(ids);
+      console.log('Checking availability for case study ID:', id);
       
-      if (ids.includes(primaryKey)) {
-        navigate(`/enhanced-case-study/${id}`, { replace: true });
-        return;
+      // First try to parse as numeric ID
+      const primaryKey = parseInt(id || '0');
+      if (!isNaN(primaryKey)) {
+        const ids = await getAvailableCaseStudyIds();
+        setAvailableIds(ids);
+        
+        if (ids.includes(primaryKey)) {
+          console.log('Found enhanced case study, redirecting to:', primaryKey);
+          navigate(`/enhanced-case-study/${primaryKey}`, { replace: true });
+          return;
+        }
+      }
+      
+      // If not numeric, try to find the story and check if it has enhanced version
+      const story = successStories.find(s => s.id === id);
+      if (story) {
+        const enhancedId = getEnhancedCaseStudyId(story);
+        if (enhancedId) {
+          console.log('Found enhanced case study for story, redirecting to:', enhancedId);
+          navigate(`/enhanced-case-study/${enhancedId}`, { replace: true });
+          return;
+        }
       }
       
       setIsCheckingAvailability(false);
@@ -65,7 +83,7 @@ const CaseStudy = () => {
   };
 
   const handleNavigateBack = () => {
-    navigate('/map');
+    navigate('/');
   };
 
   return (
