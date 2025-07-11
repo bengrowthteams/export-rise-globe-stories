@@ -125,8 +125,13 @@ export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<strin
 
     const mappings: Record<string, number> = {};
     data.forEach(row => {
-      // Add proper type checking for the row data
-      if (row && typeof row === 'object' && 'Country' in row && 'Sector' in row && 'Primary key' in row) {
+      // Add proper type checking for the row data and null checking
+      if (row && 
+          typeof row === 'object' && 
+          row !== null &&
+          'Country' in row && 
+          'Sector' in row && 
+          'Primary key' in row) {
         const country = row.Country;
         const sector = row.Sector;
         const primaryKey = row['Primary key'];
