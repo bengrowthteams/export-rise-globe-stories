@@ -125,28 +125,29 @@ export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<strin
 
     const mappings: Record<string, number> = {};
     data.forEach(row => {
-      // Add proper type checking for the row data and null checking
-      if (row && 
-          typeof row === 'object' && 
-          row !== null &&
-          'Country' in row && 
-          'Sector' in row && 
-          'Primary key' in row) {
-        
-        // Extract values with additional null checks
-        const country = row.Country;
-        const sector = row.Sector;
-        const primaryKey = row['Primary key'];
-        
-        // Ensure all required values exist and are valid
-        if (country && 
-            sector && 
-            typeof country === 'string' && 
-            typeof sector === 'string' && 
-            typeof primaryKey === 'number') {
-          const key = `${country}-${sector}`;
-          mappings[key] = primaryKey;
-        }
+      // First check if row is not null and is an object
+      if (!row || typeof row !== 'object') {
+        return;
+      }
+
+      // Check if required properties exist
+      if (!('Country' in row) || !('Sector' in row) || !('Primary key' in row)) {
+        return;
+      }
+      
+      // Extract values with additional null checks
+      const country = row.Country;
+      const sector = row.Sector;
+      const primaryKey = row['Primary key'];
+      
+      // Ensure all required values exist and are valid
+      if (country && 
+          sector && 
+          typeof country === 'string' && 
+          typeof sector === 'string' && 
+          typeof primaryKey === 'number') {
+        const key = `${country}-${sector}`;
+        mappings[key] = primaryKey;
       }
     });
 
