@@ -34,7 +34,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg">
               <Globe className="text-white" size={18} />
             </div>
-            <h1 className="text-lg font-bold text-gray-900">Export Success Stories</h1>
+            <h1 className="text-lg font-bold text-gray-900">Sector Transformation Atlas</h1>
           </div>
           <div className="flex items-center space-x-6">
             <button className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
