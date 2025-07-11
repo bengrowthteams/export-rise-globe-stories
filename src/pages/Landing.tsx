@@ -528,7 +528,7 @@ const Landing = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed text-left sm:text-center">
-              Explore case studies of successful sector transformation and rapid export growth in developing countries
+              Explore the playbooks behind 75+ export booms in emerging economies since 1995
             </p>
             
             <div className="flex justify-start sm:justify-center">
