@@ -177,11 +177,17 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
         </div>
 
         {/* Successful Product - Reduced spacing */}
-        <div className="mb-6">
+        <div className="mb-4">
           <h3 className="text-base font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
             <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
           </div>
+        </div>
+
+        {/* Success Story Summary - Reduced spacing and font size */}
+        <div className="mb-6">
+          <h3 className="text-base font-semibold mb-2">Success Story</h3>
+          <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
         </div>
 
         {/* View Full Success Story Button - Static positioning, no loading state */}
