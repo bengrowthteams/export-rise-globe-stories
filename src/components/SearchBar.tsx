@@ -1,110 +1,32 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
-import { fetchSuccessStories, fetchCountryStories } from '../services/countryDataService';
+import SearchInput from './search-bar/SearchInput';
+import SearchSuggestions, { SearchResult } from './search-bar/SearchSuggestions';
+import { useSearch } from '../hooks/useSearch';
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 
 interface SearchBarProps {
   onCountrySelect: (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => void;
 }
 
-interface SearchResult {
-  type: 'single' | 'multi';
-  country: string;
-  flag: string;
-  sector?: string; // For single-sector countries
-  sectorCount?: number; // For multi-sector countries
-  story?: SuccessStory;
-  countryStories?: CountrySuccessStories;
-}
-
 const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
-  const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
-  const [loading, setLoading] = useState(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load success stories on component mount
-  useEffect(() => {
-    const loadSuccessStories = async () => {
-      try {
-        setLoading(true);
-        const [stories, multiSectorStories] = await Promise.all([
-          fetchSuccessStories(),
-          fetchCountryStories()
-        ]);
-        setSuccessStories(stories);
-        setCountryStories(multiSectorStories);
-      } catch (error) {
-        console.error('Failed to load success stories for search:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSuccessStories();
-  }, []);
-
-  useEffect(() => {
-    if (searchTerm.trim() === '' || loading || (successStories.length === 0 && countryStories.length === 0)) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-
-    const searchResults: SearchResult[] = [];
-
-    // Search single-sector countries by country name only
-    successStories.forEach(story => {
-      if (story.country.toLowerCase().includes(searchTerm.toLowerCase())) {
-        searchResults.push({
-          type: 'single',
-          country: story.country,
-          flag: story.flag,
-          sector: story.sector,
-          story
-        });
-      }
-    });
-
-    // Search multi-sector countries by country name only
-    countryStories.forEach(countryStory => {
-      if (countryStory.country.toLowerCase().includes(searchTerm.toLowerCase())) {
-        searchResults.push({
-          type: 'multi',
-          country: countryStory.country,
-          flag: countryStory.flag,
-          sectorCount: countryStory.sectors.length,
-          countryStories: countryStory
-        });
-      }
-    });
-    
-    setSuggestions(searchResults);
-    setShowSuggestions(searchResults.length > 0);
-    setSelectedIndex(-1);
-  }, [searchTerm, successStories, countryStories, loading]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  const {
+    searchTerm,
+    setSearchTerm,
+    suggestions,
+    showSuggestions,
+    setShowSuggestions,
+    selectedIndex,
+    setSelectedIndex,
+    loading,
+    totalCountries,
+    generateSearchResults
+  } = useSearch();
 
   const handleSuggestionClick = (result: SearchResult) => {
     setSearchTerm(result.country);
@@ -141,131 +63,63 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!showSuggestions) return;
+  const { handleKeyDown } = useKeyboardNavigation({
+    showSuggestions,
+    suggestions,
+    selectedIndex,
+    setSelectedIndex,
+    setShowSuggestions,
+    onSuggestionSelect: handleSuggestionClick
+  });
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          handleSuggestionClick(suggestions[selectedIndex]);
-        }
-        break;
-      case 'Escape':
-        setShowSuggestions(false);
-        setSelectedIndex(-1);
-        break;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFocus = () => {
+    if (searchTerm && !loading) {
+      const searchResults = generateSearchResults(searchTerm);
+      setShowSuggestions(searchResults.length > 0);
     }
   };
 
   const clearSearch = () => {
     setSearchTerm('');
-    setSuggestions([]);
     setShowSuggestions(false);
     inputRef.current?.focus();
   };
 
-  const handleFocus = () => {
-    if (searchTerm && !loading) {
-      const searchResults: SearchResult[] = [];
+  // Handle click outside to close suggestions
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
 
-      // Search single-sector countries by country name only
-      successStories.forEach(story => {
-        if (story.country.toLowerCase().includes(searchTerm.toLowerCase())) {
-          searchResults.push({
-            type: 'single',
-            country: story.country,
-            flag: story.flag,
-            sector: story.sector,
-            story
-          });
-        }
-      });
-
-      // Search multi-sector countries by country name only
-      countryStories.forEach(countryStory => {
-        if (countryStory.country.toLowerCase().includes(searchTerm.toLowerCase())) {
-          searchResults.push({
-            type: 'multi',
-            country: countryStory.country,
-            flag: countryStory.flag,
-            sectorCount: countryStory.sectors.length,
-            countryStories: countryStory
-          });
-        }
-      });
-      
-      setSuggestions(searchResults);
-      setShowSuggestions(searchResults.length > 0);
-    }
-  };
-
-  const totalCountries = successStories.length + countryStories.length;
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [setShowSuggestions]);
 
   return (
     <div ref={searchRef} className="relative w-full max-w-sm">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={searchTerm}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          placeholder={loading ? "Loading..." : `Search ${totalCountries} countries...`}
-          disabled={loading}
-          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm disabled:bg-gray-100"
-        />
-        {searchTerm && !loading && (
-          <button
-            onClick={clearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+      <SearchInput
+        searchTerm={searchTerm}
+        loading={loading}
+        totalCountries={totalCountries}
+        onInputChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onClear={clearSearch}
+        inputRef={inputRef}
+      />
 
-      {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-          {suggestions.map((result, index) => (
-            <div
-              key={`${result.country}-${result.type}`}
-              onClick={() => handleSuggestionClick(result)}
-              className={`px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${
-                index === selectedIndex ? 'bg-blue-50' : ''
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">{result.flag}</span>
-                <div className="flex-1">
-                  <div className="font-medium text-gray-900">{result.country}</div>
-                  {result.type === 'single' ? (
-                    <div className="text-sm text-gray-600">{result.sector}</div>
-                  ) : (
-                    <div className="text-sm text-purple-600 font-medium">
-                      {result.sectorCount} Success Stories
-                    </div>
-                  )}
-                </div>
-                {result.type === 'multi' && (
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+      {showSuggestions && (
+        <SearchSuggestions
+          suggestions={suggestions}
+          selectedIndex={selectedIndex}
+          onSuggestionClick={handleSuggestionClick}
+        />
       )}
     </div>
   );
