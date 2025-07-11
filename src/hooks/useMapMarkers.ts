@@ -1,4 +1,3 @@
-
 import { useRef, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { SuccessStory } from '../types/SuccessStory';
@@ -98,10 +97,11 @@ export const useMapMarkers = (
         console.log('Calling onCountrySelect with country story:', countryStory.country, 'sectors:', countryStory.sectors.length);
         
         const sectorToUse = countryStory.sectors[0];
-        console.log('Using sector for primaryStory:', sectorToUse.sector);
+        console.log('Using sector for primaryStory:', sectorToUse.sector, 'primaryKey:', sectorToUse.primaryKey);
         
         const primaryStory: SuccessStory = {
           id: `${countryStory.id}-${sectorToUse.sector}`,
+          primaryKey: sectorToUse.primaryKey,
           country: countryStory.country,
           sector: sectorToUse.sector,
           product: sectorToUse.product,
@@ -122,6 +122,8 @@ export const useMapMarkers = (
           successfulProduct: sectorToUse.successfulProduct,
           successStorySummary: sectorToUse.successStorySummary
         };
+        
+        console.log('Created primaryStory with primaryKey:', primaryStory.primaryKey);
         onCountrySelect(primaryStory, countryStory);
       }
     });

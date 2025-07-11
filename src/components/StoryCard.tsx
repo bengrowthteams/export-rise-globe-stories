@@ -116,17 +116,17 @@ const LegacyStoryCard: React.FC<{
       <div className="p-6 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <span className="text-3xl">{story.flag}</span>
+            <span className="text-4xl">{story.flag}</span>
             <div>
-              <h2 className="text-xl font-bold">{story.country}</h2>
-              <p className="text-gray-600 text-sm">{story.sector}</p>
+              <h2 className="text-2xl font-bold">{story.country}</h2>
+              <p className="text-gray-600 text-base">{story.sector}</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
       </div>
@@ -136,22 +136,22 @@ const LegacyStoryCard: React.FC<{
         <div className="p-6 space-y-6">
           {/* Global Ranking Gain */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-red-600">#{story.globalRanking1995}</p>
-                  <p className="text-xs text-red-700">1995</p>
+                  <p className="text-3xl font-bold text-red-600">#{story.globalRanking1995}</p>
+                  <p className="text-sm text-red-700">1995</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
-                  <span className={`text-lg font-bold ${gainColor}`}>
+                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={24} />
+                  <span className={`text-xl font-bold ${gainColor}`}>
                     {gainPrefix}{rankingGain} positions
                   </span>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">#{story.globalRanking2022}</p>
-                  <p className="text-xs text-green-700">2022</p>
+                  <p className="text-3xl font-bold text-green-600">#{story.globalRanking2022}</p>
+                  <p className="text-sm text-green-700">2022</p>
                 </div>
               </div>
             </div>
@@ -159,48 +159,48 @@ const LegacyStoryCard: React.FC<{
 
           {/* Export Value Comparison */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Export Value Growth</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Export Value Growth</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-lg font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
-                <p className="text-xs text-gray-600">1995</p>
+                <p className="text-xl font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
+                <p className="text-sm text-gray-600">1995</p>
               </div>
               <div className="bg-blue-50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <TrendingUp className="text-blue-600" size={16} />
-                  <p className="text-lg font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
+                  <TrendingUp className="text-blue-600" size={20} />
+                  <p className="text-xl font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
                 </div>
-                <p className="text-xs text-blue-700">2022</p>
+                <p className="text-sm text-blue-700">2022</p>
               </div>
             </div>
           </div>
 
           {/* Successful Product */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Successful Product</h3>
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="font-medium text-purple-800 capitalize text-sm">{story.successfulProduct}</p>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Successful Product</h3>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <p className="font-medium text-purple-800 capitalize text-base">{story.successfulProduct}</p>
             </div>
           </div>
 
           {/* Success Story Summary */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Success Story</h3>
-            <p className="text-gray-700 leading-relaxed text-sm">{story.description}</p>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-base">{story.description}</p>
           </div>
         </div>
       </div>
 
       {/* Fixed Button at Bottom - Always show if primaryKey exists */}
       {story.primaryKey && (
-        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
+        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0 sticky bottom-0">
           <Button 
             onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
             size="lg"
           >
             View Full Success Story
-            <ArrowRight className="ml-2" size={16} />
+            <ArrowRight className="ml-2" size={18} />
           </Button>
         </div>
       )}
@@ -288,17 +288,17 @@ const MultiSectorStoryCard: React.FC<{
       <div className="p-6 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <span className="text-3xl">{countryStories.flag}</span>
+            <span className="text-4xl">{countryStories.flag}</span>
             <div>
-              <h2 className="text-xl font-bold">{countryStories.country}</h2>
-              <p className="text-gray-600 text-sm">{selectedSector.sector}</p>
+              <h2 className="text-2xl font-bold">{countryStories.country}</h2>
+              <p className="text-gray-600 text-base">{selectedSector.sector}</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
       </div>
@@ -309,8 +309,8 @@ const MultiSectorStoryCard: React.FC<{
           {/* Sector Navigation */}
           {countryStories.sectors.length > 1 && onSectorChange && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                <Building2 size={16} className="mr-2" />
+              <h3 className="text-base font-semibold text-gray-700 mb-3 flex items-center">
+                <Building2 size={18} className="mr-2" />
                 Other Sectors ({countryStories.sectors.length - 1} more)
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -320,7 +320,7 @@ const MultiSectorStoryCard: React.FC<{
                     <button
                       key={index}
                       onClick={() => onSectorChange(sector)}
-                      className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                      className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
                     >
                       {sector.sector}
                     </button>
@@ -331,22 +331,22 @@ const MultiSectorStoryCard: React.FC<{
 
           {/* Global Ranking Gain */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
-                  <p className="text-xs text-red-700">1995</p>
+                  <p className="text-3xl font-bold text-red-600">#{selectedSector.globalRanking1995}</p>
+                  <p className="text-sm text-red-700">1995</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={20} />
-                  <span className={`text-lg font-bold ${gainColor}`}>
+                  <TrendingUp className={rankingGain > 0 ? 'text-green-600' : 'text-gray-600'} size={24} />
+                  <span className={`text-xl font-bold ${gainColor}`}>
                     {gainPrefix}{rankingGain} positions
                   </span>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
-                  <p className="text-xs text-green-700">2022</p>
+                  <p className="text-3xl font-bold text-green-600">#{selectedSector.globalRanking2022}</p>
+                  <p className="text-sm text-green-700">2022</p>
                 </div>
               </div>
             </div>
@@ -354,48 +354,48 @@ const MultiSectorStoryCard: React.FC<{
 
           {/* Export Value Comparison */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Export Value Growth</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Export Value Growth</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-lg font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
-                <p className="text-xs text-gray-600">1995</p>
+                <p className="text-xl font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
+                <p className="text-sm text-gray-600">1995</p>
               </div>
               <div className="bg-blue-50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <TrendingUp className="text-blue-600" size={16} />
-                  <p className="text-lg font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
+                  <TrendingUp className="text-blue-600" size={20} />
+                  <p className="text-xl font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
                 </div>
-                <p className="text-xs text-blue-700">2022</p>
+                <p className="text-sm text-blue-700">2022</p>
               </div>
             </div>
           </div>
 
           {/* Successful Product */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Successful Product</h3>
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Successful Product</h3>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <p className="font-medium text-purple-800 capitalize text-base">{selectedSector.successfulProduct}</p>
             </div>
           </div>
 
           {/* Success Story Summary */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Success Story</h3>
-            <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-base">{selectedSector.description}</p>
           </div>
         </div>
       </div>
 
       {/* Fixed Button at Bottom - Always show if primaryKey exists */}
       {selectedSector.primaryKey && (
-        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
+        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0 sticky bottom-0">
           <Button 
             onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
             size="lg"
           >
             View Full Success Story
-            <ArrowRight className="ml-2" size={16} />
+            <ArrowRight className="ml-2" size={18} />
           </Button>
         </div>
       )}
