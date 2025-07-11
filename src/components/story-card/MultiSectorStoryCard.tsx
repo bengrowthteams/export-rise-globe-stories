@@ -26,16 +26,6 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
   onSectorChange 
 }) => {
   const navigate = useNavigate();
-  const [isEnhancedReady, setIsEnhancedReady] = useState(false);
-
-  useEffect(() => {
-    const initializeEnhancedCaseStudies = async () => {
-      await preloadEnhancedCaseStudyIds();
-      setIsEnhancedReady(true);
-    };
-
-    initializeEnhancedCaseStudies();
-  }, []);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -99,8 +89,8 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
-  // Determine if enhanced case study is available
-  const showEnhancedButton = isEnhancedReady && selectedSector.primaryKey && hasEnhancedCaseStudy(selectedSector.primaryKey);
+  // Show button for all sectors with primaryKey (simplified approach)
+  const showEnhancedButton = selectedSector.primaryKey != null;
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
@@ -145,7 +135,7 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
           </div>
         )}
 
-        {/* Global Ranking Gain - Updated header text and reduced spacing */}
+        {/* Global Ranking Gain - Updated header text and emphasis on ranking gain */}
         <div className="mb-4">
           <h3 className="text-base font-semibold mb-2">Global Ranking Gain</h3>
           <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
@@ -187,17 +177,11 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
         </div>
 
         {/* Successful Product - Reduced spacing */}
-        <div className="mb-4">
+        <div className="mb-6">
           <h3 className="text-base font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
             <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
           </div>
-        </div>
-
-        {/* Success Story Summary - Reduced spacing and font size */}
-        <div className="mb-6">
-          <h3 className="text-base font-semibold mb-2">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
         </div>
 
         {/* View Full Success Story Button - Static positioning, no loading state */}

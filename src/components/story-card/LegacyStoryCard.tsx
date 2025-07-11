@@ -21,16 +21,6 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
   onReadMore 
 }) => {
   const navigate = useNavigate();
-  const [isEnhancedReady, setIsEnhancedReady] = useState(false);
-
-  useEffect(() => {
-    const initializeEnhancedCaseStudies = async () => {
-      await preloadEnhancedCaseStudyIds();
-      setIsEnhancedReady(true);
-    };
-
-    initializeEnhancedCaseStudies();
-  }, []);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -68,8 +58,8 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
-  // Determine if enhanced case study is available
-  const showEnhancedButton = isEnhancedReady && story.primaryKey && hasEnhancedCaseStudy(story.primaryKey);
+  // Show button for all stories with primaryKey (simplified approach)
+  const showEnhancedButton = story.primaryKey != null;
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
