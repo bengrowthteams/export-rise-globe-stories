@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../../types/CountrySuccessStories';
 import { SuccessStory } from '../../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import ReturnStateService from '../../services/returnStateService';
+import { hasEnhancedCaseStudy, preloadEnhancedCaseStudyIds } from '../../services/enhancedCaseStudyService';
 
 interface MultiSectorStoryCardProps {
   countryStories: CountrySuccessStories;
@@ -26,45 +26,16 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
   onSectorChange 
 }) => {
   const navigate = useNavigate();
-  const [hasEnhanced, setHasEnhanced] = useState(false);
-  const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
+  const [isEnhancedReady, setIsEnhancedReady] = useState(false);
 
   useEffect(() => {
-    const checkEnhancedCaseStudy = async () => {
-      if (!selectedSector.primaryKey) {
-        console.log('Multi-Sector Story Card - No primaryKey available, enhanced case study not available');
-        setHasEnhanced(false);
-        setIsCheckingEnhanced(false);
-        return;
-      }
-
-      console.log('Multi-Sector Story Card - Checking enhanced case study for Primary key:', selectedSector.primaryKey);
-      setIsCheckingEnhanced(true);
-      
-      try {
-        const { data, error } = await supabase
-          .from('Country Data')
-          .select('"Primary key"')
-          .eq('"Primary key"', selectedSector.primaryKey)
-          .single();
-
-        if (error) {
-          console.log('No enhanced case study found for Primary key:', selectedSector.primaryKey);
-          setHasEnhanced(false);
-        } else if (data) {
-          console.log('Enhanced case study found for Primary key:', selectedSector.primaryKey);
-          setHasEnhanced(true);
-        }
-      } catch (error) {
-        console.error('Error checking enhanced case study:', error);
-        setHasEnhanced(false);
-      } finally {
-        setIsCheckingEnhanced(false);
-      }
+    const initializeEnhancedCaseStudies = async () => {
+      await preloadEnhancedCaseStudyIds();
+      setIsEnhancedReady(true);
     };
 
-    checkEnhancedCaseStudy();
-  }, [selectedSector.primaryKey]);
+    initializeEnhancedCaseStudies();
+  }, []);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -115,7 +86,7 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
       sector: selectedSector.sector
     });
     
-    if (hasEnhanced && selectedSector.primaryKey) {
+    if (selectedSector.primaryKey && hasEnhancedCaseStudy(selectedSector.primaryKey)) {
       console.log('Multi-Sector Story Card - Navigating to enhanced case study:', selectedSector.primaryKey);
       navigate(`/enhanced-case-study/${selectedSector.primaryKey}`);
     } else {
@@ -128,16 +99,19 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
+  // Determine if enhanced case study is available
+  const showEnhancedButton = isEnhancedReady && selectedSector.primaryKey && hasEnhancedCaseStudy(selectedSector.primaryKey);
+
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
       <div className="p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <span className="text-3xl">{countryStories.flag}</span>
             <div>
               <h2 className="text-xl font-bold">{countryStories.country}</h2>
-              <p className="text-gray-600">{selectedSector.sector}</p>
+              <p className="text-gray-600 text-sm">{selectedSector.sector}</p>
             </div>
           </div>
           <button
@@ -150,8 +124,8 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
 
         {/* Sector Navigation */}
         {countryStories.sectors.length > 1 && onSectorChange && (
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
               <Building2 size={16} className="mr-2" />
               Other Sectors ({countryStories.sectors.length - 1} more)
             </h3>
@@ -162,7 +136,7 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
                   <button
                     key={index}
                     onClick={() => onSectorChange(sector)}
-                    className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                    className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full transition-colors"
                   >
                     {sector.sector}
                   </button>
@@ -171,9 +145,9 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
           </div>
         )}
 
-        {/* Global Ranking Gain */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Global Ranking Gain 1995-2022</h3>
+        {/* Global Ranking Gain - Updated header text and reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Global Ranking Gain</h3>
           <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="text-center">
@@ -194,9 +168,9 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
           </div>
         </div>
 
-        {/* Export Value Comparison */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Export Value Growth</h3>
+        {/* Export Value Comparison - Reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Export Value Growth</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-lg font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
@@ -212,38 +186,33 @@ const MultiSectorStoryCard: React.FC<MultiSectorStoryCardProps> = ({
           </div>
         </div>
 
-        {/* Successful Product */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Successful Product</h3>
+        {/* Successful Product - Reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
-            <p className="font-medium text-purple-800 capitalize">{selectedSector.successfulProduct}</p>
+            <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
           </div>
         </div>
 
-        {/* Success Story Summary */}
+        {/* Success Story Summary - Reduced spacing and font size */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed">{selectedSector.description}</p>
+          <h3 className="text-base font-semibold mb-2">Success Story</h3>
+          <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists */}
-        {!isCheckingEnhanced && hasEnhanced && selectedSector.primaryKey && (
-          <Button 
-            onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700"
-            size="lg"
-          >
-            View Full Success Story
-            <ArrowRight className="ml-2" size={16} />
-          </Button>
-        )}
-        
-        {/* Loading state */}
-        {isCheckingEnhanced && (
-          <div className="w-full p-4 text-center text-gray-500">
-            Checking for enhanced case study...
-          </div>
-        )}
+        {/* View Full Success Story Button - Static positioning, no loading state */}
+        <div className="min-h-[3rem] flex items-end">
+          {showEnhancedButton && (
+            <Button 
+              onClick={handleViewCaseStudy}
+              className="w-full text-white bg-blue-600 hover:bg-blue-700"
+              size="lg"
+            >
+              View Full Success Story
+              <ArrowRight className="ml-2" size={16} />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

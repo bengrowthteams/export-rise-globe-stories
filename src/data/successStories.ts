@@ -1,8 +1,10 @@
+
 import { SuccessStory } from '../types/SuccessStory';
 
 export const successStories: SuccessStory[] = [
   {
     id: '1',
+    primaryKey: 11, // Adding primaryKey based on database mapping
     country: 'Vietnam',
     sector: 'Textiles & Apparel',
     product: 'Garments and Footwear',
@@ -33,6 +35,7 @@ export const successStories: SuccessStory[] = [
   },
   {
     id: '2',
+    primaryKey: 12, // Adding primaryKey based on database mapping
     country: 'Ethiopia',
     sector: 'Coffee',
     product: 'Specialty Coffee Beans',
@@ -63,6 +66,7 @@ export const successStories: SuccessStory[] = [
   },
   {
     id: '3',
+    primaryKey: 13, // Adding primaryKey based on database mapping
     country: 'Bangladesh',
     sector: 'Pharmaceuticals',
     product: 'Generic Medicines',
@@ -93,6 +97,7 @@ export const successStories: SuccessStory[] = [
   },
   {
     id: '4',
+    primaryKey: 14, // Adding primaryKey based on database mapping
     country: 'Ghana',
     sector: 'Cocoa',
     product: 'Premium Cocoa Beans',
@@ -123,6 +128,7 @@ export const successStories: SuccessStory[] = [
   },
   {
     id: '5',
+    primaryKey: 15, // Adding primaryKey based on database mapping
     country: 'India',
     sector: 'Information Technology',
     product: 'Software Services',
@@ -153,6 +159,7 @@ export const successStories: SuccessStory[] = [
   },
   {
     id: '6',
+    primaryKey: 16, // Adding primaryKey based on database mapping
     country: 'Rwanda',
     sector: 'Tourism',
     product: 'Eco-Tourism Services',

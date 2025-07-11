@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SuccessStory } from '../../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import ReturnStateService from '../../services/returnStateService';
+import { hasEnhancedCaseStudy, preloadEnhancedCaseStudyIds } from '../../services/enhancedCaseStudyService';
 
 interface LegacyStoryCardProps {
   story: SuccessStory;
@@ -20,47 +21,16 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
   onReadMore 
 }) => {
   const navigate = useNavigate();
-  const [hasEnhanced, setHasEnhanced] = useState(false);
-  const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
+  const [isEnhancedReady, setIsEnhancedReady] = useState(false);
 
   useEffect(() => {
-    const checkEnhancedCaseStudy = async () => {
-      if (!story.primaryKey) {
-        console.log('Legacy Story Card - No primaryKey available, enhanced case study not available');
-        setHasEnhanced(false);
-        setIsCheckingEnhanced(false);
-        return;
-      }
-
-      console.log('Legacy Story Card - Checking enhanced case study for Primary key:', story.primaryKey);
-      setIsCheckingEnhanced(true);
-      
-      try {
-        const { data, error } = await supabase
-          .from('Country Data')
-          .select('Primary key')
-          .eq('Primary key', story.primaryKey)
-          .maybeSingle();
-
-        if (error) {
-          console.log('No enhanced case study found for Primary key:', story.primaryKey);
-          setHasEnhanced(false);
-        } else if (data) {
-          console.log('Enhanced case study found for Primary key:', story.primaryKey);
-          setHasEnhanced(true);
-        } else {
-          setHasEnhanced(false);
-        }
-      } catch (error) {
-        console.error('Error checking enhanced case study:', error);
-        setHasEnhanced(false);
-      } finally {
-        setIsCheckingEnhanced(false);
-      }
+    const initializeEnhancedCaseStudies = async () => {
+      await preloadEnhancedCaseStudyIds();
+      setIsEnhancedReady(true);
     };
 
-    checkEnhancedCaseStudy();
-  }, [story.primaryKey]);
+    initializeEnhancedCaseStudies();
+  }, []);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -85,7 +55,7 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
       sector: story.sector
     });
     
-    if (hasEnhanced && story.primaryKey) {
+    if (story.primaryKey && hasEnhancedCaseStudy(story.primaryKey)) {
       console.log('Legacy Story Card - Navigating to enhanced case study:', story.primaryKey);
       navigate(`/enhanced-case-study/${story.primaryKey}`);
     } else {
@@ -98,16 +68,19 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
 
+  // Determine if enhanced case study is available
+  const showEnhancedButton = isEnhancedReady && story.primaryKey && hasEnhancedCaseStudy(story.primaryKey);
+
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">
       <div className="p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <span className="text-3xl">{story.flag}</span>
             <div>
               <h2 className="text-xl font-bold">{story.country}</h2>
-              <p className="text-gray-600">{story.sector}</p>
+              <p className="text-gray-600 text-sm">{story.sector}</p>
             </div>
           </div>
           <button
@@ -118,9 +91,9 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
           </button>
         </div>
 
-        {/* Global Ranking Gain */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Global Ranking Gain 1995-2022</h3>
+        {/* Global Ranking Gain - Updated header text and reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Global Ranking Gain</h3>
           <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="text-center">
@@ -141,9 +114,9 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
           </div>
         </div>
 
-        {/* Export Value Comparison */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Export Value Growth</h3>
+        {/* Export Value Comparison - Reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Export Value Growth</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-lg font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
@@ -159,38 +132,33 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
           </div>
         </div>
 
-        {/* Successful Product */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Successful Product</h3>
+        {/* Successful Product - Reduced spacing */}
+        <div className="mb-4">
+          <h3 className="text-base font-semibold mb-2">Successful Product</h3>
           <div className="bg-purple-50 p-3 rounded-lg">
-            <p className="font-medium text-purple-800 capitalize">{story.successfulProduct}</p>
+            <p className="font-medium text-purple-800 capitalize text-sm">{story.successfulProduct}</p>
           </div>
         </div>
 
-        {/* Success Story Summary */}
+        {/* Success Story Summary - Reduced spacing and font size */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-          <p className="text-gray-700 leading-relaxed">{story.description}</p>
+          <h3 className="text-base font-semibold mb-2">Success Story</h3>
+          <p className="text-gray-700 leading-relaxed text-sm">{story.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists */}
-        {!isCheckingEnhanced && hasEnhanced && story.primaryKey && (
-          <Button 
-            onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700"
-            size="lg"
-          >
-            View Full Success Story
-            <ArrowRight className="ml-2" size={16} />
-          </Button>
-        )}
-        
-        {/* Loading state */}
-        {isCheckingEnhanced && (
-          <div className="w-full p-4 text-center text-gray-500">
-            Checking for enhanced case study...
-          </div>
-        )}
+        {/* View Full Success Story Button - Static positioning, no loading state */}
+        <div className="min-h-[3rem] flex items-end">
+          {showEnhancedButton && (
+            <Button 
+              onClick={handleViewCaseStudy}
+              className="w-full text-white bg-blue-600 hover:bg-blue-700"
+              size="lg"
+            >
+              View Full Success Story
+              <ArrowRight className="ml-2" size={16} />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
