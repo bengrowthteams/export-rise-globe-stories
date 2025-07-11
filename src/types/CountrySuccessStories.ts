@@ -1,5 +1,6 @@
 
 export interface SectorStory {
+  primaryKey: number; // Added primary key for enhanced case study linking
   sector: string;
   product: string;
   description: string;

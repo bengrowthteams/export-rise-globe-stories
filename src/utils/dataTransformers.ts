@@ -1,3 +1,4 @@
+
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { countryCoordinates } from '../data/countryCoordinates';
@@ -5,6 +6,7 @@ import { countryFlags } from '../data/countryFlags';
 import { formatCurrency, calculateGrowthRate, generateSuccessStorySummary } from './formatUtils';
 
 interface CountryDataRow {
+  'Primary key': number;
   Country: string | null;
   Sector: string | null;
   'Successful product': string | null;
@@ -13,9 +15,11 @@ interface CountryDataRow {
   'Initial Exports - 1995 (USD)': number | null;
   'Current Exports - 2022 (USD)': number | null;
   'Ranks Change (absolute)': number | null;
+  'Success Story (1 sentence summary)': string | null;
 }
 
-export const transformToSectorStory = (row: CountryDataRow & { 'Success Story (1 sentence summary)': string | null }): SectorStory => {
+export const transformToSectorStory = (row: CountryDataRow): SectorStory => {
+  const primaryKey = row['Primary key'];
   const sector = row.Sector!;
   const product = row['Successful product'] || 'specialized products';
   const rank1995 = row['Rank (1995)'] || 50;
@@ -26,6 +30,7 @@ export const transformToSectorStory = (row: CountryDataRow & { 'Success Story (1
   const successStory = row['Success Story (1 sentence summary)'] || `Strategic development in ${sector} through export-oriented growth and specialization in ${product}.`;
 
   return {
+    primaryKey,
     sector,
     product,
     description: successStory,
@@ -52,14 +57,14 @@ export const transformToSectorStory = (row: CountryDataRow & { 'Success Story (1
   };
 };
 
-export const transformCountryData = (data: (CountryDataRow & { 'Success Story (1 sentence summary)': string | null })[]): { 
+export const transformCountryData = (data: CountryDataRow[]): { 
   legacyStories: SuccessStory[], 
   countryStories: CountrySuccessStories[] 
 } => {
   console.log('Transforming country data, received rows:', data.length);
   
   const filteredData = data.filter(row => {
-    const hasRequiredData = row.Country && row.Sector;
+    const hasRequiredData = row.Country && row.Sector && row['Primary key'];
     if (!hasRequiredData) {
       console.log('Filtering out row with missing required data:', row);
     }
@@ -67,7 +72,7 @@ export const transformCountryData = (data: (CountryDataRow & { 'Success Story (1
   });
 
   // Group by country
-  const countryGroups = new Map<string, (CountryDataRow & { 'Success Story (1 sentence summary)': string | null })[]>();
+  const countryGroups = new Map<string, CountryDataRow[]>();
   filteredData.forEach(row => {
     const country = row.Country!;
     if (!countryGroups.has(country)) {
@@ -88,10 +93,11 @@ export const transformCountryData = (data: (CountryDataRow & { 'Success Story (1
       const sectorStory = sectors[0];
       const legacyStory: SuccessStory = {
         id: country.toLowerCase().replace(/\s+/g, '-'),
+        primaryKey: sectorStory.primaryKey,
         country,
         sector: sectorStory.sector,
         product: sectorStory.product,
-        description: sectorStory.description, // This now contains the success story summary
+        description: sectorStory.description,
         growthRate: sectorStory.growthRate,
         timeframe: '1995-2022',
         exportValue: sectorStory.exportValue,

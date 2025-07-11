@@ -1,6 +1,7 @@
 
 export interface SuccessStory {
   id: string;
+  primaryKey: number; // Added primary key for enhanced case study linking
   country: string;
   sector: string;
   product: string;

@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { getEnhancedCaseStudyId, hasEnhancedCaseStudy, initializeMappings } from '../utils/enhancedCaseStudyMapping';
+import { supabase } from '@/integrations/supabase/client';
 import ReturnStateService from '../services/returnStateService';
 
 interface StoryCardProps {
@@ -28,11 +29,6 @@ const StoryCard: React.FC<StoryCardProps> = ({
   onSectorChange,
   onClearPopups
 }) => {
-  // Initialize mappings when component mounts
-  useEffect(() => {
-    initializeMappings().catch(console.error);
-  }, []);
-
   const handleClose = () => {
     if (onClearPopups) {
       onClearPopups();
@@ -78,32 +74,38 @@ const LegacyStoryCard: React.FC<{
 }> = ({ story, selectedSectors, onClose, onReadMore }) => {
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
-  const [enhancedId, setEnhancedId] = useState<number | null>(null);
   const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
 
   useEffect(() => {
     const checkEnhancedCaseStudy = async () => {
-      console.log('Legacy Story Card - Checking enhanced case study for:', story.country, story.sector);
+      console.log('Legacy Story Card - Checking enhanced case study for Primary key:', story.primaryKey);
       setIsCheckingEnhanced(true);
       
       try {
-        const enhanced = await hasEnhancedCaseStudy(story);
-        const id = await getEnhancedCaseStudyId(story);
-        
-        console.log('Legacy Story Card - Enhanced check result:', enhanced, 'ID:', id);
-        setHasEnhanced(enhanced);
-        setEnhancedId(id);
+        // Simple check: see if this primary key exists in the database
+        const { data, error } = await supabase
+          .from('Country Data')
+          .select('Primary key')
+          .eq('Primary key', story.primaryKey)
+          .single();
+
+        if (error) {
+          console.log('No enhanced case study found for Primary key:', story.primaryKey);
+          setHasEnhanced(false);
+        } else if (data) {
+          console.log('Enhanced case study found for Primary key:', story.primaryKey);
+          setHasEnhanced(true);
+        }
       } catch (error) {
         console.error('Error checking enhanced case study:', error);
         setHasEnhanced(false);
-        setEnhancedId(null);
       } finally {
         setIsCheckingEnhanced(false);
       }
     };
 
     checkEnhancedCaseStudy();
-  }, [story]);
+  }, [story.primaryKey]);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -120,7 +122,7 @@ const LegacyStoryCard: React.FC<{
   };
 
   const handleViewCaseStudy = () => {
-    console.log('Legacy Story Card - handleViewCaseStudy called for:', story);
+    console.log('Legacy Story Card - handleViewCaseStudy called for Primary key:', story.primaryKey);
     
     // Save return state before navigation
     ReturnStateService.saveReturnState({
@@ -129,9 +131,9 @@ const LegacyStoryCard: React.FC<{
       sector: story.sector
     });
     
-    if (hasEnhanced && enhancedId) {
-      console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
-      navigate(`/enhanced-case-study/${enhancedId}`);
+    if (hasEnhanced) {
+      console.log('Legacy Story Card - Navigating to enhanced case study:', story.primaryKey);
+      navigate(`/enhanced-case-study/${story.primaryKey}`);
     } else {
       console.log('Legacy Story Card - No enhanced case study, using onReadMore');
       onReadMore(story);
@@ -217,8 +219,8 @@ const LegacyStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{story.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists and is confirmed */}
-        {!isCheckingEnhanced && hasEnhanced && enhancedId && (
+        {/* Read More Button - Only show if enhanced case study exists */}
+        {!isCheckingEnhanced && hasEnhanced && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"
@@ -251,38 +253,38 @@ const MultiSectorStoryCard: React.FC<{
 }> = ({ countryStories, selectedSector, selectedSectors, onClose, onReadMore, onSectorChange }) => {
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
-  const [enhancedId, setEnhancedId] = useState<number | null>(null);
   const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
 
   useEffect(() => {
     const checkEnhancedCaseStudy = async () => {
-      console.log('Multi-Sector Story Card - Checking enhanced case study for:', countryStories.country, selectedSector.sector);
+      console.log('Multi-Sector Story Card - Checking enhanced case study for Primary key:', selectedSector.primaryKey);
       setIsCheckingEnhanced(true);
       
       try {
-        const sectorSpecificStory = {
-          country: countryStories.country,
-          sector: selectedSector.sector,
-          id: `${countryStories.country}-${selectedSector.sector}`
-        };
-        
-        const enhanced = await hasEnhancedCaseStudy(sectorSpecificStory);
-        const id = await getEnhancedCaseStudyId(sectorSpecificStory);
-        
-        console.log('Multi-Sector Story Card - Enhanced check result:', enhanced, 'ID:', id);
-        setHasEnhanced(enhanced);
-        setEnhancedId(id);
+        // Simple check: see if this primary key exists in the database
+        const { data, error } = await supabase
+          .from('Country Data')
+          .select('Primary key')
+          .eq('Primary key', selectedSector.primaryKey)
+          .single();
+
+        if (error) {
+          console.log('No enhanced case study found for Primary key:', selectedSector.primaryKey);
+          setHasEnhanced(false);
+        } else if (data) {
+          console.log('Enhanced case study found for Primary key:', selectedSector.primaryKey);
+          setHasEnhanced(true);
+        }
       } catch (error) {
         console.error('Error checking enhanced case study:', error);
         setHasEnhanced(false);
-        setEnhancedId(null);
       } finally {
         setIsCheckingEnhanced(false);
       }
     };
 
     checkEnhancedCaseStudy();
-  }, [countryStories, selectedSector]);
+  }, [selectedSector.primaryKey]);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -300,6 +302,7 @@ const MultiSectorStoryCard: React.FC<{
 
   const convertToLegacyStory = (): SuccessStory => ({
     id: `${countryStories.id}-${selectedSector.sector}`,
+    primaryKey: selectedSector.primaryKey,
     country: countryStories.country,
     sector: selectedSector.sector,
     product: selectedSector.product,
@@ -322,7 +325,7 @@ const MultiSectorStoryCard: React.FC<{
   });
 
   const handleViewCaseStudy = () => {
-    console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories.country, selectedSector.sector);
+    console.log('Multi-Sector Story Card - handleViewCaseStudy called for Primary key:', selectedSector.primaryKey);
     
     // Save return state before navigation
     ReturnStateService.saveReturnState({
@@ -333,9 +336,9 @@ const MultiSectorStoryCard: React.FC<{
       sector: selectedSector.sector
     });
     
-    if (hasEnhanced && enhancedId) {
-      console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
-      navigate(`/enhanced-case-study/${enhancedId}`);
+    if (hasEnhanced) {
+      console.log('Multi-Sector Story Card - Navigating to enhanced case study:', selectedSector.primaryKey);
+      navigate(`/enhanced-case-study/${selectedSector.primaryKey}`);
     } else {
       console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
       onReadMore(convertToLegacyStory());
@@ -444,8 +447,8 @@ const MultiSectorStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{selectedSector.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists and is confirmed */}
-        {!isCheckingEnhanced && hasEnhanced && enhancedId && (
+        {/* Read More Button - Only show if enhanced case study exists */}
+        {!isCheckingEnhanced && hasEnhanced && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"

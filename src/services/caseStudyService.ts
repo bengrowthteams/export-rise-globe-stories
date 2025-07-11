@@ -1,7 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { countryFlags } from '@/data/countryFlags';
-import { getAllEnhancedCaseStudyIds } from '../utils/enhancedCaseStudyMapping';
 
 export interface CaseStudyData {
   id: number;
@@ -29,8 +28,25 @@ export interface CaseStudyData {
 }
 
 export const getAvailableCaseStudyIds = async (): Promise<number[]> => {
-  // Use the new database-driven approach
-  return await getAllEnhancedCaseStudyIds();
+  try {
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('"Primary key"')
+      .not('"Primary key"', 'is', null)
+      .order('"Primary key"');
+
+    if (error) {
+      console.error('Error fetching available case study IDs:', error);
+      return [];
+    }
+
+    const ids = data?.map(row => row['Primary key']).filter(id => id != null) || [];
+    console.log('Available case study IDs:', ids);
+    return ids;
+  } catch (error) {
+    console.error('Failed to fetch available case study IDs:', error);
+    return [];
+  }
 };
 
 export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyData | null> => {
@@ -40,7 +56,7 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
     const { data, error } = await supabase
       .from('Country Data')
       .select('*')
-      .eq('Primary key', primaryKey)
+      .eq('"Primary key"', primaryKey)
       .single();
 
     if (error) {
@@ -88,11 +104,4 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
     console.error('Error fetching case study data:', error);
     return null;
   }
-};
-
-// Backward compatibility function
-export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<string, number>> => {
-  // This is now handled by the enhanced mapping utility
-  const { getAllEnhancedCaseStudyMappings } = await import('../utils/enhancedCaseStudyMapping');
-  return await getAllEnhancedCaseStudyMappings();
 };

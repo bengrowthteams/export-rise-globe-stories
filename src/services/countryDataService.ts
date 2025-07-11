@@ -6,6 +6,7 @@ import { transformCountryData } from '../utils/dataTransformers';
 import { testDatabaseAccess } from '../utils/databaseUtils';
 
 interface CountryDataRow {
+  'Primary key': number;
   Country: string | null;
   Sector: string | null;
   'Successful product': string | null;
@@ -40,10 +41,10 @@ export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
     
     console.log('Attempting main data fetch...');
     
-    // Main query with extensive logging - now including the success story summary column
+    // Main query with Primary key included
     const { data, error, count, status, statusText } = await supabase
       .from('Country Data')
-      .select('*, "Success Story (1 sentence summary)"', { count: 'exact' })
+      .select('"Primary key", Country, Sector, "Successful product", "Rank (1995)", "Rank (2022)", "Initial Exports - 1995 (USD)", "Current Exports - 2022 (USD)", "Ranks Change (absolute)", "Success Story (1 sentence summary)"', { count: 'exact' })
       .order('Country');
 
     console.log('=== MAIN QUERY RESULTS ===');
