@@ -153,7 +153,6 @@ export const useMapMarkers = (
     });
 
     if (isMultiSector && countryStory && countryStory.sectors.length > 1) {
-      // For multi-sector: show sectors and their ranking gains
       popup.setHTML(`
         <div class="p-3 max-w-xs">
           <div class="flex items-center mb-2">
@@ -162,12 +161,9 @@ export const useMapMarkers = (
           </div>
           <p class="text-xs text-purple-600 font-medium mb-2">${countryStory.sectors.length} Success Stories</p>
           <div class="space-y-1">
-            ${countryStory.sectors.slice(0, 3).map(sector => {
-              const rankingGain = sector.globalRanking1995 - sector.globalRanking2022;
-              const gainText = rankingGain > 0 ? `+${rankingGain}` : `${rankingGain}`;
-              const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
-              return `<div class="text-xs"><span class="text-gray-600">${sector.sector}</span> <span class="${gainColor} font-medium">${gainText}</span></div>`;
-            }).join('')}
+            ${countryStory.sectors.slice(0, 3).map(sector => 
+              `<div class="text-xs text-gray-600">• ${sector.sector}</div>`
+            ).join('')}
             ${countryStory.sectors.length > 3 ? 
               `<div class="text-xs text-gray-500">+${countryStory.sectors.length - 3} more</div>` : 
               ''

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,6 @@ import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
 import ReturnStateService from '../services/returnStateService';
-import { preloadEnhancedCaseStudyIds } from '../services/enhancedCaseStudyService';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
@@ -37,11 +37,6 @@ const Landing = () => {
   const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
 
   React.useEffect(() => {
-    // Initialize enhanced case study service
-    preloadEnhancedCaseStudyIds().then(() => {
-      console.log('Enhanced case study IDs preloaded');
-    });
-
     const handleReturnFromCaseStudy = () => {
       console.log('Landing - Checking for return state');
       
