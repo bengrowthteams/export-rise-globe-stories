@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -39,9 +38,9 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
       try {
         const { data, error } = await supabase
           .from('Country Data')
-          .select('"Primary key"')
-          .eq('"Primary key"', story.primaryKey)
-          .single();
+          .select('Primary key')
+          .eq('Primary key', story.primaryKey)
+          .maybeSingle();
 
         if (error) {
           console.log('No enhanced case study found for Primary key:', story.primaryKey);
@@ -49,6 +48,8 @@ const LegacyStoryCard: React.FC<LegacyStoryCardProps> = ({
         } else if (data) {
           console.log('Enhanced case study found for Primary key:', story.primaryKey);
           setHasEnhanced(true);
+        } else {
+          setHasEnhanced(false);
         }
       } catch (error) {
         console.error('Error checking enhanced case study:', error);
