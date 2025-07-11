@@ -18,7 +18,6 @@ const EnhancedCaseStudy = () => {
   const [caseStudyData, setCaseStudyData] = useState<CaseStudyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [availableIds, setAvailableIds] = useState<number[]>([]);
 
   // Capture and preserve incoming state for seamless return
   useEffect(() => {
@@ -31,36 +30,33 @@ const EnhancedCaseStudy = () => {
     }
   }, [location.state]);
 
-  // Fetch available case study IDs
-  useEffect(() => {
-    const fetchAvailableIds = async () => {
-      const ids = await getAvailableCaseStudyIds();
-      setAvailableIds(ids);
-      console.log('Available enhanced case study IDs:', ids);
-    };
-    fetchAvailableIds();
-  }, []);
-
   useEffect(() => {
     const loadCaseStudy = async () => {
       console.log('Loading case study for ID:', id);
       
       const primaryKey = parseInt(id || '0');
       
-      // Wait for available IDs to be loaded
-      if (availableIds.length === 0) {
-        return;
-      }
-
-      if (!availableIds.includes(primaryKey)) {
-        setError(`Case study not available. Available case studies: ${availableIds.join(', ')}`);
+      if (!primaryKey || primaryKey < 1) {
+        setError('Invalid case study ID');
         setLoading(false);
         return;
       }
 
       try {
+        // Get available IDs first - but use simplified static approach
+        const availableIds = await getAvailableCaseStudyIds();
+        console.log('Available enhanced case study IDs:', availableIds);
+
+        if (!availableIds.includes(primaryKey)) {
+          setError(`Case study not available. Available case studies: ${availableIds.join(', ')}`);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch the case study data
         const data = await fetchCaseStudyData(primaryKey);
         if (data) {
+          console.log('Successfully loaded case study data:', data);
           setCaseStudyData(data);
         } else {
           setError('Case study data not found.');
@@ -74,7 +70,7 @@ const EnhancedCaseStudy = () => {
     };
 
     loadCaseStudy();
-  }, [id, availableIds]);
+  }, [id]);
 
   if (loading) {
     return (

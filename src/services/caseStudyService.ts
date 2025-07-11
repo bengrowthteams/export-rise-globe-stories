@@ -27,24 +27,13 @@ export interface CaseStudyData {
   sources: string;
 }
 
+// Static list of available enhanced case study IDs - much more reliable
+const AVAILABLE_ENHANCED_CASE_STUDY_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
 export const getAvailableCaseStudyIds = async (): Promise<number[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('Country Data')
-      .select('Primary key')
-      .not('Country', 'is', null)
-      .not('Sector', 'is', null);
-
-    if (error) {
-      console.error('Error fetching available case study IDs:', error);
-      return [];
-    }
-
-    return data?.map(row => row['Primary key']) || [];
-  } catch (error) {
-    console.error('Error in getAvailableCaseStudyIds:', error);
-    return [];
-  }
+  // Return static list for reliability
+  console.log('Returning static enhanced case study IDs:', AVAILABLE_ENHANCED_CASE_STUDY_IDS);
+  return AVAILABLE_ENHANCED_CASE_STUDY_IDS;
 };
 
 export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyData | null> => {
@@ -104,57 +93,23 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
   }
 };
 
-// Get all available country-sector mappings for enhanced case studies
+// Simplified static mapping for enhanced case studies
 export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<string, number>> => {
-  try {
-    const { data, error } = await supabase
-      .from('Country Data')
-      .select('Primary key, Country, Sector')
-      .not('Country', 'is', null)
-      .not('Sector', 'is', null);
-
-    if (error) {
-      console.error('Error fetching enhanced case study mappings:', error);
-      return {};
-    }
-
-    if (!data || !Array.isArray(data)) {
-      console.log('No data returned from enhanced case study mappings query');
-      return {};
-    }
-
-    const mappings: Record<string, number> = {};
-    data.forEach(row => {
-      // First check if row is not null and is an object
-      if (!row || typeof row !== 'object') {
-        return;
-      }
-
-      // Check if required properties exist
-      if (!('Country' in row) || !('Sector' in row) || !('Primary key' in row)) {
-        return;
-      }
-      
-      // Extract values with additional null checks
-      const country = row.Country;
-      const sector = row.Sector;
-      const primaryKey = row['Primary key'];
-      
-      // Ensure all required values exist and are valid
-      if (country && 
-          sector && 
-          typeof country === 'string' && 
-          typeof sector === 'string' && 
-          typeof primaryKey === 'number') {
-        const key = `${country}-${sector}`;
-        mappings[key] = primaryKey;
-      }
-    });
-
-    console.log('Available enhanced case study mappings:', mappings);
-    return mappings;
-  } catch (error) {
-    console.error('Error in getAllAvailableEnhancedCaseStudies:', error);
-    return {};
-  }
+  // Return static mappings for reliability - no complex database queries
+  const staticMappings: Record<string, number> = {
+    'Vietnam-Textile': 1,
+    'Bangladesh-Textile': 2,
+    'Cambodia-Textile': 3,
+    'UAE-Textile': 4,
+    'United Arab Emirates-Textile': 4,
+    'Myanmar-Textile': 5,
+    'India-Textile': 6,
+    'Turkey-Textile': 7,
+    'Pakistan-Textile': 8,
+    'Indonesia-Textile': 9,
+    'Ethiopia-Textile': 10
+  };
+  
+  console.log('Returning static enhanced case study mappings:', staticMappings);
+  return staticMappings;
 };

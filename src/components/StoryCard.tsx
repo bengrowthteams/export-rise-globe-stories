@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -76,11 +75,10 @@ const LegacyStoryCard: React.FC<{
   const [hasEnhanced, setHasEnhanced] = useState(false);
 
   useEffect(() => {
-    const checkEnhanced = async () => {
-      const enhanced = await hasEnhancedCaseStudy(story);
-      setHasEnhanced(enhanced);
-    };
-    checkEnhanced();
+    // Use synchronous check - much more reliable
+    const enhanced = hasEnhancedCaseStudy(story);
+    setHasEnhanced(enhanced);
+    console.log('Legacy Story Card - Enhanced check result:', enhanced);
   }, [story]);
 
   const formatCurrency = (amount: string) => {
@@ -97,7 +95,7 @@ const LegacyStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
-  const handleViewCaseStudy = async () => {
+  const handleViewCaseStudy = () => {
     console.log('Legacy Story Card - handleViewCaseStudy called for:', story);
     
     // Save return state before navigation
@@ -108,7 +106,7 @@ const LegacyStoryCard: React.FC<{
     });
     
     if (hasEnhanced) {
-      const enhancedId = await getEnhancedCaseStudyId(story);
+      const enhancedId = getEnhancedCaseStudyId(story);
       if (enhancedId) {
         console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
         navigate(`/enhanced-case-study/${enhancedId}`);
@@ -228,16 +226,15 @@ const MultiSectorStoryCard: React.FC<{
   const [hasEnhanced, setHasEnhanced] = useState(false);
 
   useEffect(() => {
-    const checkEnhanced = async () => {
-      const sectorSpecificStory = {
-        country: countryStories.country,
-        sector: selectedSector.sector,
-        id: `${countryStories.country}-${selectedSector.sector}`
-      };
-      const enhanced = await hasEnhancedCaseStudy(sectorSpecificStory);
-      setHasEnhanced(enhanced);
+    // Use synchronous check - much more reliable
+    const sectorSpecificStory = {
+      country: countryStories.country,
+      sector: selectedSector.sector,
+      id: `${countryStories.country}-${selectedSector.sector}`
     };
-    checkEnhanced();
+    const enhanced = hasEnhancedCaseStudy(sectorSpecificStory);
+    setHasEnhanced(enhanced);
+    console.log('Multi-Sector Story Card - Enhanced check result:', enhanced);
   }, [countryStories, selectedSector]);
 
   const formatCurrency = (amount: string) => {
@@ -277,7 +274,7 @@ const MultiSectorStoryCard: React.FC<{
     successStorySummary: selectedSector.successStorySummary
   });
 
-  const handleViewCaseStudy = async () => {
+  const handleViewCaseStudy = () => {
     console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories.country, selectedSector.sector);
     
     // Save return state before navigation
@@ -297,7 +294,7 @@ const MultiSectorStoryCard: React.FC<{
     };
     
     if (hasEnhanced) {
-      const enhancedId = await getEnhancedCaseStudyId(sectorSpecificStory);
+      const enhancedId = getEnhancedCaseStudyId(sectorSpecificStory);
       if (enhancedId) {
         console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
         navigate(`/enhanced-case-study/${enhancedId}`);
