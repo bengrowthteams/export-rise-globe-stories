@@ -27,8 +27,24 @@ export interface CaseStudyData {
   sources: string;
 }
 
-export const getAvailableCaseStudyIds = (): number[] => {
-  return [1, 2, 3, 4, 5]; // First 5 rows only
+export const getAvailableCaseStudyIds = async (): Promise<number[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('Primary key')
+      .not('Country', 'is', null)
+      .not('Sector', 'is', null);
+
+    if (error) {
+      console.error('Error fetching available case study IDs:', error);
+      return [];
+    }
+
+    return data?.map(row => row['Primary key']) || [];
+  } catch (error) {
+    console.error('Error in getAvailableCaseStudyIds:', error);
+    return [];
+  }
 };
 
 export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyData | null> => {
@@ -85,5 +101,35 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
   } catch (error) {
     console.error('Error fetching case study data:', error);
     return null;
+  }
+};
+
+// Get all available country-sector mappings for enhanced case studies
+export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<string, number>> => {
+  try {
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('Primary key, Country, Sector')
+      .not('Country', 'is', null)
+      .not('Sector', 'is', null);
+
+    if (error) {
+      console.error('Error fetching enhanced case study mappings:', error);
+      return {};
+    }
+
+    const mappings: Record<string, number> = {};
+    data?.forEach(row => {
+      if (row.Country && row.Sector) {
+        const key = `${row.Country}-${row.Sector}`;
+        mappings[key] = row['Primary key'];
+      }
+    });
+
+    console.log('Available enhanced case study mappings:', mappings);
+    return mappings;
+  } catch (error) {
+    console.error('Error in getAllAvailableEnhancedCaseStudies:', error);
+    return {};
   }
 };

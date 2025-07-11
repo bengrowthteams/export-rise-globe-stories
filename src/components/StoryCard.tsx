@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { hasEnhancedCaseStudy, getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
+import { getEnhancedCaseStudyId, hasEnhancedCaseStudy } from '../utils/enhancedCaseStudyMapping';
 import ReturnStateService from '../services/returnStateService';
 
 interface StoryCardProps {
@@ -16,7 +16,7 @@ interface StoryCardProps {
   onClose: () => void;
   onReadMore: (story: SuccessStory) => void;
   onSectorChange?: (sector: SectorStory) => void;
-  onClearPopups?: () => void; // Add prop to clear popups
+  onClearPopups?: () => void;
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({ 
@@ -73,6 +73,15 @@ const LegacyStoryCard: React.FC<{
   onReadMore: (story: SuccessStory) => void;
 }> = ({ story, selectedSectors, onClose, onReadMore }) => {
   const navigate = useNavigate();
+  const [hasEnhanced, setHasEnhanced] = useState(false);
+
+  useEffect(() => {
+    const checkEnhanced = async () => {
+      const enhanced = await hasEnhancedCaseStudy(story);
+      setHasEnhanced(enhanced);
+    };
+    checkEnhanced();
+  }, [story]);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -88,7 +97,7 @@ const LegacyStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
-  const handleViewCaseStudy = () => {
+  const handleViewCaseStudy = async () => {
     console.log('Legacy Story Card - handleViewCaseStudy called for:', story);
     
     // Save return state before navigation
@@ -98,10 +107,15 @@ const LegacyStoryCard: React.FC<{
       sector: story.sector
     });
     
-    if (hasEnhancedCaseStudy(story)) {
-      const enhancedId = getEnhancedCaseStudyId(story);
-      console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
-      navigate(`/enhanced-case-study/${enhancedId}`);
+    if (hasEnhanced) {
+      const enhancedId = await getEnhancedCaseStudyId(story);
+      if (enhancedId) {
+        console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
+        navigate(`/enhanced-case-study/${enhancedId}`);
+      } else {
+        console.log('Legacy Story Card - No enhanced case study, using onReadMore');
+        onReadMore(story);
+      }
     } else {
       console.log('Legacy Story Card - No enhanced case study, using onReadMore');
       onReadMore(story);
@@ -211,6 +225,20 @@ const MultiSectorStoryCard: React.FC<{
   onSectorChange?: (sector: SectorStory) => void;
 }> = ({ countryStories, selectedSector, selectedSectors, onClose, onReadMore, onSectorChange }) => {
   const navigate = useNavigate();
+  const [hasEnhanced, setHasEnhanced] = useState(false);
+
+  useEffect(() => {
+    const checkEnhanced = async () => {
+      const sectorSpecificStory = {
+        country: countryStories.country,
+        sector: selectedSector.sector,
+        id: `${countryStories.country}-${selectedSector.sector}`
+      };
+      const enhanced = await hasEnhancedCaseStudy(sectorSpecificStory);
+      setHasEnhanced(enhanced);
+    };
+    checkEnhanced();
+  }, [countryStories, selectedSector]);
 
   const formatCurrency = (amount: string) => {
     const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
@@ -249,7 +277,7 @@ const MultiSectorStoryCard: React.FC<{
     successStorySummary: selectedSector.successStorySummary
   });
 
-  const handleViewCaseStudy = () => {
+  const handleViewCaseStudy = async () => {
     console.log('Multi-Sector Story Card - handleViewCaseStudy called for:', countryStories.country, selectedSector.sector);
     
     // Save return state before navigation
@@ -268,10 +296,15 @@ const MultiSectorStoryCard: React.FC<{
       id: `${countryStories.country}-${selectedSector.sector}`
     };
     
-    if (hasEnhancedCaseStudy(sectorSpecificStory)) {
-      const enhancedId = getEnhancedCaseStudyId(sectorSpecificStory);
-      console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
-      navigate(`/enhanced-case-study/${enhancedId}`);
+    if (hasEnhanced) {
+      const enhancedId = await getEnhancedCaseStudyId(sectorSpecificStory);
+      if (enhancedId) {
+        console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
+        navigate(`/enhanced-case-study/${enhancedId}`);
+      } else {
+        console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
+        onReadMore(convertToLegacyStory());
+      }
     } else {
       console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
       onReadMore(convertToLegacyStory());
@@ -281,14 +314,6 @@ const MultiSectorStoryCard: React.FC<{
   const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
-
-  // Check if current sector has enhanced case study
-  const sectorSpecificStory = {
-    country: countryStories.country,
-    sector: selectedSector.sector,
-    id: `${countryStories.country}-${selectedSector.sector}`
-  };
-  const hasEnhanced = hasEnhancedCaseStudy(sectorSpecificStory);
 
   return (
     <div className="h-full w-full bg-white shadow-2xl overflow-y-auto">

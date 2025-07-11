@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -17,6 +18,7 @@ const EnhancedCaseStudy = () => {
   const [caseStudyData, setCaseStudyData] = useState<CaseStudyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [availableIds, setAvailableIds] = useState<number[]>([]);
 
   // Capture and preserve incoming state for seamless return
   useEffect(() => {
@@ -29,15 +31,29 @@ const EnhancedCaseStudy = () => {
     }
   }, [location.state]);
 
+  // Fetch available case study IDs
+  useEffect(() => {
+    const fetchAvailableIds = async () => {
+      const ids = await getAvailableCaseStudyIds();
+      setAvailableIds(ids);
+      console.log('Available enhanced case study IDs:', ids);
+    };
+    fetchAvailableIds();
+  }, []);
+
   useEffect(() => {
     const loadCaseStudy = async () => {
       console.log('Loading case study for ID:', id);
       
       const primaryKey = parseInt(id || '0');
-      const availableIds = getAvailableCaseStudyIds();
       
+      // Wait for available IDs to be loaded
+      if (availableIds.length === 0) {
+        return;
+      }
+
       if (!availableIds.includes(primaryKey)) {
-        setError('Case study not available. Only the first 5 case studies are implemented.');
+        setError(`Case study not available. Available case studies: ${availableIds.join(', ')}`);
         setLoading(false);
         return;
       }
@@ -58,7 +74,7 @@ const EnhancedCaseStudy = () => {
     };
 
     loadCaseStudy();
-  }, [id]);
+  }, [id, availableIds]);
 
   if (loading) {
     return (

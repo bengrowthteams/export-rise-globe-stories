@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { successStories } from '../data/successStories';
 import { getAvailableCaseStudyIds } from '../services/caseStudyService';
@@ -14,19 +15,38 @@ import FurtherReadingSection from '../components/case-study/FurtherReadingSectio
 const CaseStudy = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [availableIds, setAvailableIds] = useState<number[]>([]);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(true);
   
   // Check if this ID should use the enhanced version
   useEffect(() => {
-    const primaryKey = parseInt(id || '0');
-    const availableIds = getAvailableCaseStudyIds();
+    const checkAvailability = async () => {
+      const primaryKey = parseInt(id || '0');
+      const ids = await getAvailableCaseStudyIds();
+      setAvailableIds(ids);
+      
+      if (ids.includes(primaryKey)) {
+        navigate(`/enhanced-case-study/${id}`, { replace: true });
+        return;
+      }
+      
+      setIsCheckingAvailability(false);
+    };
     
-    if (availableIds.includes(primaryKey)) {
-      navigate(`/enhanced-case-study/${id}`, { replace: true });
-      return;
-    }
+    checkAvailability();
   }, [id, navigate]);
   
   const story = successStories.find(s => s.id === id);
+
+  if (isCheckingAvailability) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Checking case study availability...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!story) {
     return (
