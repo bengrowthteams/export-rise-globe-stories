@@ -1,115 +1,179 @@
 
-// Enhanced mapping system for case studies with expanded coverage
-const STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID: Record<string, number> = {
-  // Original mappings (1-10)
+import { supabase } from '@/integrations/supabase/client';
+
+// Cache for database mappings to avoid repeated queries
+let cachedMappings: Record<string, number> | null = null;
+let cachedAvailableIds: number[] | null = null;
+
+// Static fallback mappings (only verified ones)
+const VERIFIED_STATIC_MAPPINGS: Record<string, number> = {
   'Vietnam-Textile': 1,
-  'Bangladesh-Textile': 2, 
+  'Bangladesh-Textile': 2,
   'Cambodia-Textile': 3,
-  'UAE-Textile': 4,
-  'United Arab Emirates-Textile': 4,
   'Myanmar-Textile': 5,
   'India-Textile': 6,
   'Turkey-Textile': 7,
   'Pakistan-Textile': 8,
   'Indonesia-Textile': 9,
-  'Ethiopia-Textile': 10,
-  
-  // Additional mappings (11-28)
-  'China-Textile': 11,
-  'Sri Lanka-Textile': 12,
-  'Philippines-Textile': 13,
-  'Thailand-Textile': 14,
-  'Malaysia-Textile': 15,
-  'Jordan-Textile': 16,
-  'Morocco-Textile': 17,
-  'Tunisia-Textile': 18,
-  'Egypt-Textile': 19,
-  'Kenya-Textile': 20,
-  'Madagascar-Textile': 21,
-  'Mauritius-Textile': 22,
-  'Guatemala-Textile': 23,
-  'Honduras-Textile': 24,
-  'El Salvador-Textile': 25,
-  'Nicaragua-Textile': 26,
-  'Dominican Republic-Textile': 27,
-  'Haiti-Textile': 28,
-  
-  // Additional mappings (47-63)
-  'Vietnam-Electronics': 47,
-  'China-Electronics': 48,
-  'South Korea-Electronics': 49,
-  'Taiwan-Electronics': 50,
-  'Singapore-Electronics': 51,
-  'Malaysia-Electronics': 52,
-  'Thailand-Electronics': 53,
-  'Philippines-Electronics': 54,
-  'Indonesia-Electronics': 55,
-  'India-Electronics': 56,
-  'Bangladesh-Electronics': 57,
-  'Sri Lanka-Electronics': 58,
-  'Pakistan-Electronics': 59,
-  'Turkey-Electronics': 60,
-  'Morocco-Electronics': 61,
-  'Tunisia-Electronics': 62,
-  'Egypt-Electronics': 63,
-  
-  // Additional mappings (65-76)
-  'Vietnam-Automotive': 65,
-  'China-Automotive': 66,
-  'India-Automotive': 67,
-  'Thailand-Automotive': 68,
-  'Indonesia-Automotive': 69,
-  'Malaysia-Automotive': 70,
-  'Turkey-Automotive': 71,
-  'Morocco-Automotive': 72,
-  'South Africa-Automotive': 73,
-  'Mexico-Automotive': 74,
-  'Brazil-Automotive': 75,
-  'Argentina-Automotive': 76,
-  
-  // Additional mappings (78-82)
-  'Vietnam-Agriculture': 78,
-  'Thailand-Agriculture': 79,
-  'India-Agriculture': 80,
-  'Brazil-Agriculture': 81,
-  'Argentina-Agriculture': 82
+  'Ethiopia-Textile': 10
 };
 
-// All available enhanced case study IDs
-const AVAILABLE_ENHANCED_IDS = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-  11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-  21, 22, 23, 24, 25, 26, 27, 28,
-  47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
-  57, 58, 59, 60, 61, 62, 63,
-  65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
-  78, 79, 80, 81, 82
-];
+// Sector name variations to handle different naming conventions
+const SECTOR_VARIATIONS: Record<string, string[]> = {
+  'Textile': ['Textiles', 'Textiles & Apparel', 'Garments', 'Apparel'],
+  'Electronics': ['Electronic', 'Electronics & Electrical'],
+  'Automotive': ['Automobile', 'Auto', 'Motor Vehicle'],
+  'Agriculture': ['Agricultural', 'Agro', 'Farm Products']
+};
 
-export const getEnhancedCaseStudyId = (story: any): number | null => {
+// Function to normalize sector names
+const normalizeSectorName = (sector: string): string[] => {
+  const cleaned = sector.trim();
+  const variations = [cleaned];
+  
+  // Check if this sector has known variations
+  for (const [mainSector, variants] of Object.entries(SECTOR_VARIATIONS)) {
+    if (variants.some(variant => cleaned.toLowerCase().includes(variant.toLowerCase()))) {
+      variations.push(mainSector);
+      variations.push(...variants);
+    }
+    if (cleaned.toLowerCase().includes(mainSector.toLowerCase())) {
+      variations.push(mainSector);
+      variations.push(...variants);
+    }
+  }
+  
+  return [...new Set(variations)]; // Remove duplicates
+};
+
+// Function to fetch mappings from database
+export const fetchDatabaseMappings = async (): Promise<Record<string, number>> => {
+  try {
+    console.log('Fetching database mappings...');
+    
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('Primary key, Country, Sector')
+      .not('Country', 'is', null)
+      .not('Sector', 'is', null);
+
+    if (error) {
+      console.error('Error fetching database mappings:', error);
+      return VERIFIED_STATIC_MAPPINGS;
+    }
+
+    if (!data || data.length === 0) {
+      console.log('No data found in database, using static mappings');
+      return VERIFIED_STATIC_MAPPINGS;
+    }
+
+    const mappings: Record<string, number> = {};
+    
+    data.forEach(row => {
+      if (row.Country && row.Sector && row['Primary key']) {
+        const country = row.Country.trim();
+        const sector = row.Sector.trim();
+        const primaryKey = row['Primary key'];
+        
+        // Create primary mapping
+        const primaryKey_mapping = `${country}-${sector}`;
+        mappings[primaryKey_mapping] = primaryKey;
+        
+        // Create variations for sector names
+        const sectorVariations = normalizeSectorName(sector);
+        sectorVariations.forEach(sectorVariant => {
+          const variantKey = `${country}-${sectorVariant}`;
+          if (variantKey !== primaryKey_mapping) {
+            mappings[variantKey] = primaryKey;
+          }
+        });
+        
+        console.log(`Mapped: ${primaryKey_mapping} -> ${primaryKey}`);
+      }
+    });
+
+    console.log('Database mappings created:', mappings);
+    return mappings;
+
+  } catch (error) {
+    console.error('Failed to fetch database mappings:', error);
+    return VERIFIED_STATIC_MAPPINGS;
+  }
+};
+
+// Function to get all available enhanced case study IDs
+export const fetchAvailableIds = async (): Promise<number[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('Primary key')
+      .not('Primary key', 'is', null);
+
+    if (error) {
+      console.error('Error fetching available IDs:', error);
+      return Object.values(VERIFIED_STATIC_MAPPINGS);
+    }
+
+    const ids = data?.map(row => row['Primary key']).filter(id => id != null) || [];
+    console.log('Available enhanced case study IDs:', ids);
+    return ids.sort((a, b) => a - b);
+
+  } catch (error) {
+    console.error('Failed to fetch available IDs:', error);
+    return Object.values(VERIFIED_STATIC_MAPPINGS);
+  }
+};
+
+// Main function to get enhanced case study ID
+export const getEnhancedCaseStudyId = async (story: any): Promise<number | null> => {
   console.log('Getting enhanced case study ID for story:', story);
   
   // Handle numeric IDs directly
-  if (typeof story.id === 'number' && AVAILABLE_ENHANCED_IDS.includes(story.id)) {
-    console.log('Found numeric ID:', story.id);
-    return story.id;
+  if (typeof story.id === 'number') {
+    if (!cachedAvailableIds) {
+      cachedAvailableIds = await fetchAvailableIds();
+    }
+    if (cachedAvailableIds.includes(story.id)) {
+      console.log('Found numeric ID:', story.id);
+      return story.id;
+    }
   }
   
   // Handle string numeric IDs
   if (typeof story.id === 'string') {
     const numericId = parseInt(story.id);
-    if (!isNaN(numericId) && AVAILABLE_ENHANCED_IDS.includes(numericId)) {
-      console.log('Found string numeric ID:', numericId);
-      return numericId;
+    if (!isNaN(numericId)) {
+      if (!cachedAvailableIds) {
+        cachedAvailableIds = await fetchAvailableIds();
+      }
+      if (cachedAvailableIds.includes(numericId)) {
+        console.log('Found string numeric ID:', numericId);
+        return numericId;
+      }
     }
+  }
+  
+  // Get database mappings if not cached
+  if (!cachedMappings) {
+    cachedMappings = await fetchDatabaseMappings();
   }
   
   // Primary method: Match by country + sector combination
   if (story.country && story.sector) {
-    const key = `${story.country}-${story.sector}`;
-    if (STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key]) {
-      console.log('Found country-sector mapping:', key, '→', STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key]);
-      return STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key];
+    const primaryKey = `${story.country}-${story.sector}`;
+    if (cachedMappings[primaryKey]) {
+      console.log('Found country-sector mapping:', primaryKey, '→', cachedMappings[primaryKey]);
+      return cachedMappings[primaryKey];
+    }
+    
+    // Try sector variations
+    const sectorVariations = normalizeSectorName(story.sector);
+    for (const sectorVariant of sectorVariations) {
+      const variantKey = `${story.country}-${sectorVariant}`;
+      if (cachedMappings[variantKey]) {
+        console.log('Found sector variant mapping:', variantKey, '→', cachedMappings[variantKey]);
+        return cachedMappings[variantKey];
+      }
     }
     
     // Try alternative country name formats
@@ -120,9 +184,9 @@ export const getEnhancedCaseStudyId = (story: any): number | null => {
     ];
     
     for (const altKey of alternativeKeys) {
-      if (STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[altKey]) {
-        console.log('Found alternative country-sector mapping:', altKey, '→', STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[altKey]);
-        return STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[altKey];
+      if (cachedMappings[altKey]) {
+        console.log('Found alternative country-sector mapping:', altKey, '→', cachedMappings[altKey]);
+        return cachedMappings[altKey];
       }
     }
   }
@@ -133,11 +197,11 @@ export const getEnhancedCaseStudyId = (story: any): number | null => {
     if (parts.length >= 2) {
       const countryPart = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
       const sectorPart = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
-      const key = `${countryPart}-${sectorPart}`;
+      const compoundKey = `${countryPart}-${sectorPart}`;
       
-      if (STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key]) {
-        console.log('Found compound ID mapping:', key, '→', STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key]);
-        return STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID[key];
+      if (cachedMappings[compoundKey]) {
+        console.log('Found compound ID mapping:', compoundKey, '→', cachedMappings[compoundKey]);
+        return cachedMappings[compoundKey];
       }
     }
   }
@@ -146,17 +210,92 @@ export const getEnhancedCaseStudyId = (story: any): number | null => {
   return null;
 };
 
-export const hasEnhancedCaseStudy = (story: any): boolean => {
-  const id = getEnhancedCaseStudyId(story);
+// Async version of hasEnhancedCaseStudy
+export const hasEnhancedCaseStudy = async (story: any): Promise<boolean> => {
+  const id = await getEnhancedCaseStudyId(story);
   return id !== null;
 };
 
+// Synchronous version using cached data (for backwards compatibility)
+export const hasEnhancedCaseStudySync = (story: any): boolean => {
+  // Handle numeric IDs
+  if (typeof story.id === 'number' && cachedAvailableIds) {
+    return cachedAvailableIds.includes(story.id);
+  }
+  
+  if (typeof story.id === 'string') {
+    const numericId = parseInt(story.id);
+    if (!isNaN(numericId) && cachedAvailableIds) {
+      return cachedAvailableIds.includes(numericId);
+    }
+  }
+  
+  // Check cached mappings
+  if (!cachedMappings) {
+    // Use static mappings as fallback
+    if (story.country && story.sector) {
+      const key = `${story.country}-${story.sector}`;
+      return VERIFIED_STATIC_MAPPINGS[key] !== undefined;
+    }
+    return false;
+  }
+  
+  if (story.country && story.sector) {
+    const primaryKey = `${story.country}-${story.sector}`;
+    return cachedMappings[primaryKey] !== undefined;
+  }
+  
+  return false;
+};
+
+// Get enhanced case study ID synchronously using cached data
+export const getEnhancedCaseStudyIdSync = (story: any): number | null => {
+  // Handle numeric IDs
+  if (typeof story.id === 'number' && cachedAvailableIds) {
+    return cachedAvailableIds.includes(story.id) ? story.id : null;
+  }
+  
+  if (typeof story.id === 'string') {
+    const numericId = parseInt(story.id);
+    if (!isNaN(numericId) && cachedAvailableIds) {
+      return cachedAvailableIds.includes(numericId) ? numericId : null;
+    }
+  }
+  
+  // Check cached mappings
+  if (!cachedMappings && story.country && story.sector) {
+    const key = `${story.country}-${story.sector}`;
+    return VERIFIED_STATIC_MAPPINGS[key] || null;
+  }
+  
+  if (cachedMappings && story.country && story.sector) {
+    const primaryKey = `${story.country}-${story.sector}`;
+    return cachedMappings[primaryKey] || null;
+  }
+  
+  return null;
+};
+
 // Get all available enhanced case studies
-export const getAllEnhancedCaseStudyIds = (): number[] => {
-  return AVAILABLE_ENHANCED_IDS;
+export const getAllEnhancedCaseStudyIds = async (): Promise<number[]> => {
+  if (!cachedAvailableIds) {
+    cachedAvailableIds = await fetchAvailableIds();
+  }
+  return cachedAvailableIds;
 };
 
 // Get all country-sector mappings
-export const getAllEnhancedCaseStudyMappings = (): Record<string, number> => {
-  return STATIC_COUNTRY_SECTOR_TO_ENHANCED_ID;
+export const getAllEnhancedCaseStudyMappings = async (): Promise<Record<string, number>> => {
+  if (!cachedMappings) {
+    cachedMappings = await fetchDatabaseMappings();
+  }
+  return cachedMappings;
+};
+
+// Initialize mappings on module load
+export const initializeMappings = async (): Promise<void> => {
+  console.log('Initializing enhanced case study mappings...');
+  cachedMappings = await fetchDatabaseMappings();
+  cachedAvailableIds = await fetchAvailableIds();
+  console.log('Mappings initialized successfully');
 };

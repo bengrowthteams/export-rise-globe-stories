@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
-import { getEnhancedCaseStudyId, hasEnhancedCaseStudy } from '../utils/enhancedCaseStudyMapping';
+import { getEnhancedCaseStudyId, hasEnhancedCaseStudy, initializeMappings } from '../utils/enhancedCaseStudyMapping';
 import ReturnStateService from '../services/returnStateService';
 
 interface StoryCardProps {
@@ -29,6 +28,11 @@ const StoryCard: React.FC<StoryCardProps> = ({
   onSectorChange,
   onClearPopups
 }) => {
+  // Initialize mappings when component mounts
+  useEffect(() => {
+    initializeMappings().catch(console.error);
+  }, []);
+
   const handleClose = () => {
     if (onClearPopups) {
       onClearPopups();
@@ -75,14 +79,30 @@ const LegacyStoryCard: React.FC<{
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
   const [enhancedId, setEnhancedId] = useState<number | null>(null);
+  const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
 
   useEffect(() => {
-    console.log('Legacy Story Card - Checking enhanced case study for:', story.country, story.sector);
-    const enhanced = hasEnhancedCaseStudy(story);
-    const id = getEnhancedCaseStudyId(story);
-    setHasEnhanced(enhanced);
-    setEnhancedId(id);
-    console.log('Legacy Story Card - Enhanced check result:', enhanced, 'ID:', id);
+    const checkEnhancedCaseStudy = async () => {
+      console.log('Legacy Story Card - Checking enhanced case study for:', story.country, story.sector);
+      setIsCheckingEnhanced(true);
+      
+      try {
+        const enhanced = await hasEnhancedCaseStudy(story);
+        const id = await getEnhancedCaseStudyId(story);
+        
+        console.log('Legacy Story Card - Enhanced check result:', enhanced, 'ID:', id);
+        setHasEnhanced(enhanced);
+        setEnhancedId(id);
+      } catch (error) {
+        console.error('Error checking enhanced case study:', error);
+        setHasEnhanced(false);
+        setEnhancedId(null);
+      } finally {
+        setIsCheckingEnhanced(false);
+      }
+    };
+
+    checkEnhancedCaseStudy();
   }, [story]);
 
   const formatCurrency = (amount: string) => {
@@ -197,8 +217,8 @@ const LegacyStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{story.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists */}
-        {hasEnhanced && enhancedId && (
+        {/* Read More Button - Only show if enhanced case study exists and is confirmed */}
+        {!isCheckingEnhanced && hasEnhanced && enhancedId && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"
@@ -207,6 +227,13 @@ const LegacyStoryCard: React.FC<{
             View Full Success Story
             <ArrowRight className="ml-2" size={16} />
           </Button>
+        )}
+        
+        {/* Loading state */}
+        {isCheckingEnhanced && (
+          <div className="w-full p-4 text-center text-gray-500">
+            Checking for enhanced case study...
+          </div>
         )}
       </div>
     </div>
@@ -225,19 +252,36 @@ const MultiSectorStoryCard: React.FC<{
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
   const [enhancedId, setEnhancedId] = useState<number | null>(null);
+  const [isCheckingEnhanced, setIsCheckingEnhanced] = useState(true);
 
   useEffect(() => {
-    console.log('Multi-Sector Story Card - Checking enhanced case study for:', countryStories.country, selectedSector.sector);
-    const sectorSpecificStory = {
-      country: countryStories.country,
-      sector: selectedSector.sector,
-      id: `${countryStories.country}-${selectedSector.sector}`
+    const checkEnhancedCaseStudy = async () => {
+      console.log('Multi-Sector Story Card - Checking enhanced case study for:', countryStories.country, selectedSector.sector);
+      setIsCheckingEnhanced(true);
+      
+      try {
+        const sectorSpecificStory = {
+          country: countryStories.country,
+          sector: selectedSector.sector,
+          id: `${countryStories.country}-${selectedSector.sector}`
+        };
+        
+        const enhanced = await hasEnhancedCaseStudy(sectorSpecificStory);
+        const id = await getEnhancedCaseStudyId(sectorSpecificStory);
+        
+        console.log('Multi-Sector Story Card - Enhanced check result:', enhanced, 'ID:', id);
+        setHasEnhanced(enhanced);
+        setEnhancedId(id);
+      } catch (error) {
+        console.error('Error checking enhanced case study:', error);
+        setHasEnhanced(false);
+        setEnhancedId(null);
+      } finally {
+        setIsCheckingEnhanced(false);
+      }
     };
-    const enhanced = hasEnhancedCaseStudy(sectorSpecificStory);
-    const id = getEnhancedCaseStudyId(sectorSpecificStory);
-    setHasEnhanced(enhanced);
-    setEnhancedId(id);
-    console.log('Multi-Sector Story Card - Enhanced check result:', enhanced, 'ID:', id);
+
+    checkEnhancedCaseStudy();
   }, [countryStories, selectedSector]);
 
   const formatCurrency = (amount: string) => {
@@ -400,8 +444,8 @@ const MultiSectorStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{selectedSector.description}</p>
         </div>
 
-        {/* Read More Button - Only show if enhanced case study exists */}
-        {hasEnhanced && enhancedId && (
+        {/* Read More Button - Only show if enhanced case study exists and is confirmed */}
+        {!isCheckingEnhanced && hasEnhanced && enhancedId && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"
@@ -410,6 +454,13 @@ const MultiSectorStoryCard: React.FC<{
             View Full Success Story
             <ArrowRight className="ml-2" size={16} />
           </Button>
+        )}
+        
+        {/* Loading state */}
+        {isCheckingEnhanced && (
+          <div className="w-full p-4 text-center text-gray-500">
+            Checking for enhanced case study...
+          </div>
         )}
       </div>
     </div>
