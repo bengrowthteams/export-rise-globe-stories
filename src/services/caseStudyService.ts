@@ -118,11 +118,23 @@ export const getAllAvailableEnhancedCaseStudies = async (): Promise<Record<strin
       return {};
     }
 
+    if (!data || !Array.isArray(data)) {
+      console.log('No data returned from enhanced case study mappings query');
+      return {};
+    }
+
     const mappings: Record<string, number> = {};
-    data?.forEach(row => {
-      if (row.Country && row.Sector) {
-        const key = `${row.Country}-${row.Sector}`;
-        mappings[key] = row['Primary key'];
+    data.forEach(row => {
+      // Add proper type checking for the row data
+      if (row && typeof row === 'object' && 'Country' in row && 'Sector' in row && 'Primary key' in row) {
+        const country = row.Country;
+        const sector = row.Sector;
+        const primaryKey = row['Primary key'];
+        
+        if (country && sector && typeof primaryKey === 'number') {
+          const key = `${country}-${sector}`;
+          mappings[key] = primaryKey;
+        }
       }
     });
 
