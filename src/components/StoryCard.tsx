@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -73,12 +74,15 @@ const LegacyStoryCard: React.FC<{
 }> = ({ story, selectedSectors, onClose, onReadMore }) => {
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
+  const [enhancedId, setEnhancedId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Use synchronous check - much more reliable
+    console.log('Legacy Story Card - Checking enhanced case study for:', story.country, story.sector);
     const enhanced = hasEnhancedCaseStudy(story);
+    const id = getEnhancedCaseStudyId(story);
     setHasEnhanced(enhanced);
-    console.log('Legacy Story Card - Enhanced check result:', enhanced);
+    setEnhancedId(id);
+    console.log('Legacy Story Card - Enhanced check result:', enhanced, 'ID:', id);
   }, [story]);
 
   const formatCurrency = (amount: string) => {
@@ -105,15 +109,9 @@ const LegacyStoryCard: React.FC<{
       sector: story.sector
     });
     
-    if (hasEnhanced) {
-      const enhancedId = getEnhancedCaseStudyId(story);
-      if (enhancedId) {
-        console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
-        navigate(`/enhanced-case-study/${enhancedId}`);
-      } else {
-        console.log('Legacy Story Card - No enhanced case study, using onReadMore');
-        onReadMore(story);
-      }
+    if (hasEnhanced && enhancedId) {
+      console.log('Legacy Story Card - Navigating to enhanced case study:', enhancedId);
+      navigate(`/enhanced-case-study/${enhancedId}`);
     } else {
       console.log('Legacy Story Card - No enhanced case study, using onReadMore');
       onReadMore(story);
@@ -199,15 +197,17 @@ const LegacyStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{story.description}</p>
         </div>
 
-        {/* Read More Button */}
-        <Button 
-          onClick={handleViewCaseStudy}
-          className="w-full text-white bg-blue-600 hover:bg-blue-700"
-          size="lg"
-        >
-          View Full Success Story
-          <ArrowRight className="ml-2" size={16} />
-        </Button>
+        {/* Read More Button - Only show if enhanced case study exists */}
+        {hasEnhanced && enhancedId && (
+          <Button 
+            onClick={handleViewCaseStudy}
+            className="w-full text-white bg-blue-600 hover:bg-blue-700"
+            size="lg"
+          >
+            View Full Success Story
+            <ArrowRight className="ml-2" size={16} />
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -224,17 +224,20 @@ const MultiSectorStoryCard: React.FC<{
 }> = ({ countryStories, selectedSector, selectedSectors, onClose, onReadMore, onSectorChange }) => {
   const navigate = useNavigate();
   const [hasEnhanced, setHasEnhanced] = useState(false);
+  const [enhancedId, setEnhancedId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Use synchronous check - much more reliable
+    console.log('Multi-Sector Story Card - Checking enhanced case study for:', countryStories.country, selectedSector.sector);
     const sectorSpecificStory = {
       country: countryStories.country,
       sector: selectedSector.sector,
       id: `${countryStories.country}-${selectedSector.sector}`
     };
     const enhanced = hasEnhancedCaseStudy(sectorSpecificStory);
+    const id = getEnhancedCaseStudyId(sectorSpecificStory);
     setHasEnhanced(enhanced);
-    console.log('Multi-Sector Story Card - Enhanced check result:', enhanced);
+    setEnhancedId(id);
+    console.log('Multi-Sector Story Card - Enhanced check result:', enhanced, 'ID:', id);
   }, [countryStories, selectedSector]);
 
   const formatCurrency = (amount: string) => {
@@ -286,22 +289,9 @@ const MultiSectorStoryCard: React.FC<{
       sector: selectedSector.sector
     });
     
-    // Create a story object with both country and sector for enhanced case study checking
-    const sectorSpecificStory = {
-      country: countryStories.country,
-      sector: selectedSector.sector,
-      id: `${countryStories.country}-${selectedSector.sector}`
-    };
-    
-    if (hasEnhanced) {
-      const enhancedId = getEnhancedCaseStudyId(sectorSpecificStory);
-      if (enhancedId) {
-        console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
-        navigate(`/enhanced-case-study/${enhancedId}`);
-      } else {
-        console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
-        onReadMore(convertToLegacyStory());
-      }
+    if (hasEnhanced && enhancedId) {
+      console.log('Multi-Sector Story Card - Navigating to enhanced case study:', enhancedId);
+      navigate(`/enhanced-case-study/${enhancedId}`);
     } else {
       console.log('Multi-Sector Story Card - No enhanced case study, using onReadMore');
       onReadMore(convertToLegacyStory());
@@ -410,15 +400,17 @@ const MultiSectorStoryCard: React.FC<{
           <p className="text-gray-700 leading-relaxed">{selectedSector.description}</p>
         </div>
 
-        {/* Read More Button */}
-        <Button 
-          onClick={handleViewCaseStudy}
-          className="w-full text-white bg-blue-600 hover:bg-blue-700"
-          size="lg"
-        >
-          View Full Success Story
-          <ArrowRight className="ml-2" size={16} />
-        </Button>
+        {/* Read More Button - Only show if enhanced case study exists */}
+        {hasEnhanced && enhancedId && (
+          <Button 
+            onClick={handleViewCaseStudy}
+            className="w-full text-white bg-blue-600 hover:bg-blue-700"
+            size="lg"
+          >
+            View Full Success Story
+            <ArrowRight className="ml-2" size={16} />
+          </Button>
+        )}
       </div>
     </div>
   );

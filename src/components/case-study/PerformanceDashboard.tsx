@@ -35,7 +35,6 @@ const PerformanceDashboard = ({
   const rankChange = rank1995 - rank2022;
   const exportGrowthAnnual = (Math.pow(currentExports2022 / initialExports1995, 1/27) - 1) * 100;
   const shareChange = globalShare2022 - globalShare1995;
-  const shareChangeAnnual = shareChange / 27;
 
   return (
     <div className="mb-6">
@@ -72,8 +71,8 @@ const PerformanceDashboard = ({
                 <TableCell className="font-medium text-sm">Global Market Share</TableCell>
                 <TableCell className="text-sm">{globalShare1995.toFixed(2)}%</TableCell>
                 <TableCell className="text-sm">{globalShare2022.toFixed(2)}%</TableCell>
-                <TableCell className={`text-sm font-semibold ${shareChangeAnnual > 0 ? "text-green-600" : "text-red-600"}`}>
-                  {shareChangeAnnual > 0 ? '+' : ''}{shareChangeAnnual.toFixed(3)}pp per year
+                <TableCell className={`text-sm font-semibold ${shareChange > 0 ? "text-green-600" : "text-red-600"}`}>
+                  {shareChange > 0 ? '+' : ''}{shareChange.toFixed(2)}pp
                 </TableCell>
               </TableRow>
             </TableBody>
