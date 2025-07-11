@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { SuccessStory } from '../types/SuccessStory';
@@ -115,6 +116,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
       // Create a primary story for the multi-sector country
       const primaryStory: SuccessStory = {
         id: `${result.countryStories.id}-${result.countryStories.primarySector.sector}`,
+        primaryKey: result.countryStories.primarySector.primaryKey,
         country: result.countryStories.country,
         sector: result.countryStories.primarySector.sector,
         product: result.countryStories.primarySector.product,

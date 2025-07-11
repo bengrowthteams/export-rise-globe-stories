@@ -78,6 +78,14 @@ const LegacyStoryCard: React.FC<{
 
   useEffect(() => {
     const checkEnhancedCaseStudy = async () => {
+      // Only check if primaryKey exists
+      if (!story.primaryKey) {
+        console.log('Legacy Story Card - No primaryKey available, enhanced case study not available');
+        setHasEnhanced(false);
+        setIsCheckingEnhanced(false);
+        return;
+      }
+
       console.log('Legacy Story Card - Checking enhanced case study for Primary key:', story.primaryKey);
       setIsCheckingEnhanced(true);
       
@@ -85,8 +93,8 @@ const LegacyStoryCard: React.FC<{
         // Simple check: see if this primary key exists in the database
         const { data, error } = await supabase
           .from('Country Data')
-          .select('Primary key')
-          .eq('Primary key', story.primaryKey)
+          .select('"Primary key"')
+          .eq('"Primary key"', story.primaryKey)
           .single();
 
         if (error) {
@@ -131,7 +139,7 @@ const LegacyStoryCard: React.FC<{
       sector: story.sector
     });
     
-    if (hasEnhanced) {
+    if (hasEnhanced && story.primaryKey) {
       console.log('Legacy Story Card - Navigating to enhanced case study:', story.primaryKey);
       navigate(`/enhanced-case-study/${story.primaryKey}`);
     } else {
@@ -220,7 +228,7 @@ const LegacyStoryCard: React.FC<{
         </div>
 
         {/* Read More Button - Only show if enhanced case study exists */}
-        {!isCheckingEnhanced && hasEnhanced && (
+        {!isCheckingEnhanced && hasEnhanced && story.primaryKey && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"
@@ -257,6 +265,14 @@ const MultiSectorStoryCard: React.FC<{
 
   useEffect(() => {
     const checkEnhancedCaseStudy = async () => {
+      // Only check if primaryKey exists
+      if (!selectedSector.primaryKey) {
+        console.log('Multi-Sector Story Card - No primaryKey available, enhanced case study not available');
+        setHasEnhanced(false);
+        setIsCheckingEnhanced(false);
+        return;
+      }
+
       console.log('Multi-Sector Story Card - Checking enhanced case study for Primary key:', selectedSector.primaryKey);
       setIsCheckingEnhanced(true);
       
@@ -264,8 +280,8 @@ const MultiSectorStoryCard: React.FC<{
         // Simple check: see if this primary key exists in the database
         const { data, error } = await supabase
           .from('Country Data')
-          .select('Primary key')
-          .eq('Primary key', selectedSector.primaryKey)
+          .select('"Primary key"')
+          .eq('"Primary key"', selectedSector.primaryKey)
           .single();
 
         if (error) {
@@ -336,7 +352,7 @@ const MultiSectorStoryCard: React.FC<{
       sector: selectedSector.sector
     });
     
-    if (hasEnhanced) {
+    if (hasEnhanced && selectedSector.primaryKey) {
       console.log('Multi-Sector Story Card - Navigating to enhanced case study:', selectedSector.primaryKey);
       navigate(`/enhanced-case-study/${selectedSector.primaryKey}`);
     } else {
@@ -448,7 +464,7 @@ const MultiSectorStoryCard: React.FC<{
         </div>
 
         {/* Read More Button - Only show if enhanced case study exists */}
-        {!isCheckingEnhanced && hasEnhanced && (
+        {!isCheckingEnhanced && hasEnhanced && selectedSector.primaryKey && (
           <Button 
             onClick={handleViewCaseStudy}
             className="w-full text-white bg-blue-600 hover:bg-blue-700"
