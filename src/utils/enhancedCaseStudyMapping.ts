@@ -76,19 +76,19 @@ export const fetchDatabaseMappings = async (): Promise<Record<string, number>> =
         const primaryKey = row['Primary key'];
         
         // Create primary mapping
-        const primaryKey_mapping = `${country}-${sector}`;
-        mappings[primaryKey_mapping] = primaryKey;
+        const primaryMapping = `${country}-${sector}`;
+        mappings[primaryMapping] = primaryKey;
         
         // Create variations for sector names
         const sectorVariations = normalizeSectorName(sector);
         sectorVariations.forEach(sectorVariant => {
           const variantKey = `${country}-${sectorVariant}`;
-          if (variantKey !== primaryKey_mapping) {
+          if (variantKey !== primaryMapping) {
             mappings[variantKey] = primaryKey;
           }
         });
         
-        console.log(`Mapped: ${primaryKey_mapping} -> ${primaryKey}`);
+        console.log(`Mapped: ${primaryMapping} -> ${primaryKey}`);
       }
     });
 
