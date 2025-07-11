@@ -319,7 +319,7 @@ const Landing = () => {
           // Create story with preserved primaryKey when filtering results in single sector
           const filteredStory: SuccessStory = {
             id: `${countryStories.id}-${filteredCountryStories.sectors[0].sector}`,
-            primaryKey: filteredCountryStories.sectors[0].primaryKey, // Preserve primaryKey
+            primaryKey: filteredCountryStories.sectors[0].primaryKey, // Ensure primaryKey is preserved
             country: countryStories.country,
             sector: filteredCountryStories.sectors[0].sector,
             product: filteredCountryStories.sectors[0].product,
@@ -341,6 +341,7 @@ const Landing = () => {
             successStorySummary: filteredCountryStories.sectors[0].successStorySummary
           };
           
+          console.log('Created filtered story with primaryKey:', filteredStory.primaryKey);
           setSelectedStory(filteredStory);
           setShowFilteredSectorModal(false);
           setShowSectorModal(false);

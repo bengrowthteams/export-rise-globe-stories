@@ -133,10 +133,10 @@ const LegacyStoryCard: React.FC<{
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-6">
           {/* Global Ranking Gain */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Global Ranking Gain</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
@@ -159,7 +159,7 @@ const LegacyStoryCard: React.FC<{
 
           {/* Export Value Comparison */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Export Value Growth</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Export Value Growth</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-lg font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
@@ -177,16 +177,16 @@ const LegacyStoryCard: React.FC<{
 
           {/* Successful Product */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Successful Product</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Successful Product</h3>
             <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="font-medium text-purple-800 capitalize text-xs">{story.successfulProduct}</p>
+              <p className="font-medium text-purple-800 capitalize text-sm">{story.successfulProduct}</p>
             </div>
           </div>
 
           {/* Success Story Summary */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Success Story</h3>
-            <p className="text-gray-700 leading-relaxed text-xs">{story.description}</p>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-sm">{story.description}</p>
           </div>
         </div>
       </div>
@@ -305,11 +305,11 @@ const MultiSectorStoryCard: React.FC<{
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-6">
           {/* Sector Navigation */}
           {countryStories.sectors.length > 1 && onSectorChange && (
             <div>
-              <h3 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                 <Building2 size={16} className="mr-2" />
                 Other Sectors ({countryStories.sectors.length - 1} more)
               </h3>
@@ -331,7 +331,7 @@ const MultiSectorStoryCard: React.FC<{
 
           {/* Global Ranking Gain */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Global Ranking Gain</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
@@ -354,7 +354,7 @@ const MultiSectorStoryCard: React.FC<{
 
           {/* Export Value Comparison */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Export Value Growth</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Export Value Growth</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-lg font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
@@ -372,16 +372,16 @@ const MultiSectorStoryCard: React.FC<{
 
           {/* Successful Product */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Successful Product</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Successful Product</h3>
             <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="font-medium text-purple-800 capitalize text-xs">{selectedSector.successfulProduct}</p>
+              <p className="font-medium text-purple-800 capitalize text-sm">{selectedSector.successfulProduct}</p>
             </div>
           </div>
 
           {/* Success Story Summary */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">Success Story</h3>
-            <p className="text-gray-700 leading-relaxed text-xs">{selectedSector.description}</p>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Success Story</h3>
+            <p className="text-gray-700 leading-relaxed text-sm">{selectedSector.description}</p>
           </div>
         </div>
       </div>
