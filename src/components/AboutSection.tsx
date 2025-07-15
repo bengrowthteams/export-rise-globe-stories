@@ -157,7 +157,7 @@ const AboutSection = () => {
                 The Sector Transformation Atlas is a freely available public resource designed to advance the understanding of economic growth through structural transformation. We actively encourage use of the tool and database for research, analysis, and collaboration, with the simple request of proper attribution, crediting the Sector Transformation Atlas and Growth Teams.
               </p>
               <p>
-                Citation Guidelines. When incorporating Sector Transformation Atlas content in your work, please use this citation format for the Sector Transformation Atlas tool:
+                When incorporating Sector Transformation Atlas content in your work, please use this citation format for the Sector Transformation Atlas tool:
               </p>
               <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-6 rounded-xl border border-orange-200 shadow-sm">
                 <div className="flex items-start space-x-3">
