@@ -1,6 +1,5 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Tables } from '@/integrations/supabase/types';
 import { SuccessStory } from '@/types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '@/types/CountrySuccessStories';
 import { countryCoordinates } from '@/data/countryCoordinates';
@@ -108,7 +107,7 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
     const storiesMap = new Map<string, SuccessStory[]>();
     const countryStoriesMap = new Map<string, CountrySuccessStories>();
 
-    data.forEach((row: Tables<'Country Data'>['Row']) => {
+    data.forEach((row) => {
       if (!row.Country || !row.Sector) return;
 
       const coordinates = getCountryCoordinates(row.Country);
@@ -185,6 +184,7 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
           coordinates: countryStoriesList[0].coordinates,
           flag: countryStoriesList[0].flag,
           hasMutipleSectors: true,
+          primarySector: countryStoriesList[0].sector, // Add the missing primarySector property
           sectors
         };
 

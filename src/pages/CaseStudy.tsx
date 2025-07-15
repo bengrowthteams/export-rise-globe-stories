@@ -11,6 +11,7 @@ import FurtherReadingSection from '@/components/case-study/FurtherReadingSection
 import { fetchCaseStudyData, CaseStudyData } from '@/services/caseStudyService';
 import ReturnStateService from '@/services/returnStateService';
 import { toast } from 'sonner';
+import { countryFlags } from '@/data/countryFlags';
 
 const CaseStudy = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,45 +73,32 @@ const CaseStudy = () => {
     );
   }
 
+  const flag = countryFlags[caseStudyData.country] || '🏳️';
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Button 
-            onClick={handleBackToMap}
-            variant="ghost" 
-            className="mb-2"
-          >
-            <ArrowLeft className="mr-2" size={16} />
-            Back to Map
-          </Button>
-        </div>
-      </div>
-
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         <CaseStudyHeader 
+          flag={flag}
           country={caseStudyData.country}
           sector={caseStudyData.sector}
-          product={caseStudyData.product}
-          successStory={caseStudyData.successStory}
+          successfulProduct={caseStudyData.product}
+          onNavigateBack={handleBackToMap}
         />
 
         <KeyHighlightsSection 
-          initialExports1995={caseStudyData.initialExports1995}
-          currentExports2022={caseStudyData.currentExports2022}
-          globalShare1995={caseStudyData.globalShare1995}
-          globalShare2022={caseStudyData.globalShare2022}
-          rank1995={caseStudyData.rank1995}
-          rank2022={caseStudyData.rank2022}
-          ranksChange={caseStudyData.ranksChange}
+          publicSectorSummary={caseStudyData.publicSectorActor}
+          privateSectorSummary={caseStudyData.privateSectorGrowth}
+          externalFactorsSummary={caseStudyData.externalFactors}
         />
 
         <DetailedAnalysisSection 
-          externalFactors={caseStudyData.externalFactors}
-          privateSectorGrowth={caseStudyData.privateSectorGrowth}
-          privateSectorFirm={caseStudyData.privateSectorFirm}
-          publicSectorActor={caseStudyData.publicSectorActor}
           publicSectorPolicy={caseStudyData.publicSectorPolicy}
+          publicSectorActor={caseStudyData.publicSectorActor}
+          privateSectorPioneeringFirm={caseStudyData.privateSectorFirm}
+          privateSectorIndustryGrowth={caseStudyData.privateSectorGrowth}
+          externalMarketFactors={caseStudyData.externalFactors}
+          externalActorContribution={caseStudyData.externalFactors}
         />
 
         <OutcomesSection outcome={caseStudyData.outcome} />

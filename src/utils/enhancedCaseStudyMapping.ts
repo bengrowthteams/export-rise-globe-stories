@@ -53,13 +53,8 @@ export const hasEnhancedCaseStudy = async (story: { primaryKey?: number }): Prom
 };
 
 // Get the enhanced case study ID (which is just the primaryKey)
-export const getEnhancedCaseStudyId = async (story: { primaryKey?: number }): Promise<number | null> => {
-  if (!story.primaryKey) {
-    return null;
-  }
-
-  const hasEnhanced = await hasEnhancedCaseStudy(story);
-  return hasEnhanced ? story.primaryKey : null;
+export const getEnhancedCaseStudyId = (story: { primaryKey?: number }): number | null => {
+  return story.primaryKey || null;
 };
 
 // Legacy compatibility functions (simplified)
