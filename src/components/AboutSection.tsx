@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink, Database, Users, Search, BookOpen, Award, FileText } from 'lucide-react';
+import { ExternalLink, Database, Users, Search, BookOpen, Award, FileText, Lightbulb, Quote } from 'lucide-react';
 
 const AboutSection = () => {
   return (
@@ -18,7 +18,7 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-sm mr-4">
               <Database className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">About This Map</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">About this map</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
@@ -41,7 +41,7 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm mr-4">
               <Users className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Who We Are</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Who we are</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
@@ -96,7 +96,7 @@ const AboutSection = () => {
                 </p>
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-200 shadow-sm">
                   <p className="font-medium text-gray-900 mb-3">Cases were included if they met both of the following criteria:</p>
-                  <ul className="ml-6 space-y-2 text-gray-900">
+                  <ul className="ml-6 space-y-2 text-gray-800">
                     <li className="list-disc">An improvement of at least 15 places in global export ranking from 1995 to 2022</li>
                     <li className="list-disc">A final ranking of 60th or better in 2022</li>
                   </ul>
@@ -159,7 +159,7 @@ const AboutSection = () => {
               </p>
               <div className="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-xl border border-orange-200 shadow-sm">
                 <div className="flex items-start space-x-3">
-                  <div className="text-orange-500 mt-1 flex-shrink-0 text-2xl">"</div>
+                  <Quote className="text-orange-500 mt-1 flex-shrink-0" size={20} />
                   <p className="font-mono text-gray-800 text-base leading-relaxed">
                     <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent font-semibold">Growth Teams. (2025). Sector Transformation Atlas. [www.Sector Transformation Atlas.com]</span>
                   </p>
@@ -170,7 +170,7 @@ const AboutSection = () => {
         </section>
 
         {/* Credits section */}
-        <section className="mb-16">
+        <section>
           <div className="flex items-center mb-6">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Award className="text-white" size={20} />
@@ -205,103 +205,6 @@ const AboutSection = () => {
                 <h4 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Data analysis</h4>
               </div>
               <p className="text-lg text-gray-700">Navya Sahay, Kara Wong</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Further Reading section */}
-        <section>
-          <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-lg shadow-sm mr-4">
-              <FileText className="text-white" size={20} />
-            </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Further Reading</h3>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-            <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Andrews, Matt, Lant Pritchett and Michael Woolcock (2017).</strong> Building State Capability: Evidence, Analysis, Action.{' '}
-                <a href="https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Dercon, Stefan (2022).</strong> Gambling on Development: Why Some Countries Win and Others Lose.{' '}
-                <a href="https://www.hurstpublishers.com/book/gambling-on-development/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://www.hurstpublishers.com/book/gambling-on-development/
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hallward-Driemeier, Mary and Gaurav Nayyar (2017).</strong> The Future of Manufacturing Led Development.{' '}
-                <a href="https://openknowledge.worldbank.org/handle/10986/27946" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://openknowledge.worldbank.org/handle/10986/27946
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hausmann, Ricardo (2024).</strong> Export-led Growth.{' '}
-                <a href="https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hausmann, Ricardo and Dani Rodrik (2003).</strong> Economic Development as Self-Discovery.{' '}
-                <a href="https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hausmann, Ricardo, Jason Hwang, Dani Rodrik (2006).</strong> What You Export Matters.{' '}
-                <a href="https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hidalgo, Caesar and Ricardo Hausmann (2009).</strong> The Building Blocks of Economic Complexity.{' '}
-                <a href="http://www.pnas.org/content/106/26/10570.full.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  http://www.pnas.org/content/106/26/10570.full.pdf
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Hummels, David and Peter J. Klenow (2005).</strong> The Variety and Quality of a Nation's Exports. American Economic Review.{' '}
-                <a href="http://klenow.com/Hummels&Klenow.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  http://klenow.com/Hummels&Klenow.pdf
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Mostafa, Romel and Steven Klepper (2009).</strong> Industrial Development through Tacit Knowledge Seeding: Evidence from the Bangladesh Garment.{' '}
-                <a href="http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Opalo, Ken (2025).</strong> Why Growth Must Be at the Center of Africa's Future. Energy for Growth Hub.{' '}
-                <a href="https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Pritchett, Lant (2024).</strong> The Case for Economic Growth as the Path to Better Human Wellbeing.{' '}
-                <a href="https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/
-                </a>
-              </p>
-              
-              <p>
-                <strong className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">The Commission on Growth and Development (2008).</strong> The Growth Report: Strategies for Sustained Growth and Inclusive Development.{' '}
-                <a href="https://openknowledge.worldbank.org/handle/10986/6507" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                  https://openknowledge.worldbank.org/handle/10986/6507
-                </a>
-              </p>
             </div>
           </div>
         </section>
