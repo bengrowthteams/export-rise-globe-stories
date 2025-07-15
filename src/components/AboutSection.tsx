@@ -13,7 +13,7 @@ const AboutSection = () => {
           <h3 className="text-2xl font-semibold text-gray-900 mb-6">About this map</h3>
           <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
             <p>
-              The Sector Transformation Atlas documents and maps [about 100] export booms since 1995 that have reshaped economies around the world.
+              The <b>Sector Transformation Atlas</b> documents and maps 82 export booms since 1995 that have reshaped emerging economies around the world.
             </p>
             <p>
               As economies have transformed over the past decades, lifting millions of people out of poverty, many countries have experienced episodes of rapid export growth in specific sectors. Often these cases and the stories behind them are not commonly known, even by international development experts.
@@ -29,16 +29,16 @@ const AboutSection = () => {
           <h3 className="text-2xl font-semibold text-gray-900 mb-6">Who we are</h3>
           <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
             <p>
-              The Sector Transformation Atlas is a project of Growth Teams.
+              The Sector Transformation Atlas is a project of <b>Growth Teams</b>.
             </p>
             <p>
-              Growth Teams <a 
+              <a 
                 href="https://www.growth-teams.org" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1"
               >
-                https://www.growth-teams.org
+               Growth Teams 
                 <ExternalLink size={14} />
               </a> helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
             </p>
