@@ -41,11 +41,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
   };
 
   const handleWhyExportsClick = () => {
-    // Scroll to a section explaining why exports matter (could be part of about or a separate section)
-    const aboutSection = document.getElementById('about-section');
-    if (aboutSection) {
+    const whyExportsSection = document.getElementById('why-exports-section');
+    if (whyExportsSection) {
       const navHeight = 56; // h-14 = 56px
-      const elementPosition = aboutSection.offsetTop;
+      const elementPosition = whyExportsSection.offsetTop;
       const offsetPosition = elementPosition - navHeight;
 
       window.scrollTo({
