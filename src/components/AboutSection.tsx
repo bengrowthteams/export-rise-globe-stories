@@ -319,7 +319,7 @@ const AboutSection = () => {
                 </p>
 
                 <p>
-                  Mostafa, Romel and Steven Klepper (2009). <em>Industrial Development through Tacit Knowledge Seeding: Evidence from the Bangladesh Garment</em>.<br/>
+                  Mostafa, Romel and Steven Klepper (2009). <em>Industrial Development through Tacit Knowledge Seeding: Evidence from the Bangladesh Garment Industry</em>.<br/>
                   <a 
                     href="http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf" 
                     target="_blank" 
