@@ -12,6 +12,7 @@ import ExternalMarketSection from '@/components/case-study/ExternalMarketSection
 import OutcomesAnalysis from '@/components/case-study/OutcomesAnalysis';
 import SourcesBibliography from '@/components/case-study/SourcesBibliography';
 import { supabase } from '@/integrations/supabase/client';
+import { Tables } from '@/integrations/supabase/types';
 import { countryCoordinates } from '@/data/countryCoordinates';
 import { countryFlags } from '@/data/countryFlags';
 import ReturnStateService from '@/services/returnStateService';
@@ -167,16 +168,11 @@ const EnhancedCaseStudy = () => {
 
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-12">
         <EnhancedCaseStudyHeader 
-          flag={caseStudyData.flag}
           country={caseStudyData.country}
           sector={caseStudyData.sector}
-          successfulProduct={caseStudyData.product}
-          rank1995={caseStudyData.rank1995}
-          rank2022={caseStudyData.rank2022}
-          initialExports1995={caseStudyData.initialExports1995}
-          currentExports2022={caseStudyData.currentExports2022}
-          globalShare1995={caseStudyData.globalShare1995}
-          globalShare2022={caseStudyData.globalShare2022}
+          product={caseStudyData.product}
+          successStory={caseStudyData.successStory}
+          flag={caseStudyData.flag}
         />
 
         <QuantitativeDashboard 
@@ -186,9 +182,12 @@ const EnhancedCaseStudy = () => {
           globalShare2022={caseStudyData.globalShare2022}
           rank1995={caseStudyData.rank1995}
           rank2022={caseStudyData.rank2022}
+          ranksChange={caseStudyData.ranksChange}
         />
 
         <TransformationOverview 
+          country={caseStudyData.country}
+          sector={caseStudyData.sector}
           successStory={caseStudyData.successStory}
           externalFactors={caseStudyData.externalFactors}
           privateSectorGrowth={caseStudyData.privateSectorGrowth}

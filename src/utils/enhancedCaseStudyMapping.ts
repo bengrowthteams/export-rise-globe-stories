@@ -28,7 +28,7 @@ export const getAllEnhancedCaseStudyIds = async (): Promise<number[]> => {
 };
 
 // Simple check if a story has an enhanced case study based on its primaryKey
-export const hasEnhancedCaseStudy = async (story: { primaryKey?: number | null }): Promise<boolean> => {
+export const hasEnhancedCaseStudy = async (story: { primaryKey?: number }): Promise<boolean> => {
   if (!story.primaryKey) {
     return false;
   }
@@ -45,7 +45,7 @@ export const hasEnhancedCaseStudy = async (story: { primaryKey?: number | null }
       return false;
     }
 
-    return Boolean(data);
+    return data !== null;
   } catch (error) {
     console.error('Error checking enhanced case study:', error);
     return false;
@@ -53,17 +53,22 @@ export const hasEnhancedCaseStudy = async (story: { primaryKey?: number | null }
 };
 
 // Get the enhanced case study ID (which is just the primaryKey)
-export const getEnhancedCaseStudyId = (story: { primaryKey?: number | null }): number | null => {
-  return story.primaryKey || null;
+export const getEnhancedCaseStudyId = async (story: { primaryKey?: number }): Promise<number | null> => {
+  if (!story.primaryKey) {
+    return null;
+  }
+
+  const hasEnhanced = await hasEnhancedCaseStudy(story);
+  return hasEnhanced ? story.primaryKey : null;
 };
 
 // Legacy compatibility functions (simplified)
-export const hasEnhancedCaseStudySync = (story: { primaryKey?: number | null }): boolean => {
+export const hasEnhancedCaseStudySync = (story: { primaryKey?: number }): boolean => {
   // For sync version, we can only check if primaryKey exists
   return Boolean(story.primaryKey);
 };
 
-export const getEnhancedCaseStudyIdSync = (story: { primaryKey?: number | null }): number | null => {
+export const getEnhancedCaseStudyIdSync = (story: { primaryKey?: number }): number | null => {
   return story.primaryKey || null;
 };
 

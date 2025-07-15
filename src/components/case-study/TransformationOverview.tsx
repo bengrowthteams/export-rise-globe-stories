@@ -2,20 +2,31 @@
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface TransformationOverviewProps {
-  successStory: string;
-  externalFactors: string;
-  privateSectorGrowth: string;
-  publicSectorPolicy: string;
+  globalRanking1995: number;
+  globalRanking2022: number;
+  initialExports1995: string;
+  initialExports2022: string;
 }
 
 const TransformationOverview = ({ 
-  successStory,
-  externalFactors,
-  privateSectorGrowth,
-  publicSectorPolicy
+  globalRanking1995, 
+  globalRanking2022, 
+  initialExports1995, 
+  initialExports2022 
 }: TransformationOverviewProps) => {
+  const formatCurrency = (amount: string) => {
+    const numAmount = parseFloat(amount.replace(/[\$,]/g, ''));
+    if (numAmount >= 1000000000) {
+      return `$${(numAmount / 1000000000).toFixed(1)} billion`;
+    } else if (numAmount >= 1000000) {
+      return `$${(numAmount / 1000000).toFixed(1)} million`;
+    }
+    return amount;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -25,37 +36,34 @@ const TransformationOverview = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
-          {successStory && (
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-              <p className="text-gray-700">{successStory}</p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {publicSectorPolicy && (
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-800 mb-2">Public Sector</h4>
-                <p className="text-sm text-blue-700">{publicSectorPolicy}</p>
-              </div>
-            )}
-
-            {privateSectorGrowth && (
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <h4 className="font-semibold text-purple-800 mb-2">Private Sector</h4>
-                <p className="text-sm text-purple-700">{privateSectorGrowth}</p>
-              </div>
-            )}
-
-            {externalFactors && (
-              <div className="p-4 bg-green-50 rounded-lg">
-                <h4 className="font-semibold text-green-800 mb-2">External Factors</h4>
-                <p className="text-sm text-green-700">{externalFactors}</p>
-              </div>
-            )}
-          </div>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Metric</TableHead>
+              <TableHead>1995</TableHead>
+              <TableHead>2022</TableHead>
+              <TableHead>Change</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">Global Export Ranking</TableCell>
+              <TableCell>#{globalRanking1995}</TableCell>
+              <TableCell>#{globalRanking2022}</TableCell>
+              <TableCell className="text-green-600 font-semibold">
+                +{globalRanking1995 - globalRanking2022} positions
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Export Value</TableCell>
+              <TableCell>{formatCurrency(initialExports1995)}</TableCell>
+              <TableCell>{formatCurrency(initialExports2022)}</TableCell>
+              <TableCell className="text-green-600 font-semibold">
+                +{Math.round(((parseFloat(initialExports2022.replace(/[\$,]/g, '')) / parseFloat(initialExports1995.replace(/[\$,]/g, ''))) - 1) * 100)}%
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );
