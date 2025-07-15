@@ -24,27 +24,37 @@ const ExternalMarketSection = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">External Factors Summary</h3>
-            <p className="text-gray-700 leading-relaxed">
-              {externalFactors}
-            </p>
-          </div>
+          {externalFactors && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">External Factors</h3>
+              <div className="whitespace-pre-line text-gray-700">
+                {externalFactors}
+              </div>
+            </div>
+          )}
 
           {externalMarketFactors && (
             <div>
               <h3 className="text-lg font-semibold mb-3">Market Factors</h3>
-              <p className="text-gray-700 leading-relaxed">
+              <div className="whitespace-pre-line text-gray-700">
                 {externalMarketFactors}
-              </p>
+              </div>
             </div>
           )}
 
           {externalActorContribution && (
             <div>
-              <h3 className="text-lg font-semibold mb-3">External Actor Contribution</h3>
-              <p className="text-gray-700 leading-relaxed">
+              <h3 className="text-lg font-semibold mb-3">Actor Contributions</h3>
+              <div className="whitespace-pre-line text-gray-700">
                 {externalActorContribution}
+              </div>
+            </div>
+          )}
+
+          {!externalFactors && !externalMarketFactors && !externalActorContribution && (
+            <div>
+              <p className="text-gray-700">
+                External market factors and international actor contributions played a significant role in the development of this export success story.
               </p>
             </div>
           )}

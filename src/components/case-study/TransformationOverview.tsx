@@ -26,34 +26,34 @@ const TransformationOverview = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Success Story</h3>
-            <p className="text-gray-700 leading-relaxed">
-              {successStory}
-            </p>
-          </div>
+          {successStory && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Success Story</h3>
+              <p className="text-gray-700">{successStory}</p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Public Sector</h4>
-              <p className="text-sm text-gray-700">
-                {publicSectorPolicy}
-              </p>
-            </div>
+            {publicSectorPolicy && (
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800 mb-2">Public Sector</h4>
+                <p className="text-sm text-blue-700">{publicSectorPolicy}</p>
+              </div>
+            )}
 
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-orange-800 mb-2">Private Sector</h4>
-              <p className="text-sm text-gray-700">
-                {privateSectorGrowth}
-              </p>
-            </div>
+            {privateSectorGrowth && (
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <h4 className="font-semibold text-purple-800 mb-2">Private Sector</h4>
+                <p className="text-sm text-purple-700">{privateSectorGrowth}</p>
+              </div>
+            )}
 
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">External Factors</h4>
-              <p className="text-sm text-gray-700">
-                {externalFactors}
-              </p>
-            </div>
+            {externalFactors && (
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800 mb-2">External Factors</h4>
+                <p className="text-sm text-green-700">{externalFactors}</p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
