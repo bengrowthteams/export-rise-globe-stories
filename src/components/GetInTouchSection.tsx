@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const GetInTouchSection = () => {
   const [formData, setFormData] = useState({
@@ -40,9 +41,13 @@ const GetInTouchSection = () => {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically send the form data to your backend
-      // For now, we'll just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Message sent successfully!",
@@ -58,6 +63,7 @@ const GetInTouchSection = () => {
         message: ''
       });
     } catch (error) {
+      console.error('Error sending message:', error);
       toast({
         title: "Error sending message",
         description: "Please try again later.",
@@ -79,12 +85,6 @@ const GetInTouchSection = () => {
         
         {/* Introduction text */}
         <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl">
-              <MessageSquare className="text-green-600" size={24} />
-            </div>
-            <h3 className="text-3xl font-semibold text-gray-900">Connect With Us</h3>
-          </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
@@ -102,13 +102,6 @@ const GetInTouchSection = () => {
 
         {/* Contact Form */}
         <div className="mb-16">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
-              <Mail className="text-blue-600" size={24} />
-            </div>
-            <h3 className="text-3xl font-semibold text-gray-900">Send Us a Message</h3>
-          </div>
-          
           <Card className="shadow-lg border border-gray-100">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
