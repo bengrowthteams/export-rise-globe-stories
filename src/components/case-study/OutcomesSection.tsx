@@ -3,11 +3,7 @@ import React from 'react';
 import { Users, DollarSign, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface OutcomesSectionProps {
-  outcome: string;
-}
-
-const OutcomesSection = ({ outcome }: OutcomesSectionProps) => {
+const OutcomesSection = () => {
   return (
     <Card>
       <CardHeader>
@@ -37,7 +33,7 @@ const OutcomesSection = ({ outcome }: OutcomesSectionProps) => {
         
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-gray-700 leading-relaxed">
-            {outcome}
+            Vietnam's GDP reached approximately $409 billion in 2022, with the textile sector representing over 15% of total exports. The sector has created 3 million jobs, with major companies like Nike and Adidas employing tens of thousands of workers each in manufacturing plants.
           </p>
         </div>
 
