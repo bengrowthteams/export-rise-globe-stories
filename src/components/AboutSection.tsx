@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ExternalLink, Database, Users, Search, BookOpen, Award, FileText, Lightbulb, Quote } from 'lucide-react';
 
@@ -56,7 +57,7 @@ const AboutSection = () => {
                 >
                   Growth Teams
                   <ExternalLink size={16} />
-                </a> helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
+                </a>{' '}helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
               </p>
               <p>
                 Established as a non-profit organization in 2022, we have launched engagements in Rwanda, Tanzania, Malawi, and India. Our team brings extensive experience advising governments in Africa and India on investment, job creation, and economic transformation, and our advisory board includes experts such as Stefan Dercon, Lant Pritchett, Kunal Sen, Pallavi Roy, and Lindsay Whitfield. Learn more at{' '}
@@ -169,7 +170,7 @@ const AboutSection = () => {
         </section>
 
         {/* Credits section */}
-        <section>
+        <section className="mb-24">
           <div className="flex items-center mb-6">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Award className="text-white" size={20} />
@@ -214,7 +215,7 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg shadow-sm mr-4">
               <FileText className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading on Export-Led Growth, Sector Development, and Structural Transformation</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
@@ -258,7 +259,7 @@ const AboutSection = () => {
                 </p>
 
                 <p>
-                  Hausmann, Ricardo (2024). <em>Export-led Growth</em>.<br/>
+                  Haussman, Ricardo (2024). <em>Export-led Growth</em>.<br/>
                   <a 
                     href="https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf" 
                     target="_blank" 

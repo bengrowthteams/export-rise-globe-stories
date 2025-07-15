@@ -670,8 +670,10 @@ const Landing = () => {
       {/* About Section */}
       <AboutSection />
 
-      {/* Get In Touch Section */}
-      <GetInTouchSection />
+      {/* Get In Touch Section - reduced top padding to decrease space from About */}
+      <div id="get-in-touch-section" className="pt-8">
+        <GetInTouchSection />
+      </div>
     </div>
   );
 };
