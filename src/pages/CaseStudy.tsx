@@ -1,9 +1,7 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { successStories } from '../data/successStories';
-import { getAvailableCaseStudyIds } from '../services/caseStudyService';
-import { getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
 import CaseStudyHeader from '../components/case-study/CaseStudyHeader';
 import TransformationOverview from '../components/case-study/TransformationOverview';
 import SuccessStorySummary from '../components/case-study/SuccessStorySummary';
@@ -16,55 +14,8 @@ import FurtherReadingSection from '../components/case-study/FurtherReadingSectio
 const CaseStudy = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [availableIds, setAvailableIds] = useState<number[]>([]);
-  const [isCheckingAvailability, setIsCheckingAvailability] = useState(true);
-  
-  // Check if this ID should use the enhanced version
-  useEffect(() => {
-    const checkAvailability = async () => {
-      console.log('Checking availability for case study ID:', id);
-      
-      // First try to parse as numeric ID
-      const primaryKey = parseInt(id || '0');
-      if (!isNaN(primaryKey)) {
-        const ids = await getAvailableCaseStudyIds();
-        setAvailableIds(ids);
-        
-        if (ids.includes(primaryKey)) {
-          console.log('Found enhanced case study, redirecting to:', primaryKey);
-          navigate(`/enhanced-case-study/${primaryKey}`, { replace: true });
-          return;
-        }
-      }
-      
-      // If not numeric, try to find the story and check if it has enhanced version
-      const story = successStories.find(s => s.id === id);
-      if (story) {
-        const enhancedId = getEnhancedCaseStudyId(story);
-        if (enhancedId) {
-          console.log('Found enhanced case study for story, redirecting to:', enhancedId);
-          navigate(`/enhanced-case-study/${enhancedId}`, { replace: true });
-          return;
-        }
-      }
-      
-      setIsCheckingAvailability(false);
-    };
-    
-    checkAvailability();
-  }, [id, navigate]);
   
   const story = successStories.find(s => s.id === id);
-
-  if (isCheckingAvailability) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Checking case study availability...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!story) {
     return (

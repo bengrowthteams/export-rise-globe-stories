@@ -43,7 +43,7 @@ const EnhancedCaseStudy = () => {
       }
 
       try {
-        // Get available IDs first - but use simplified static approach
+        // Get available IDs first
         const availableIds = await getAvailableCaseStudyIds();
         console.log('Available enhanced case study IDs:', availableIds);
 
@@ -54,7 +54,7 @@ const EnhancedCaseStudy = () => {
         }
 
         // Fetch the case study data
-        const data = await fetchCaseStudyData(primaryKey);
+        const data = await fetchCaseStudyData(primaryKey.toString());
         if (data) {
           console.log('Successfully loaded case study data:', data);
           setCaseStudyData(data);
