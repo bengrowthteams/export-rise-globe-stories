@@ -57,7 +57,8 @@ const AboutSection = () => {
                 >
                   Growth Teams
                   <ExternalLink size={16} />
-                </a>{' '}helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
+                </a>
+                {' '}helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
               </p>
               <p>
                 Established as a non-profit organization in 2022, we have launched engagements in Rwanda, Tanzania, Malawi, and India. Our team brings extensive experience advising governments in Africa and India on investment, job creation, and economic transformation, and our advisory board includes experts such as Stefan Dercon, Lant Pritchett, Kunal Sen, Pallavi Roy, and Lindsay Whitfield. Learn more at{' '}
@@ -170,7 +171,7 @@ const AboutSection = () => {
         </section>
 
         {/* Credits section */}
-        <section>
+        <section className="mb-16">
           <div className="flex items-center mb-6">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Award className="text-white" size={20} />
@@ -205,6 +206,163 @@ const AboutSection = () => {
                 <h4 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Data analysis</h4>
               </div>
               <p className="text-lg text-gray-700">Navya Sahay, Kara Wong</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Further Reading section */}
+        <section>
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-sm mr-4">
+              <FileText className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading</h3>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+            <div className="space-y-4 text-base text-gray-700 leading-relaxed">
+              <p>
+                <strong>Andrews, Matt, Lant Pritchett and Michael Woolcock (2017).</strong> Building State Capability: Evidence, Analysis, Action.<br />
+                <a 
+                  href="https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/
+                </a>
+              </p>
+              
+              <p>
+                <strong>Dercon, Stefan (2022).</strong> Gambling on Development: Why Some Countries Win and Others Lose.<br />
+                <a 
+                  href="https://www.hurstpublishers.com/book/gambling-on-development/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://www.hurstpublishers.com/book/gambling-on-development/
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hallward-Driemeier, Mary and Gaurav Nayyar (2017).</strong> The Future of Manufacturing Led Development.<br />
+                <a 
+                  href="https://openknowledge.worldbank.org/handle/10986/27946" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://openknowledge.worldbank.org/handle/10986/27946
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo (2024).</strong> Export-led Growth.<br />
+                <a 
+                  href="https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo and Dani Rodrik (2003).</strong> Economic Development as Self-Discovery.<br />
+                <a 
+                  href="https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo, Jason Hwang, Dani Rodrik (2006).</strong> What You Export Matters.<br />
+                <a 
+                  href="https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hidalgo, Caesar and Ricardo Hausmann (2009).</strong> The Building Blocks of Economic Complexity.<br />
+                <a 
+                  href="http://www.pnas.org/content/106/26/10570.full.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  http://www.pnas.org/content/106/26/10570.full.pdf
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hummels, David and Peter J. Klenow (2005).</strong> The Variety and Quality of a Nation's Exports. American Economic Review.<br />
+                <a 
+                  href="http://klenow.com/Hummels&Klenow.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  http://klenow.com/Hummels&Klenow.pdf
+                </a>
+              </p>
+              
+              <p>
+                <strong>Mostafa, Romel and Steven Klepper (2009).</strong> Industrial Development through Tacit Knowledge Seeding: Evidence from the Bangladesh Garment.<br />
+                <a 
+                  href="http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf
+                </a>
+              </p>
+              
+              <p>
+                <strong>Opalo, Ken (2025).</strong> Why Growth Must Be at the Center of Africa's Future. Energy for Growth Hub.<br />
+                <a 
+                  href="https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/
+                </a>
+              </p>
+              
+              <p>
+                <strong>Pritchett, Lant (2024).</strong> The Case for Economic Growth as the Path to Better Human Wellbeing.<br />
+                <a 
+                  href="https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/
+                </a>
+              </p>
+              
+              <p>
+                <strong>The Commission on Growth and Development (2008).</strong> The Growth Report: Strategies for Sustained Growth and Inclusive Development.<br />
+                <a 
+                  href="https://openknowledge.worldbank.org/handle/10986/6507" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  https://openknowledge.worldbank.org/handle/10986/6507
+                </a>
+              </p>
             </div>
           </div>
         </section>
