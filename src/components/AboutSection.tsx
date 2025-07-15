@@ -219,7 +219,7 @@ const AboutSection = () => {
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-              <p className="mb-6 font-medium text-gray-900">For additional insights into export-Led Growth, sector development, economic complexity, and structural transformation:</p>
+              <p className="mb-6 font-medium text-gray-900">For additional insights into export-led Growth, sector development, economic complexity, and structural transformation:</p>
               
               <div className="space-y-4">
                 <p>
