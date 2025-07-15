@@ -215,11 +215,11 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg shadow-sm mr-4">
               <FileText className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading on Export-Led Growth, Sector Development, and Structural Transformation</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-              <p className="mb-6 font-medium text-gray-900">For additional insights into economic development and structural transformation:</p>
+              <p className="mb-6 font-medium text-gray-900">For additional insights into export-Led Growth, sector development, economic complexity, and structural transformation:</p>
               
               <div className="space-y-4">
                 <p>
