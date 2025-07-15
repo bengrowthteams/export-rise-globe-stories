@@ -10,7 +10,7 @@ const AboutSection = () => {
         
         {/* About this map */}
         <section className="mb-12">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-6">About this map</h3>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-6">About This Map</h3>
           <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
             <p>
               The <b>Sector Transformation Atlas</b> documents and maps 82 export booms since 1995 that have reshaped emerging economies around the world.
@@ -26,7 +26,7 @@ const AboutSection = () => {
 
         {/* Who we are */}
         <section className="mb-12">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-6">Who we are</h3>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-6">Who We Are</h3>
           <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
             <p>
               The Sector Transformation Atlas is a project of <b>Growth Teams</b>.
