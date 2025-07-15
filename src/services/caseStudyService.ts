@@ -72,30 +72,32 @@ export const fetchCaseStudyData = async (primaryKey: number): Promise<CaseStudyD
     console.log('Raw data from Supabase:', data);
 
     // Transform the database row into our CaseStudyData interface
-    // Using direct property access instead of complex type casting to avoid recursion
+    // Using type assertion to avoid complex type inference
+    const row = data as any;
+    
     const caseStudyData: CaseStudyData = {
-      id: data['Primary key'] || 0,
-      country: data.Country || 'Unknown Country',
-      sector: data.Sector || 'Unknown Sector',
-      successfulProduct: data['Successful product'] || 'Not specified',
-      flag: countryFlags[data.Country || ''] || '🌍',
-      publicSectorSummary: data['Public Sector - One Bullet Summary'] || 'Public sector information not available.',
-      privateSectorSummary: data['Private Sector - One Bullet Summary'] || 'Private sector information not available.',
-      externalFactorsSummary: data['External Factors - One Bullet Summary'] || 'External factors information not available.',
-      rank1995: data['Rank (1995)'] || 0,
-      rank2022: data['Rank (2022)'] || 0,
-      initialExports1995: data['Initial Exports - 1995 (USD)'] || 0,
-      currentExports2022: data['Current Exports - 2022 (USD)'] || 0,
-      globalShare1995: data['Global Share 1995 - %'] || 0,
-      globalShare2022: data['Global Share 2022 - %'] || 0,
-      outcome: data.Outcome || 'Outcome information not available.',
-      publicSectorPolicy: data['Public Sector Policy'] || 'Public sector policy information not available.',
-      publicSectorActor: data['Public Sector Actor'] || 'Public sector actor information not available.',
-      privateSectorPioneeringFirm: data['Private Sector Pioneering Firm'] || 'Private sector pioneering firm information not available.',
-      privateSectorIndustryGrowth: data['Private Sector Industry Growth'] || 'Private sector industry growth information not available.',
-      externalMarketFactors: data['External Market Factors'] || 'External market factors information not available.',
-      externalActorContribution: data['External Actor Contribution'] || 'External actor contribution information not available.',
-      sources: data.Sources || 'Sources not available.'
+      id: row['Primary key'] || 0,
+      country: row.Country || 'Unknown Country',
+      sector: row.Sector || 'Unknown Sector',
+      successfulProduct: row['Successful product'] || 'Not specified',
+      flag: countryFlags[row.Country || ''] || '🌍',
+      publicSectorSummary: row['Public Sector - One Bullet Summary'] || 'Public sector information not available.',
+      privateSectorSummary: row['Private Sector - One Bullet Summary'] || 'Private sector information not available.',
+      externalFactorsSummary: row['External Factors - One Bullet Summary'] || 'External factors information not available.',
+      rank1995: row['Rank (1995)'] || 0,
+      rank2022: row['Rank (2022)'] || 0,
+      initialExports1995: row['Initial Exports - 1995 (USD)'] || 0,
+      currentExports2022: row['Current Exports - 2022 (USD)'] || 0,
+      globalShare1995: row['Global Share 1995 - %'] || 0,
+      globalShare2022: row['Global Share 2022 - %'] || 0,
+      outcome: row.Outcome || 'Outcome information not available.',
+      publicSectorPolicy: row['Public Sector Policy'] || 'Public sector policy information not available.',
+      publicSectorActor: row['Public Sector Actor'] || 'Public sector actor information not available.',
+      privateSectorPioneeringFirm: row['Private Sector Pioneering Firm'] || 'Private sector pioneering firm information not available.',
+      privateSectorIndustryGrowth: row['Private Sector Industry Growth'] || 'Private sector industry growth information not available.',
+      externalMarketFactors: row['External Market Factors'] || 'External market factors information not available.',
+      externalActorContribution: row['External Actor Contribution'] || 'External actor contribution information not available.',
+      sources: row.Sources || 'Sources not available.'
     };
 
     console.log('Transformed case study data:', caseStudyData);
