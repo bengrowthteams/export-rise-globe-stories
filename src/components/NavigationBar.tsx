@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Globe } from 'lucide-react';
 
@@ -22,6 +23,21 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
           behavior: 'smooth'
         });
       }
+    }
+  };
+
+  const handleWhyExportsClick = () => {
+    // Scroll to the Why Exports section
+    const whyExportsSection = document.querySelector('.bg-gradient-to-b.from-white.to-gray-50');
+    if (whyExportsSection) {
+      const navHeight = 56; // h-14 = 56px
+      const elementPosition = whyExportsSection.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -64,7 +80,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
             <h1 className="text-lg font-bold text-gray-900">Sector Transformation Atlas</h1>
           </div>
           <div className="flex items-center space-x-6">
-            <button className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            <button 
+              onClick={handleWhyExportsClick}
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
               Why Exports?
             </button>
             <button 

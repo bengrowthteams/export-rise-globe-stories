@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink, Users, Search, Database, BookOpen, Award } from 'lucide-react';
+import { ExternalLink, Users, Search, Database, BookOpen, Award, Library } from 'lucide-react';
 
 const AboutSection = () => {
   return (
@@ -166,7 +166,7 @@ const AboutSection = () => {
         </section>
 
         {/* Credits section */}
-        <section>
+        <section className="mb-16">
           <div className="flex items-center gap-3 mb-8">
             <div className="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-xl">
               <Award className="text-yellow-600" size={24} />
@@ -189,6 +189,115 @@ const AboutSection = () => {
                   <p><strong className="text-gray-900">Data analysis:</strong><br />Navya Sahay, Kara Wong</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Further Reading section */}
+        <section>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-xl">
+              <Library className="text-indigo-600" size={24} />
+            </div>
+            <h3 className="text-3xl font-semibold text-gray-900">Further Reading</h3>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="space-y-4 text-base text-gray-700 leading-relaxed">
+              <p>
+                <strong>Andrews, Matt, Lant Pritchett and Michael Woolcock (2017).</strong> Building State Capability: Evidence, Analysis, Action.<br />
+                <a href="https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://bsc.hks.harvard.edu/publications/building-state-capability-evidence-analysis-action/
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Dercon, Stefan (2022).</strong> Gambling on Development: Why Some Countries Win and Others Lose.<br />
+                <a href="https://www.hurstpublishers.com/book/gambling-on-development/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://www.hurstpublishers.com/book/gambling-on-development/
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hallward-Driemeier, Mary and Gaurav Nayyar (2017).</strong> The Future of Manufacturing Led Development.<br />
+                <a href="https://openknowledge.worldbank.org/handle/10986/27946" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://openknowledge.worldbank.org/handle/10986/27946
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo (2024).</strong> Export-led Growth.<br />
+                <a href="https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://growthlab.hks.harvard.edu/sites/projects.iq.harvard.edu/files/2024-07-glwp-231-export-led-growth.pdf
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo and Dani Rodrik (2003).</strong> Economic Development as Self-Discovery.<br />
+                <a href="https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://www.sciencedirect.com/science/article/abs/pii/S030438780300124X
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hausmann, Ricardo, Jason Hwang, Dani Rodrik (2006).</strong> What You Export Matters.<br />
+                <a href="https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://drodrik.scholar.harvard.edu/files/dani-rodrik/files/what-you-export-matters.pdf
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hidalgo, Caesar and Ricardo Hausmann (2009).</strong> The Building Blocks of Economic Complexity.<br />
+                <a href="http://www.pnas.org/content/106/26/10570.full.pdf" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  http://www.pnas.org/content/106/26/10570.full.pdf
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Hummels, David and Peter J. Klenow (2005).</strong> The Variety and Quality of a Nation's Exports. American Economic Review.<br />
+                <a href="http://klenow.com/Hummels&Klenow.pdf" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  http://klenow.com/Hummels&Klenow.pdf
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Mostafa, Romel and Steven Klepper (2009).</strong> Industrial Development through Tacit Knowledge Seeding: Evidence from the Bangladesh Garment.<br />
+                <a href="http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-centers gap-1 transition-colors">
+                  http://www.columbia.edu/~ev2124/igc/spring_2010/papers/mostafa.pdf
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Opalo, Ken (2025).</strong> Why Growth Must Be at the Center of Africa's Future. Energy for Growth Hub.<br />
+                <a href="https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://energyforgrowth.org/article/episode-32-ken-opalo-why-growth-must-be-at-the-center-of-africas-future/
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>Pritchett, Lant (2024).</strong> The Case for Economic Growth as the Path to Better Human Wellbeing.<br />
+                <a href="https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://lantpritchett.org/the-case-for-sustained-rapid-inclusive-enough-economic-growth-as-a-focus-of-development/
+                  <ExternalLink size={14} />
+                </a>
+              </p>
+              
+              <p>
+                <strong>The Commission on Growth and Development (2008).</strong> The Growth Report: Strategies for Sustained Growth and Inclusive Development.<br />
+                <a href="https://openknowledge.worldbank.org/handle/10986/6507" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline inline-flex items-center gap-1 transition-colors">
+                  https://openknowledge.worldbank.org/handle/10986/6507
+                  <ExternalLink size={14} />
+                </a>
+              </p>
             </div>
           </div>
         </section>

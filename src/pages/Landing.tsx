@@ -10,6 +10,7 @@ import FilteredSectorModal from '../components/FilteredSectorModal';
 import SectorFilter from '../components/SectorFilter';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
+import WhyExportsSection from '../components/WhyExportsSection';
 import AboutSection from '../components/AboutSection';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
@@ -546,6 +547,9 @@ const Landing = () => {
           </div>
         </div>
       </div>
+
+      {/* Why Exports Section */}
+      <WhyExportsSection />
 
       {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="h-[calc(100vh-3.5rem)] bg-gray-50">
