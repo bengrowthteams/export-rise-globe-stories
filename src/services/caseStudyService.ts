@@ -184,7 +184,7 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
           coordinates: countryStoriesList[0].coordinates,
           flag: countryStoriesList[0].flag,
           hasMutipleSectors: true,
-          primarySector: countryStoriesList[0].sector, // Add the missing primarySector property
+          primarySector: countryStoriesList[0].sector,
           sectors
         };
 
