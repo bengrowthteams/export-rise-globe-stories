@@ -10,6 +10,7 @@ import FilteredSectorModal from '../components/FilteredSectorModal';
 import SectorFilter from '../components/SectorFilter';
 import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
+import AboutSection from '../components/AboutSection';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
@@ -664,6 +665,9 @@ const Landing = () => {
           )}
         </div>
       </div>
+
+      {/* About Section */}
+      <AboutSection />
     </div>
   );
 };
