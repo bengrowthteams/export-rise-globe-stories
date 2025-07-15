@@ -26,6 +26,20 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
     }
   };
 
+  const handleAboutClick = () => {
+    const aboutSection = document.getElementById('about-section');
+    if (aboutSection) {
+      const navHeight = 56; // h-14 = 56px
+      const elementPosition = aboutSection.offsetTop;
+      const offsetPosition = elementPosition - navHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,7 +60,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
             >
               Explore
             </button>
-            <button className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            <button 
+              onClick={handleAboutClick}
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
               About
             </button>
             <button className="text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
