@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,20 +6,17 @@ import { useNavigate } from 'react-router-dom';
 import ReturnStateService from '@/services/returnStateService';
 
 interface CaseStudyHeaderProps {
-  flag: string;
   country: string;
   sector: string;
-  successfulProduct: string;
-  onNavigateBack: () => void;
+  product: string;
+  successStory: string;
 }
 
-const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateBack }: CaseStudyHeaderProps) => {
+const CaseStudyHeader = ({ country, sector, product, successStory }: CaseStudyHeaderProps) => {
   const navigate = useNavigate();
 
   const handleReturnToMap = () => {
     console.log('Regular Case Study Header - Return to Map clicked');
-    
-    // Simply navigate back to main page - the return state service will handle restoration
     navigate('/');
   };
 
@@ -42,11 +40,13 @@ const CaseStudyHeader = ({ flag, country, sector, successfulProduct, onNavigateB
       <div className="bg-white shadow-sm border-b pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <span className="text-4xl">{flag}</span>
             <div className="w-full sm:w-auto">
               <h1 className="text-3xl sm:text-4xl font-bold text-left">{country} / {sector}</h1>
               <p className="text-lg sm:text-xl text-gray-600 mt-2 text-left">
-                <span className="font-semibold">Successful Product:</span> {successfulProduct}
+                <span className="font-semibold">Successful Product:</span> {product}
+              </p>
+              <p className="text-base text-gray-700 mt-2 text-left italic">
+                {successStory}
               </p>
             </div>
           </div>

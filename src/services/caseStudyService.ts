@@ -106,9 +106,8 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
     }
 
     const storiesMap = new Map<string, SuccessStory[]>();
-    const countryStoriesMap = new Map<string, CountrySuccessStories>();
 
-    data.forEach((row: Tables<'Country Data'>['Row']) => {
+    data.forEach((row) => {
       if (!row.Country || !row.Sector) return;
 
       const coordinates = getCountryCoordinates(row.Country);
@@ -137,7 +136,10 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
         flag,
         marketDestinations: [],
         challenges: [],
-        impact: row.Outcome || '',
+        impact: {
+          jobs: '',
+          economicContribution: ''
+        },
         globalRanking1995: row['Rank (1995)'] || 0,
         globalRanking2022: row['Rank (2022)'] || 0,
         initialExports1995: formatExportValue(row['Initial Exports - 1995 (USD)'] || 0),
@@ -178,6 +180,9 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
           successStorySummary: story.successStorySummary
         }));
 
+        // Get the primary sector (first one for simplicity)
+        const primarySector = sectors[0];
+
         const countryStoryData: CountrySuccessStories = {
           id: country,
           country,
@@ -185,6 +190,7 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
           coordinates: countryStoriesList[0].coordinates,
           flag: countryStoriesList[0].flag,
           hasMutipleSectors: true,
+          primarySector,
           sectors
         };
 

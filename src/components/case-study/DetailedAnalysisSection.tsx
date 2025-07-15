@@ -1,52 +1,27 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Factory, Globe, Users, Briefcase } from 'lucide-react';
+import { Building2, Factory, Globe } from 'lucide-react';
 
 interface DetailedAnalysisSectionProps {
-  publicSectorPolicy: string;
+  externalFactors: string;
+  privateSectorGrowth: string;
+  privateSectorFirm: string;
   publicSectorActor: string;
-  privateSectorPioneeringFirm: string;
-  privateSectorIndustryGrowth: string;
-  externalMarketFactors: string;
-  externalActorContribution: string;
+  publicSectorPolicy: string;
 }
 
 const DetailedAnalysisSection = ({
-  publicSectorPolicy,
+  externalFactors,
+  privateSectorGrowth,
+  privateSectorFirm,
   publicSectorActor,
-  privateSectorPioneeringFirm,
-  privateSectorIndustryGrowth,
-  externalMarketFactors,
-  externalActorContribution
+  publicSectorPolicy
 }: DetailedAnalysisSectionProps) => {
   
-  const formatBulletPoints = (text: string) => {
-    // Only format if text contains bullets (●) - don't add bullets where they don't exist
-    if (text.includes('●')) {
-      const parts = text.split('●');
-      const firstPart = parts[0].trim();
-      const bulletParts = parts.slice(1);
-      
-      return (
-        <div>
-          {/* First part without bullet if it exists */}
-          {firstPart && <p className="mb-3">{firstPart}</p>}
-          {/* Bullet points */}
-          {bulletParts.map((point, index) => {
-            if (!point.trim()) return null;
-            return (
-              <div key={index} className="flex items-start mb-2">
-                <span className="text-gray-600 mr-2 mt-1">●</span>
-                <span className="flex-1">{point.trim()}</span>
-              </div>
-            );
-          }).filter(Boolean)}
-        </div>
-      );
-    }
-    // If no bullets, return as regular paragraph
-    return <p>{text}</p>;
+  const formatText = (text: string) => {
+    if (!text) return 'Information not available';
+    return text;
   };
 
   const sections = [
@@ -56,17 +31,9 @@ const DetailedAnalysisSection = ({
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
       icon: Building2,
-      subsections: [
-        {
-          title: 'Policy Framework',
-          icon: Briefcase,
-          content: publicSectorPolicy
-        },
-        {
-          title: 'Key Actors',
-          icon: Users,
-          content: publicSectorActor
-        }
+      content: [
+        { label: 'Key Actors', text: formatText(publicSectorActor) },
+        { label: 'Policy Framework', text: formatText(publicSectorPolicy) }
       ]
     },
     {
@@ -75,64 +42,46 @@ const DetailedAnalysisSection = ({
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200',
       icon: Factory,
-      subsections: [
-        {
-          title: 'Pioneering Firms',
-          icon: Factory,
-          content: privateSectorPioneeringFirm
-        },
-        {
-          title: 'Industry Growth',
-          icon: Briefcase,
-          content: privateSectorIndustryGrowth
-        }
+      content: [
+        { label: 'Industry Growth', text: formatText(privateSectorGrowth) },
+        { label: 'Pioneering Firms', text: formatText(privateSectorFirm) }
       ]
     },
     {
-      title: 'External Factors Role',
+      title: 'External Factors',
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       borderColor: 'border-green-200',
       icon: Globe,
-      subsections: [
-        {
-          title: 'Market Factors',
-          icon: Globe,
-          content: externalMarketFactors
-        },
-        {
-          title: 'External Actor Contribution',
-          icon: Users,
-          content: externalActorContribution
-        }
+      content: [
+        { label: 'Key Factors', text: formatText(externalFactors) }
       ]
     }
   ];
 
   return (
     <div className="mb-8">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">Understanding the Story</h2>
+      <h2 className="text-2xl font-semibold text-gray-900 mb-6">Detailed Analysis</h2>
       
-      <div className="space-y-8">
+      <div className="space-y-6">
         {sections.map((section, sectionIndex) => (
           <Card key={sectionIndex} className={`${section.bgColor} ${section.borderColor} border-2`}>
             <CardHeader>
-              <CardTitle className={`flex items-center space-x-3 text-2xl ${section.color}`}>
-                <section.icon size={28} />
+              <CardTitle className={`flex items-center space-x-3 text-xl ${section.color}`}>
+                <section.icon size={24} />
                 <span>{section.title}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {section.subsections.map((subsection, subIndex) => (
-                  <div key={subIndex} className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-white/50">
-                    <div className={`flex items-center mb-3 ${section.color}`}>
-                      <subsection.icon size={20} className="mr-2" />
-                      <h4 className="text-lg font-semibold">{subsection.title}</h4>
-                    </div>
-                    <div className="text-gray-700 leading-relaxed">
-                      {formatBulletPoints(subsection.content)}
-                    </div>
+              <div className="space-y-4">
+                {section.content.map((item, index) => (
+                  <div key={index} className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-white/50">
+                    <h4 className={`text-base font-semibold mb-2 ${section.color}`}>
+                      {item.label}
+                    </h4>
+                    <p className="text-gray-700 leading-relaxed text-sm">
+                      {item.text}
+                    </p>
                   </div>
                 ))}
               </div>
