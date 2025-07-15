@@ -15,7 +15,6 @@ import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
 import ReturnStateService from '../services/returnStateService';
-import GetInTouchSection from '../components/GetInTouchSection';
 
 const Landing = () => {
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
@@ -669,9 +668,6 @@ const Landing = () => {
 
       {/* About Section */}
       <AboutSection />
-
-      {/* Get In Touch Section */}
-      <GetInTouchSection />
     </div>
   );
 };
