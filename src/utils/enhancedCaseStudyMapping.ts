@@ -18,7 +18,7 @@ export const getAllEnhancedCaseStudyIds = async (): Promise<number[]> => {
       return [];
     }
 
-    const ids = data?.map(row => row['Primary key']).filter(id => id != null) || [];
+    const ids: number[] = data?.map((row: any) => row['Primary key']).filter((id: any) => id != null) || [];
     console.log('Available enhanced case study IDs:', ids);
     return ids;
   } catch (error) {
