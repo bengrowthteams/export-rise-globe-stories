@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Database, Users, Search, BookOpen, Award, FileText, Lightbulb, Quote } from 'lucide-react';
 
 const AboutSection = () => {
   return (
@@ -14,8 +14,13 @@ const AboutSection = () => {
 
         {/* About this map section */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">About this map</h3>
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-sm mr-4">
+              <Database className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900">About this map</h3>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
                 The Sector Transformation Atlas documents and maps [about 100] export booms since 1995 that have reshaped economies around the world.
@@ -32,8 +37,13 @@ const AboutSection = () => {
 
         {/* Who we are section */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">Who we are</h3>
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm mr-4">
+              <Users className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900">Who we are</h3>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
                 The Sector Transformation Atlas is a project of Growth Teams.
@@ -68,21 +78,31 @@ const AboutSection = () => {
 
         {/* Methodology section */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">Methodology</h3>
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-sm mr-4">
+              <Search className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900">Methodology</h3>
+          </div>
           
           <div className="space-y-8">
             {/* Inclusion Criteria */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h4 className="text-2xl font-bold text-gray-900 mb-6">Inclusion Criteria</h4>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold text-gray-900">Inclusion Criteria</h4>
+              </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
                   We identified export success stories in low- and middle-income countries (LMICs) through a systematic approach using global trade data accessed from the Atlas of Economic Complexity (which is itself based on data from UN Comtrade). For each country in each sector, we ranked export performance globally and compared the rankings across two benchmark years: 1995 and 2022.
                 </p>
-                <p>Cases were included if they met both of the following criteria:</p>
-                <ul className="ml-6 space-y-2">
-                  <li className="list-disc">An improvement of at least 15 places in global export ranking from 1995 to 2022</li>
-                  <li className="list-disc">A final ranking of 60th or better in 2022</li>
-                </ul>
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-l-4 border-purple-500">
+                  <p className="font-medium text-gray-900 mb-3">Cases were included if they met both of the following criteria:</p>
+                  <ul className="ml-6 space-y-2">
+                    <li className="list-disc">An improvement of at least 15 places in global export ranking from 1995 to 2022</li>
+                    <li className="list-disc">A final ranking of 60th or better in 2022</li>
+                  </ul>
+                </div>
                 <p>
                   This criteria emphasizes cases with both significant export growth (Improvement over the time period) and international competitiveness (final ranking). We use data from 1995 to 2022 given data availability and consistent product categories over this time period. This approach yielded 100 cases across 9 sectors: Agriculture (9), Chemicals (10), Electronics (10), Machinery (7), Metals (8), Stones (17), Services (14), Textiles (12), and Vehicles (13). Each case consists of a country-sector pair. We used the Harmonized System (HS) 1992 for sector classification.
                 </p>
@@ -93,8 +113,11 @@ const AboutSection = () => {
             </div>
 
             {/* Research Approach */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h4 className="text-2xl font-bold text-gray-900 mb-6">Research Approach</h4>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold text-gray-900">Research Approach</h4>
+              </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
                   After filtering the trade data based on the aforementioned criteria, we conducted detailed desk research based on available secondary sources (e.g. academic papers, industry reports, case studies) to identify the policy choices, private investments, and external influences that shaped each success. In our research, we prioritized official government sources, international reports (UN, WTO, and World Bank), industry reports, and academic studies over news articles and commentary pieces.
@@ -106,8 +129,11 @@ const AboutSection = () => {
             </div>
 
             {/* Use of AI */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h4 className="text-2xl font-bold text-gray-900 mb-6">Use of AI</h4>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-indigo-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold text-gray-900">Use of AI</h4>
+              </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
                   AI-powered tools were used across the project lifecycle. In the research phase, AI search engines were used as a starting point to understand the possible policies and actors that influenced a country's sectoral export boom. These ideas were supplemented by academic journal and policy document searches that provided corroboration and additional detail. When writing up the case studies, AI was not used directly, but prompts were used for formatting and summarization. The "Key Highlights" and "Success Story" sentences in the case studies, which summarize human-written information, were generated by GPT-powered tools. For web development, all coding was done by no-code AI tools (notably Lovable), directed by human prompting and refinement.
@@ -119,8 +145,13 @@ const AboutSection = () => {
 
         {/* Usage, Citation, and Credits section */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">Usage, Citation, and Credits</h3>
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg shadow-sm mr-4">
+              <BookOpen className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900">Usage, Citation, and Credits</h3>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
                 The Sector Transformation Atlas is a freely available public resource designed to advance the understanding of economic growth through structural transformation. We actively encourage use of the tool and database for research, analysis, and collaboration, with the simple request of proper attribution, crediting the Sector Transformation Atlas and Growth Teams.
@@ -128,10 +159,13 @@ const AboutSection = () => {
               <p>
                 Citation Guidelines. When incorporating Sector Transformation Atlas content in your work, please use this citation format for the Sector Transformation Atlas tool:
               </p>
-              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="font-mono text-gray-800">
-                  Growth Teams. (2025). Sector Transformation Atlas. [www.Sector Transformation Atlas.com]
-                </p>
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-6 rounded-xl border border-orange-200 shadow-sm">
+                <div className="flex items-start space-x-3">
+                  <Quote className="text-orange-500 mt-1 flex-shrink-0" size={20} />
+                  <p className="font-mono text-gray-800 text-base leading-relaxed">
+                    Growth Teams. (2025). Sector Transformation Atlas. [www.Sector Transformation Atlas.com]
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -139,13 +173,40 @@ const AboutSection = () => {
 
         {/* Credits section */}
         <section>
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">Credits</h3>
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-            <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-              <p><strong>Lead creators:</strong> Kartik Akileswaran, Jonathan Mazumdar, Chema Triki</p>
-              <p><strong>Web development, writing, and case research:</strong> Benjamin Oestericher</p>
-              <p><strong>Data analysis and case research:</strong> Adriana Maria Gonzalez, Yosumin Qurbonbekova, Zhengfei Jiao, Yuwei Liu</p>
-              <p><strong>Data analysis:</strong> Navya Sahay, Kara Wong</p>
+          <div className="flex items-center mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg shadow-sm mr-4">
+              <Award className="text-white" size={20} />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900">Credits</h3>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-teal-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold text-gray-900">Lead creators</h4>
+              </div>
+              <p className="text-lg text-gray-700">Kartik Akileswaran, Jonathan Mazumdar, Chema Triki</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold text-gray-900">Web development, writing, and case research</h4>
+              </div>
+              <p className="text-lg text-gray-700">Benjamin Oestericher</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold text-gray-900">Data analysis and case research</h4>
+              </div>
+              <p className="text-lg text-gray-700">Adriana Maria Gonzalez, Yosumin Qurbonbekova, Zhengfei Jiao, Yuwei Liu</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold text-gray-900">Data analysis</h4>
+              </div>
+              <p className="text-lg text-gray-700">Navya Sahay, Kara Wong</p>
             </div>
           </div>
         </section>
