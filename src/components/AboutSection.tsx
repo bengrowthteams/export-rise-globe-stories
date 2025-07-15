@@ -102,7 +102,7 @@ const AboutSection = () => {
                   </ul>
                 </div>
                 <p>
-                  This criteria emphasizes cases with both significant export growth (Improvement over the time period) and international competitiveness (final ranking). We use data from 1995 to 2022 given data availability and consistent product categories over this time period. This approach yielded 100 cases across 9 sectors: Agriculture (9), Chemicals (10), Electronics (10), Machinery (7), Metals (8), Stones (17), Services (14), Textiles (12), and Vehicles (13). Each case consists of a country-sector pair. We used the Harmonized System (HS) 1992 for sector classification.
+                  This criteria emphasizes cases with both significant export growth (improvement over the time period) and international competitiveness (final ranking). We use data from 1995 to 2022 given data availability and consistent product categories over this time period. This approach yielded 100 cases across 9 sectors: Agriculture (9), Chemicals (10), Electronics (10), Machinery (7), Metals (8), Stones (17), Services (14), Textiles (12), and Vehicles (13). Each case consists of a country-sector pair. We used the Harmonized System (HS) 1992 for sector classification.
                 </p>
                 <p>
                   For the final map visualization we excluded countries that the World Bank defined as high-income in 1995 in order to focus our data set exclusively on development in low- and middle income economies.
