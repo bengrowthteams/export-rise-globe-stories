@@ -38,7 +38,7 @@ export const hasEnhancedCaseStudy = async (story: { primaryKey?: number }): Prom
       .from('Country Data')
       .select('"Primary key"')
       .eq('"Primary key"', story.primaryKey)
-      .maybeSingle();
+      .single();
 
     if (error) {
       console.log('No enhanced case study found for Primary key:', story.primaryKey);

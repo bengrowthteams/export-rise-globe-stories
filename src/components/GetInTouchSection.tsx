@@ -103,7 +103,16 @@ const GetInTouchSection = () => {
         {/* Contact Form */}
         <div className="mb-16">
           <Card className="shadow-lg border border-gray-100">
-            <CardContent className="pt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Send className="text-green-600" size={20} />
+                Contact Form
+              </CardTitle>
+              <CardDescription>
+                Fill out the form below and we'll get back to you as soon as possible.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">

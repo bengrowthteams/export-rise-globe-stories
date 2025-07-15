@@ -1,121 +1,120 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import CaseStudyHeader from '@/components/case-study/CaseStudyHeader';
-import KeyHighlightsSection from '@/components/case-study/KeyHighlightsSection';
-import DetailedAnalysisSection from '@/components/case-study/DetailedAnalysisSection';
-import OutcomesSection from '@/components/case-study/OutcomesSection';
-import FurtherReadingSection from '@/components/case-study/FurtherReadingSection';
-import { fetchCaseStudyData, CaseStudyData } from '@/services/caseStudyService';
-import ReturnStateService from '@/services/returnStateService';
-import { toast } from 'sonner';
+import { successStories } from '../data/successStories';
+import { getAvailableCaseStudyIds } from '../services/caseStudyService';
+import { getEnhancedCaseStudyId } from '../utils/enhancedCaseStudyMapping';
+import CaseStudyHeader from '../components/case-study/CaseStudyHeader';
+import TransformationOverview from '../components/case-study/TransformationOverview';
+import SuccessStorySummary from '../components/case-study/SuccessStorySummary';
+import PublicSectorSection from '../components/case-study/PublicSectorSection';
+import PrivateSectorSection from '../components/case-study/PrivateSectorSection';
+import ExternalMarketSection from '../components/case-study/ExternalMarketSection';
+import OutcomesSection from '../components/case-study/OutcomesSection';
+import FurtherReadingSection from '../components/case-study/FurtherReadingSection';
 
 const CaseStudy = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [caseStudyData, setCaseStudyData] = useState<CaseStudyData | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [availableIds, setAvailableIds] = useState<number[]>([]);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(true);
+  
+  // Check if this ID should use the enhanced version
   useEffect(() => {
-    const loadCaseStudy = async () => {
-      if (!id) {
-        setLoading(false);
-        return;
+    const checkAvailability = async () => {
+      console.log('Checking availability for case study ID:', id);
+      
+      // First try to parse as numeric ID
+      const primaryKey = parseInt(id || '0');
+      if (!isNaN(primaryKey)) {
+        const ids = await getAvailableCaseStudyIds();
+        setAvailableIds(ids);
+        
+        if (ids.includes(primaryKey)) {
+          console.log('Found enhanced case study, redirecting to:', primaryKey);
+          navigate(`/enhanced-case-study/${primaryKey}`, { replace: true });
+          return;
+        }
       }
-
-      try {
-        const data = await fetchCaseStudyData(id);
-        setCaseStudyData(data);
-      } catch (error) {
-        console.error('Failed to load case study:', error);
-        toast.error('Failed to load case study data');
-      } finally {
-        setLoading(false);
+      
+      // If not numeric, try to find the story and check if it has enhanced version
+      const story = successStories.find(s => s.id === id);
+      if (story) {
+        const enhancedId = getEnhancedCaseStudyId(story);
+        if (enhancedId) {
+          console.log('Found enhanced case study for story, redirecting to:', enhancedId);
+          navigate(`/enhanced-case-study/${enhancedId}`, { replace: true });
+          return;
+        }
       }
+      
+      setIsCheckingAvailability(false);
     };
+    
+    checkAvailability();
+  }, [id, navigate]);
+  
+  const story = successStories.find(s => s.id === id);
 
-    loadCaseStudy();
-  }, [id]);
+  if (isCheckingAvailability) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Checking case study availability...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleBackToMap = () => {
-    ReturnStateService.clearReturnState();
-    navigate('/', { 
-      state: { scrollToMap: true }
-    });
+  if (!story) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Case Study Not Found</h1>
+          <button 
+            onClick={() => navigate('/')}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Back to Map
+          </button>
+        </div>
+      </div>
+    );
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading case study...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!caseStudyData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Case Study Not Found</h1>
-          <p className="text-gray-600 mb-6">The case study you're looking for doesn't exist.</p>
-          <Button onClick={handleBackToMap} className="bg-green-600 hover:bg-green-700">
-            <ArrowLeft className="mr-2" size={16} />
-            Back to Map
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const handleNavigateBack = () => {
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Button 
-            onClick={handleBackToMap}
-            variant="ghost" 
-            className="mb-2"
-          >
-            <ArrowLeft className="mr-2" size={16} />
-            Back to Map
-          </Button>
-        </div>
-      </div>
+      <CaseStudyHeader
+        flag={story.flag}
+        country={story.country}
+        sector={story.sector}
+        successfulProduct={story.successfulProduct}
+        onNavigateBack={handleNavigateBack}
+      />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        <CaseStudyHeader 
-          country={caseStudyData.country}
-          sector={caseStudyData.sector}
-          product={caseStudyData.product}
-          successStory={caseStudyData.successStory}
+      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        <TransformationOverview
+          globalRanking1995={story.globalRanking1995}
+          globalRanking2022={story.globalRanking2022}
+          initialExports1995={story.initialExports1995}
+          initialExports2022={story.initialExports2022}
         />
 
-        <KeyHighlightsSection 
-          initialExports1995={caseStudyData.initialExports1995}
-          currentExports2022={caseStudyData.currentExports2022}
-          globalShare1995={caseStudyData.globalShare1995}
-          globalShare2022={caseStudyData.globalShare2022}
-          rank1995={caseStudyData.rank1995}
-          rank2022={caseStudyData.rank2022}
-          ranksChange={caseStudyData.ranksChange}
-        />
+        <SuccessStorySummary summary={story.successStorySummary} />
 
-        <DetailedAnalysisSection 
-          externalFactors={caseStudyData.externalFactors}
-          privateSectorGrowth={caseStudyData.privateSectorGrowth}
-          privateSectorFirm={caseStudyData.privateSectorFirm}
-          publicSectorActor={caseStudyData.publicSectorActor}
-          publicSectorPolicy={caseStudyData.publicSectorPolicy}
-        />
+        <PublicSectorSection />
 
-        <OutcomesSection outcome={caseStudyData.outcome} />
+        <PrivateSectorSection />
 
-        <FurtherReadingSection sources={caseStudyData.sources} />
+        <ExternalMarketSection />
+
+        <OutcomesSection />
+
+        <FurtherReadingSection />
       </div>
     </div>
   );
