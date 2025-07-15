@@ -136,7 +136,10 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
         flag,
         marketDestinations: [],
         challenges: [],
-        impact: row.Outcome || '',
+        impact: {
+          jobs: 'Data not available',
+          economicContribution: formatExportValue(row['Current Exports - 2022 (USD)'] || 0)
+        },
         globalRanking1995: row['Rank (1995)'] || 0,
         globalRanking2022: row['Rank (2022)'] || 0,
         initialExports1995: formatExportValue(row['Initial Exports - 1995 (USD)'] || 0),
@@ -184,7 +187,7 @@ export const fetchAllSuccessStories = async (): Promise<{ stories: SuccessStory[
           coordinates: countryStoriesList[0].coordinates,
           flag: countryStoriesList[0].flag,
           hasMutipleSectors: true,
-          primarySector: countryStoriesList[0].sector, // Add the missing primarySector property
+          primarySector: sectors[0], // Use the first sector as primary
           sectors
         };
 
