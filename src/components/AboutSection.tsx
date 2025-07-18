@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ExternalLink, Database, Users, Search, BookOpen, Award, FileText, Lightbulb, Quote } from 'lucide-react';
 const AboutSection = () => {
@@ -46,9 +47,9 @@ const AboutSection = () => {
                 The Sector Transformation Atlas is a project of <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent font-semibold">Growth Teams</span>.
               </p>
               <p>
-                <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent hover:from-green-700 hover:to-blue-700 underline inline-flex items-center gap-1 transition-all font-semibold">
+                <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent hover:from-green-700 hover:to-blue-700 underline inline-flex items-center transition-all font-semibold">
                   Growth Teams
-                  <ExternalLink size={16} />
+                  <ExternalLink size={16} className="ml-1" />
                 </a>{' '}helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
               </p>
               <p>
