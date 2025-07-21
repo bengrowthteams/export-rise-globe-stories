@@ -90,9 +90,9 @@ export const transformCountryData = (data: CountryDataRow[]) => {
         },
         globalRanking1995: row['Rank (1995)'] || 0,
         globalRanking2022: row['Rank (2022)'] || 0,
-        // IMPORTANT: Store the raw numeric values as strings for consistent parsing
-        initialExports1995: convertExportValueToString(row['Initial Exports - 1995 (USD)']),
-        initialExports2022: convertExportValueToString(row['Current Exports - 2022 (USD)']),
+        // Store the raw numeric values consistently as strings for parsing
+        initialExports1995: `${row['Initial Exports - 1995 (USD)'] || 0}`,
+        initialExports2022: `${row['Current Exports - 2022 (USD)'] || 0}`,
         successfulProduct: row['Successful product'] || 'Unknown',
         successStorySummary: row['Success Story (1 sentence summary)'] || 'No summary available'
       };
@@ -125,13 +125,20 @@ export const transformCountryData = (data: CountryDataRow[]) => {
           },
           globalRanking1995: row['Rank (1995)'] || 0,
           globalRanking2022: row['Rank (2022)'] || 0,
-          // IMPORTANT: Store the raw numeric values as strings for consistent parsing
-          initialExports1995: convertExportValueToString(row['Initial Exports - 1995 (USD)']),
-          initialExports2022: convertExportValueToString(row['Current Exports - 2022 (USD)']),
+          // Store the raw numeric values consistently as strings for parsing
+          initialExports1995: `${row['Initial Exports - 1995 (USD)'] || 0}`,
+          initialExports2022: `${row['Current Exports - 2022 (USD)'] || 0}`,
           successfulProduct: row['Successful product'] || 'Unknown',
           successStorySummary: row['Success Story (1 sentence summary)'] || 'No summary available'
         };
       });
+
+      // Find the primary sector (highest export value in 2022)
+      const primarySector = sectors.reduce((max, current) => {
+        const maxValue = parseFloat(`${max.initialExports2022}`.replace(/[^\d.]/g, '')) || 0;
+        const currentValue = parseFloat(`${current.initialExports2022}`.replace(/[^\d.]/g, '')) || 0;
+        return currentValue > maxValue ? current : max;
+      }, sectors[0]);
 
       const countryStory: CountrySuccessStories = {
         id: `country-${country.toLowerCase().replace(/\s+/g, '-')}`,
@@ -139,7 +146,9 @@ export const transformCountryData = (data: CountryDataRow[]) => {
         flag,
         coordinates,
         timeframe: '1995-2022',
-        sectors
+        sectors,
+        hasMutipleSectors: true,
+        primarySector
       };
 
       countryStories.push(countryStory);

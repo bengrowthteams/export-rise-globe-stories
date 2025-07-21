@@ -1,4 +1,3 @@
-
 // Country coordinates mapping for map display
 export const countryCoordinates: Record<string, { lat: number; lng: number }> = {
   'Afghanistan': { lat: 33.9391, lng: 67.7100 },
@@ -165,4 +164,9 @@ export const countryCoordinates: Record<string, { lat: number; lng: number }> = 
   'UK': { lat: 55.3781, lng: -3.4360 },
   'USA': { lat: 37.0902, lng: -95.7129 },
   'US': { lat: 37.0902, lng: -95.7129 }
+};
+
+// Helper function to get coordinates for a country
+export const getCountryCoordinates = (country: string): { lat: number; lng: number } => {
+  return countryCoordinates[country] || { lat: 0, lng: 0 };
 };
