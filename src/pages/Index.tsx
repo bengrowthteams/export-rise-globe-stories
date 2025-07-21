@@ -28,8 +28,8 @@ const Index = () => {
       <NavigationBar />
       
       <div className="relative h-[calc(100vh-56px)]">
-        {/* Search Bar */}
-        <div className="absolute top-4 left-4 z-20">
+        {/* Search Bar - Fixed width container */}
+        <div className="absolute top-4 left-4 z-20 w-80">
           <SearchBar onCountrySelect={handleCountrySelect} />
         </div>
 
