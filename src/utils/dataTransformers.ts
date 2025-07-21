@@ -1,9 +1,8 @@
 
-import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { SuccessStory } from '../types/SuccessStory';
-import { countryCoordinates } from '../data/countryCoordinates';
-import { countryFlags } from '../data/countryFlags';
-import { formatCurrency, calculateGrowthRate, generateSuccessStorySummary } from './formatUtils';
+import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
+import { getCountryCoordinates } from '../data/countryCoordinates';
+import { getCountryFlag } from '../data/countryFlags';
 
 interface CountryDataRow {
   'Primary key': number;
@@ -18,158 +17,147 @@ interface CountryDataRow {
   'Success Story (1 sentence summary)': string | null;
 }
 
-export const transformToSectorStory = (row: CountryDataRow): SectorStory => {
-  const primaryKey = row['Primary key'];
-  const sector = row.Sector!;
-  const product = row['Successful product'] || 'specialized products';
-  const rank1995 = row['Rank (1995)'] || 50;
-  const rank2022 = row['Rank (2022)'] || 50;
-  const initial = row['Initial Exports - 1995 (USD)'] || 0;
-  const current = row['Current Exports - 2022 (USD)'] || 0;
-  const growthRate = calculateGrowthRate(initial, current);
-  const successStory = row['Success Story (1 sentence summary)'] || `Strategic development in ${sector} through export-oriented growth and specialization in ${product}.`;
-
-  return {
-    primaryKey,
-    sector,
-    product,
-    description: successStory,
-    growthRate,
-    exportValue: formatCurrency(current),
-    keyFactors: [
-      'Strategic sector development',
-      'Export market expansion', 
-      'Product specialization',
-      'Global value chain integration'
-    ],
-    marketDestinations: ['Global Markets', 'Regional Partners', 'Emerging Economies'],
-    challenges: ['Market competition', 'Economic volatility', 'Trade policy changes'],
-    impact: {
-      jobs: 'Significant employment creation',
-      economicContribution: `${((current / 1000000000) * 0.1).toFixed(1)}% of export economy`
-    },
-    globalRanking1995: rank1995,
-    globalRanking2022: rank2022,
-    initialExports1995: formatCurrency(initial),
-    initialExports2022: formatCurrency(current),
-    successfulProduct: product.toLowerCase(),
-    successStorySummary: generateSuccessStorySummary(row.Country!, sector, product, growthRate)
-  };
+// Helper function to format currency for display
+const formatCurrencyForDisplay = (amount: number): string => {
+  if (amount >= 1000000000) {
+    return `$${(amount / 1000000000).toFixed(1)}B`;
+  } else if (amount >= 1000000) {
+    return `$${(amount / 1000000).toFixed(1)}M`;
+  } else if (amount >= 1000) {
+    return `$${(amount / 1000).toFixed(1)}K`;
+  }
+  return `$${amount.toLocaleString()}`;
 };
 
-export const transformCountryData = (data: CountryDataRow[]): { 
-  legacyStories: SuccessStory[], 
-  countryStories: CountrySuccessStories[] 
-} => {
-  console.log('Transforming country data, received rows:', data.length);
-  
-  const filteredData = data.filter(row => {
-    const hasRequiredData = row.Country && row.Sector && row['Primary key'];
-    if (!hasRequiredData) {
-      console.log('Filtering out row with missing required data:', row);
-    }
-    return hasRequiredData;
-  });
+// Helper function to safely convert numeric export values to string format
+const convertExportValueToString = (value: number | null): string => {
+  if (value === null || value === undefined) return '$0';
+  return `$${value.toLocaleString()}`;
+};
+
+export const transformCountryData = (data: CountryDataRow[]) => {
+  console.log('=== TRANSFORMING COUNTRY DATA ===');
+  console.log('Input data sample:', data.slice(0, 2));
 
   // Group by country
   const countryGroups = new Map<string, CountryDataRow[]>();
-  filteredData.forEach(row => {
-    const country = row.Country!;
-    if (!countryGroups.has(country)) {
-      countryGroups.set(country, []);
+  
+  data.forEach(row => {
+    if (!row.Country) return;
+    
+    if (!countryGroups.has(row.Country)) {
+      countryGroups.set(row.Country, []);
     }
-    countryGroups.get(country)!.push(row);
+    countryGroups.get(row.Country)!.push(row);
   });
 
   const legacyStories: SuccessStory[] = [];
   const countryStories: CountrySuccessStories[] = [];
 
   countryGroups.forEach((rows, country) => {
-    const sectors = rows.map(transformToSectorStory);
     const coordinates = getCountryCoordinates(country);
-    
-    if (sectors.length === 1) {
-      // Single sector - create legacy story
-      const sectorStory = sectors[0];
+    const flag = getCountryFlag(country);
+
+    if (rows.length === 1) {
+      // Single sector country - create legacy story
+      const row = rows[0];
+      
+      console.log(`Processing single-sector country: ${country}`, {
+        sector: row.Sector,
+        initialExports1995: row['Initial Exports - 1995 (USD)'],
+        currentExports2022: row['Current Exports - 2022 (USD)'],
+        primaryKey: row['Primary key']
+      });
+
       const legacyStory: SuccessStory = {
-        id: country.toLowerCase().replace(/\s+/g, '-'),
-        primaryKey: sectorStory.primaryKey,
-        country,
-        sector: sectorStory.sector,
-        product: sectorStory.product,
-        description: sectorStory.description,
-        growthRate: sectorStory.growthRate,
+        id: `legacy-${row['Primary key']}`,
+        primaryKey: row['Primary key'],
+        country: country,
+        sector: row.Sector || 'Unknown',
+        product: row['Successful product'] || 'Unknown',
+        description: row['Success Story (1 sentence summary)'] || 'No description available',
+        growthRate: Math.abs(row['Ranks Change (absolute)'] || 0),
         timeframe: '1995-2022',
-        exportValue: sectorStory.exportValue,
-        keyFactors: sectorStory.keyFactors,
+        exportValue: formatCurrencyForDisplay(row['Current Exports - 2022 (USD)'] || 0),
+        keyFactors: ['Data not available in legacy format'],
         coordinates,
-        flag: countryFlags[country] || '🌍',
-        marketDestinations: sectorStory.marketDestinations,
-        challenges: sectorStory.challenges,
-        impact: sectorStory.impact,
-        globalRanking1995: sectorStory.globalRanking1995,
-        globalRanking2022: sectorStory.globalRanking2022,
-        initialExports1995: sectorStory.initialExports1995,
-        initialExports2022: sectorStory.initialExports2022,
-        successfulProduct: sectorStory.successfulProduct,
-        successStorySummary: sectorStory.successStorySummary
+        flag,
+        marketDestinations: ['Data not available'],
+        challenges: ['Data not available'],
+        impact: {
+          jobs: 'Data not available',
+          economicContribution: 'Data not available'
+        },
+        globalRanking1995: row['Rank (1995)'] || 0,
+        globalRanking2022: row['Rank (2022)'] || 0,
+        // IMPORTANT: Store the raw numeric values as strings for consistent parsing
+        initialExports1995: convertExportValueToString(row['Initial Exports - 1995 (USD)']),
+        initialExports2022: convertExportValueToString(row['Current Exports - 2022 (USD)']),
+        successfulProduct: row['Successful product'] || 'Unknown',
+        successStorySummary: row['Success Story (1 sentence summary)'] || 'No summary available'
       };
+
       legacyStories.push(legacyStory);
     } else {
-      // Multiple sectors - create country story
-      const primarySector = sectors.reduce((prev, current) => 
-        (current.globalRanking2022 < prev.globalRanking2022) ? current : prev
-      );
+      // Multi-sector country - create country stories
+      console.log(`Processing multi-sector country: ${country} with ${rows.length} sectors`);
+      
+      const sectors: SectorStory[] = rows.map(row => {
+        console.log(`Processing sector: ${row.Sector}`, {
+          initialExports1995: row['Initial Exports - 1995 (USD)'],
+          currentExports2022: row['Current Exports - 2022 (USD)'],
+          primaryKey: row['Primary key']
+        });
+
+        return {
+          primaryKey: row['Primary key'],
+          sector: row.Sector || 'Unknown',
+          product: row['Successful product'] || 'Unknown',
+          description: row['Success Story (1 sentence summary)'] || 'No description available',
+          growthRate: Math.abs(row['Ranks Change (absolute)'] || 0),
+          exportValue: formatCurrencyForDisplay(row['Current Exports - 2022 (USD)'] || 0),
+          keyFactors: ['Data not available in this format'],
+          marketDestinations: ['Data not available'],
+          challenges: ['Data not available'],
+          impact: {
+            jobs: 'Data not available',
+            economicContribution: 'Data not available'
+          },
+          globalRanking1995: row['Rank (1995)'] || 0,
+          globalRanking2022: row['Rank (2022)'] || 0,
+          // IMPORTANT: Store the raw numeric values as strings for consistent parsing
+          initialExports1995: convertExportValueToString(row['Initial Exports - 1995 (USD)']),
+          initialExports2022: convertExportValueToString(row['Current Exports - 2022 (USD)']),
+          successfulProduct: row['Successful product'] || 'Unknown',
+          successStorySummary: row['Success Story (1 sentence summary)'] || 'No summary available'
+        };
+      });
 
       const countryStory: CountrySuccessStories = {
-        id: country.toLowerCase().replace(/\s+/g, '-'),
+        id: `country-${country.toLowerCase().replace(/\s+/g, '-')}`,
         country,
-        flag: countryFlags[country] || '🌍',
+        flag,
         coordinates,
         timeframe: '1995-2022',
-        sectors: sectors.sort((a, b) => a.globalRanking2022 - b.globalRanking2022), // Sort by best ranking
-        hasMutipleSectors: true,
-        primarySector
+        sectors
       };
+
       countryStories.push(countryStory);
     }
   });
 
-  return { legacyStories, countryStories };
-};
+  console.log(`=== TRANSFORMATION COMPLETE ===`);
+  console.log(`Legacy stories: ${legacyStories.length}`);
+  console.log(`Country stories: ${countryStories.length}`);
+  
+  // Log a sample for debugging
+  if (legacyStories.length > 0) {
+    console.log('Sample legacy story export values:', {
+      country: legacyStories[0].country,
+      initialExports1995: legacyStories[0].initialExports1995,
+      initialExports2022: legacyStories[0].initialExports2022
+    });
+  }
 
-const getCountryCoordinates = (country: string): { lat: number; lng: number } => {
-  // First try exact match
-  if (countryCoordinates[country]) {
-    return countryCoordinates[country];
-  }
-  
-  // Try case-insensitive match
-  const lowerCountry = country.toLowerCase();
-  const matchingKey = Object.keys(countryCoordinates).find(
-    key => key.toLowerCase() === lowerCountry
-  );
-  
-  if (matchingKey) {
-    console.log(`Found case-insensitive match for ${country}: ${matchingKey}`);
-    return countryCoordinates[matchingKey];
-  }
-  
-  // Try partial matches for common variations
-  const partialMatch = Object.keys(countryCoordinates).find(key => {
-    const keyLower = key.toLowerCase();
-    return keyLower.includes(lowerCountry) || lowerCountry.includes(keyLower);
-  });
-  
-  if (partialMatch) {
-    console.log(`Found partial match for ${country}: ${partialMatch}`);
-    return countryCoordinates[partialMatch];
-  }
-  
-  // Log missing countries for debugging
-  console.warn(`Missing coordinates for country: "${country}"`);
-  console.warn('Available countries:', Object.keys(countryCoordinates).sort());
-  
-  // Return a default location (center of Africa for missing countries)
-  return { lat: 0, lng: 20 };
+  return { legacyStories, countryStories };
 };

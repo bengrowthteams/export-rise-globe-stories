@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, TrendingUp, ArrowRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +64,43 @@ const StoryCard: React.FC<StoryCardProps> = ({
   return null;
 };
 
+// Improved calculation function that handles both numeric and string inputs robustly
+const calculateExportGrowthMultiple = (exports1995: string | number, exports2022: string | number): number => {
+  console.log('Calculating export growth multiple:', { exports1995, exports2022 });
+  
+  let amount1995: number;
+  let amount2022: number;
+  
+  // Handle string inputs by parsing out currency symbols and commas
+  if (typeof exports1995 === 'string') {
+    // Remove all non-digit characters except decimal points
+    const cleaned1995 = exports1995.replace(/[^\d.]/g, '');
+    amount1995 = parseFloat(cleaned1995) || 0;
+  } else {
+    amount1995 = exports1995 || 0;
+  }
+  
+  if (typeof exports2022 === 'string') {
+    // Remove all non-digit characters except decimal points
+    const cleaned2022 = exports2022.replace(/[^\d.]/g, '');
+    amount2022 = parseFloat(cleaned2022) || 0;
+  } else {
+    amount2022 = exports2022 || 0;
+  }
+  
+  console.log('Parsed amounts:', { amount1995, amount2022 });
+  
+  if (amount1995 === 0) {
+    console.warn('Initial exports 1995 is zero, cannot calculate growth multiple');
+    return 0;
+  }
+  
+  const multiple = amount2022 / amount1995;
+  console.log('Calculated multiple:', multiple);
+  
+  return multiple;
+};
+
 // Legacy component for backwards compatibility
 const LegacyStoryCard: React.FC<{
   story: SuccessStory;
@@ -84,12 +122,6 @@ const LegacyStoryCard: React.FC<{
 
   const calculateRankingGain = (rank1995: number, rank2022: number): number => {
     return rank1995 - rank2022;
-  };
-
-  const calculateExportGrowthMultiple = (exports1995: string, exports2022: string): number => {
-    const amount1995 = parseFloat(exports1995.replace(/[\$,]/g, ''));
-    const amount2022 = parseFloat(exports2022.replace(/[\$,]/g, ''));
-    return amount2022 / amount1995;
   };
 
   const handleViewCaseStudy = () => {
@@ -242,12 +274,6 @@ const MultiSectorStoryCard: React.FC<{
 
   const calculateRankingGain = (rank1995: number, rank2022: number): number => {
     return rank1995 - rank2022;
-  };
-
-  const calculateExportGrowthMultiple = (exports1995: string, exports2022: string): number => {
-    const amount1995 = parseFloat(exports1995.replace(/[\$,]/g, ''));
-    const amount2022 = parseFloat(exports2022.replace(/[\$,]/g, ''));
-    return amount2022 / amount1995;
   };
 
   const convertToLegacyStory = (): SuccessStory => ({
