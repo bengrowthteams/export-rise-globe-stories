@@ -87,6 +87,12 @@ const LegacyStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
+  const calculateExportGrowthMultiple = (exports1995: string, exports2022: string): number => {
+    const amount1995 = parseFloat(exports1995.replace(/[\$,]/g, ''));
+    const amount2022 = parseFloat(exports2022.replace(/[\$,]/g, ''));
+    return amount2022 / amount1995;
+  };
+
   const handleViewCaseStudy = () => {
     console.log('Legacy Story Card - handleViewCaseStudy called for Primary key:', story.primaryKey);
     
@@ -109,6 +115,7 @@ const LegacyStoryCard: React.FC<{
   const rankingGain = calculateRankingGain(story.globalRanking1995, story.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
+  const exportGrowthMultiple = calculateExportGrowthMultiple(story.initialExports1995, story.initialExports2022);
 
   return (
     <div className="h-full w-full bg-white shadow-2xl flex flex-col">
@@ -134,9 +141,9 @@ const LegacyStoryCard: React.FC<{
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6">
-          {/* Global Ranking Gain */}
+          {/* Global Export Ranking Gain */}
           <div>
-            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Export Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
@@ -157,20 +164,25 @@ const LegacyStoryCard: React.FC<{
             </div>
           </div>
 
-          {/* Export Value Comparison */}
+          {/* Export Value Growth */}
           <div>
             <h3 className="text-base font-semibold text-gray-700 mb-3">Export Value Growth</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-xl font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
-                <p className="text-sm text-gray-600">1995</p>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <p className="text-xl font-bold text-gray-700">{formatCurrency(story.initialExports1995)}</p>
+                  <p className="text-sm text-gray-600">1995</p>
+                </div>
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="text-blue-600" size={20} />
-                  <p className="text-xl font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
+                  <span className="text-xl font-bold text-blue-600">
+                    {exportGrowthMultiple.toFixed(1)}x
+                  </span>
                 </div>
-                <p className="text-sm text-blue-700">2022</p>
+                <div className="text-center">
+                  <p className="text-xl font-bold text-blue-600">{formatCurrency(story.initialExports2022)}</p>
+                  <p className="text-sm text-blue-700">2022</p>
+                </div>
               </div>
             </div>
           </div>
@@ -233,6 +245,12 @@ const MultiSectorStoryCard: React.FC<{
     return rank1995 - rank2022;
   };
 
+  const calculateExportGrowthMultiple = (exports1995: string, exports2022: string): number => {
+    const amount1995 = parseFloat(exports1995.replace(/[\$,]/g, ''));
+    const amount2022 = parseFloat(exports2022.replace(/[\$,]/g, ''));
+    return amount2022 / amount1995;
+  };
+
   const convertToLegacyStory = (): SuccessStory => ({
     id: `${countryStories.id}-${selectedSector.sector}`,
     primaryKey: selectedSector.primaryKey, // Ensure primaryKey is preserved
@@ -281,6 +299,7 @@ const MultiSectorStoryCard: React.FC<{
   const rankingGain = calculateRankingGain(selectedSector.globalRanking1995, selectedSector.globalRanking2022);
   const gainColor = rankingGain > 0 ? 'text-green-600' : rankingGain < 0 ? 'text-red-600' : 'text-gray-600';
   const gainPrefix = rankingGain > 0 ? '+' : '';
+  const exportGrowthMultiple = calculateExportGrowthMultiple(selectedSector.initialExports1995, selectedSector.initialExports2022);
 
   return (
     <div className="h-full w-full bg-white shadow-2xl flex flex-col">
@@ -329,9 +348,9 @@ const MultiSectorStoryCard: React.FC<{
             </div>
           )}
 
-          {/* Global Ranking Gain */}
+          {/* Global Export Ranking Gain */}
           <div>
-            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Ranking Gain</h3>
+            <h3 className="text-base font-semibold text-gray-700 mb-3">Global Export Ranking Gain</h3>
             <div className="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-center">
@@ -352,20 +371,25 @@ const MultiSectorStoryCard: React.FC<{
             </div>
           </div>
 
-          {/* Export Value Comparison */}
+          {/* Export Value Growth */}
           <div>
             <h3 className="text-base font-semibold text-gray-700 mb-3">Export Value Growth</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-xl font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
-                <p className="text-sm text-gray-600">1995</p>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <p className="text-xl font-bold text-gray-700">{formatCurrency(selectedSector.initialExports1995)}</p>
+                  <p className="text-sm text-gray-600">1995</p>
+                </div>
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="text-blue-600" size={20} />
-                  <p className="text-xl font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
+                  <span className="text-xl font-bold text-blue-600">
+                    {exportGrowthMultiple.toFixed(1)}x
+                  </span>
                 </div>
-                <p className="text-sm text-blue-700">2022</p>
+                <div className="text-center">
+                  <p className="text-xl font-bold text-blue-600">{formatCurrency(selectedSector.initialExports2022)}</p>
+                  <p className="text-sm text-blue-700">2022</p>
+                </div>
               </div>
             </div>
           </div>
