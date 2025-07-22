@@ -44,7 +44,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     },
     {
       title: "Story Cards & Detailed Case Studies",
-      content: "When you select a country and sector, a card appears showing key metrics. Click 'View Full Case Study' to read our detailed insights on how the country achieved sector growth.",
+      content: "When you select a country and sector, a card appears showing key metrics. Click 'View Full Success Story' to read our detailed insights on how the country achieved sector growth.",
       position: "right",
       highlight: "story-card"
     }
