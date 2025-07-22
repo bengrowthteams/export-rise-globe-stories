@@ -101,6 +101,16 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Fix mobile overflow issues */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
 }
 
 /* Ensure Mapbox markers have proper positioning - no overrides */

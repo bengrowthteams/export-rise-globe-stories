@@ -155,13 +155,13 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
       {/* Tutorial card */}
-      <div className={`absolute bg-white rounded-lg shadow-2xl p-6 max-w-md transition-all duration-500 z-40 ${
+      <div className={`absolute bg-white rounded-lg shadow-2xl p-4 sm:p-6 max-w-md mx-4 sm:mx-0 transition-all duration-500 z-40 ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
-        currentStepData.position === 'left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
-        currentStepData.position === 'middle-left' ? 'top-1/2 left-8 transform -translate-y-1/2' :
-        currentStepData.position === 'top-left' ? 'top-20 left-8' :
-        currentStepData.position === 'bottom-right' ? 'bottom-8 right-8' :
-        currentStepData.position === 'bottom-left' ? 'bottom-8 left-8' :
+        currentStepData.position === 'left' ? 'bottom-4 left-4 right-4 sm:top-1/2 sm:left-8 sm:right-auto sm:transform sm:-translate-y-1/2' :
+        currentStepData.position === 'middle-left' ? 'bottom-4 left-4 right-4 sm:top-1/2 sm:left-8 sm:right-auto sm:transform sm:-translate-y-1/2' :
+        currentStepData.position === 'top-left' ? 'bottom-4 left-4 right-4 sm:top-20 sm:left-8 sm:right-auto' :
+        currentStepData.position === 'bottom-right' ? 'bottom-4 left-4 right-4 sm:bottom-8 sm:right-8 sm:left-auto' :
+        currentStepData.position === 'bottom-left' ? 'bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-auto' :
         'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
       }`}>
         <div className="flex items-start justify-between mb-4">

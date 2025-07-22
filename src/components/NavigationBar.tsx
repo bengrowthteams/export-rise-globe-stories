@@ -76,32 +76,36 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg shadow-sm">
               <Globe className="text-white" size={18} />
             </div>
-            <h1 className="text-lg font-bold text-gray-900">Sector Transformation Atlas</h1>
+            <h1 className="text-sm sm:text-lg font-bold text-gray-900 truncate">
+              <span className="hidden sm:inline">Sector Transformation Atlas</span>
+              <span className="sm:hidden">Atlas</span>
+            </h1>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-2 sm:space-x-6">
             <button 
               onClick={handleWhyExportsClick}
-              className="text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
+              className="hidden sm:block text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
             >
               Why Exports?
             </button>
             <button 
               onClick={handleExploreClick}
-              className="text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
+              className="text-xs sm:text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
             >
               Explore
             </button>
             <button 
               onClick={handleAboutClick}
-              className="text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
+              className="text-xs sm:text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
             >
               About
             </button>
             <button 
               onClick={handleGetInTouchClick}
-              className="text-sm font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+              className="text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              Get In Touch
+              <span className="hidden sm:inline">Get In Touch</span>
+              <span className="sm:hidden">Contact</span>
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ const Landing = () => {
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
   const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
-  const [showSectorFilter, setShowSectorFilter] = useState(true);
+  const [showSectorFilter, setShowSectorFilter] = useState(false);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
