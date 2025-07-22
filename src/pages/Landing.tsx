@@ -27,20 +27,39 @@ const Landing = () => {
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
   const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
-  const [showSectorFilter, setShowSectorFilter] = useState(!isMobile);
+  const [showSectorFilter, setShowSectorFilter] = useState(false);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
-  const [showMobileWelcome, setShowMobileWelcome] = useState(isMobile && !localStorage.getItem('mobile-welcome-seen'));
+  const [showMobileWelcome, setShowMobileWelcome] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const worldMapRef = useRef<WorldMapRef>(null);
   const [clearPopups, setClearPopups] = useState<(() => void) | null>(null);
   
-  const { showTutorial, hasSeenTutorial, startTutorial, closeTutorial } = useTutorial();
+  const { 
+    showTutorial, 
+    startTutorial, 
+    closeTutorial, 
+    triggerTutorialIfNeeded 
+  } = useTutorial();
+
+  // Set initial filter state based on device type
+  React.useEffect(() => {
+    if (!isMobile) {
+      setShowSectorFilter(true);
+    }
+  }, [isMobile]);
+
+  // Show mobile welcome popup
+  React.useEffect(() => {
+    if (isMobile && !localStorage.getItem('mobile-welcome-seen')) {
+      setShowMobileWelcome(true);
+    }
+  }, [isMobile]);
 
   React.useEffect(() => {
     const handleReturnFromCaseStudy = () => {
@@ -281,12 +300,7 @@ const Landing = () => {
       });
     }
 
-    if (!hasSeenTutorial) {
-      setTimeout(() => {
-        console.log('Auto-starting tutorial for first-time user');
-        startTutorial();
-      }, 1000);
-    }
+    // Tutorial will auto-trigger based on useTutorial hook logic
   };
 
   const handleCountrySelect = (story: SuccessStory | null, countryStories?: CountrySuccessStories | null) => {
@@ -485,15 +499,11 @@ const Landing = () => {
   };
 
   const handleStartTutorial = () => {
-    if (mapSectionRef.current) {
-      mapSectionRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
+    startTutorial();
+    // Prevent scroll when tutorial starts
     setTimeout(() => {
-      startTutorial();
-    }, 500);
+      window.scrollTo({ top: window.scrollY, behavior: 'auto' });
+    }, 0);
   };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {

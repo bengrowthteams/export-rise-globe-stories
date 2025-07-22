@@ -84,9 +84,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
           <div className="flex items-center space-x-2 sm:space-x-6">
             <button 
               onClick={handleWhyExportsClick}
-              className="hidden sm:block text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
+              className="text-xs sm:text-sm text-gray-600 hover:text-green-600 transition-colors font-medium"
             >
-              Why Exports?
+              <span className="hidden sm:inline">Why Exports?</span>
+              <span className="sm:hidden">Why</span>
             </button>
             <button 
               onClick={handleExploreClick}
