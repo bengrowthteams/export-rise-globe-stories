@@ -17,20 +17,23 @@ import GetInTouchSection from '../components/GetInTouchSection';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
+import { useIsMobile } from '../hooks/use-mobile';
 import ReturnStateService from '../services/returnStateService';
 
 const Landing = () => {
+  const isMobile = useIsMobile();
   const [selectedStory, setSelectedStory] = useState<SuccessStory | null>(null);
   const [selectedCountryStories, setSelectedCountryStories] = useState<CountrySuccessStories | null>(null);
   const [selectedSector, setSelectedSector] = useState<SectorStory | null>(null);
   const [showSectorModal, setShowSectorModal] = useState(false);
   const [showFilteredSectorModal, setShowFilteredSectorModal] = useState(false);
-  const [showSectorFilter, setShowSectorFilter] = useState(false);
+  const [showSectorFilter, setShowSectorFilter] = useState(!isMobile);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [mapState, setMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const [storedMapState, setStoredMapState] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  const [showMobileWelcome, setShowMobileWelcome] = useState(isMobile && !localStorage.getItem('mobile-welcome-seen'));
   const navigate = useNavigate();
   const location = useLocation();
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -510,6 +513,11 @@ const Landing = () => {
     setClearPopups(() => clearFn);
   }, []);
 
+  const handleCloseMobileWelcome = () => {
+    setShowMobileWelcome(false);
+    localStorage.setItem('mobile-welcome-seen', 'true');
+  };
+
   return (
     <div className="min-h-screen">
       <NavigationBar onExploreClick={handleExploreMap} />
@@ -589,8 +597,8 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Tutorial Button - positioned to avoid zoom controls */}
-          <div className="absolute top-4 right-20 z-20">
+          {/* Tutorial Button - positioned to avoid overlap with search bar on mobile */}
+          <div className={`absolute z-20 ${isMobile ? 'bottom-20 right-4' : 'top-4 right-20'}`}>
             <div className="tutorial-help-button">
               <Button
                 onClick={handleStartTutorial}
@@ -668,6 +676,34 @@ const Landing = () => {
               selectedSectors={selectedSectors}
               onSectorToggle={handleSectorToggle}
             />
+          )}
+
+          {/* Mobile Welcome Popup */}
+          {showMobileWelcome && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+              <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Welcome!</h3>
+                  <button
+                    onClick={handleCloseMobileWelcome}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Welcome to the Sector Transformation Atlas. This website is better viewed on a computer or tablet, but we welcome you to explore on your mobile device.
+                </p>
+                
+                <Button
+                  onClick={handleCloseMobileWelcome}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  Start Exploring
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       </div>
