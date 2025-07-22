@@ -12,13 +12,18 @@ const Header: React.FC = () => {
               <Globe className="text-white" size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Export Success Stories</h1>
-              <p className="text-sm text-gray-600">Developing Countries Growth Map</p>
+              <h1 className="text-xl sm:text-xl font-bold text-gray-900">
+                <span className="hidden sm:inline">Export Success Stories</span>
+                <span className="sm:hidden">Export Stories</span>
+              </h1>
+              <p className="text-sm text-gray-600 hidden sm:block">Developing Countries Growth Map</p>
+              <p className="text-xs text-gray-600 sm:hidden">Growth Map</p>
             </div>
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <TrendingUp size={16} />
-            <span>Interactive Global Data</span>
+            <TrendingUp size={16} className="hidden sm:block" />
+            <span className="hidden md:inline">Interactive Global Data</span>
+            <span className="md:hidden sm:inline text-xs">Global Data</span>
           </div>
         </div>
       </div>

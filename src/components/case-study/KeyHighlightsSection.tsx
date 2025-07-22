@@ -43,18 +43,18 @@ const KeyHighlightsSection = ({
 
   return (
     <div className="mb-6">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-4">Key Highlights</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">Key Highlights</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         {highlights.map((highlight, index) => (
           <Card key={index} className={`${highlight.bgColor} ${highlight.borderColor} border-2`}>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center mb-3">
                 <highlight.icon className={`${highlight.color} mr-2`} size={18} />
-                <h3 className="text-sm font-semibold ${highlight.color}">
+                <h3 className={`text-xs sm:text-sm font-semibold ${highlight.color}`}>
                   {highlight.title}
                 </h3>
               </div>
-              <p className="text-gray-700 leading-relaxed text-sm">
+              <p className="text-gray-700 leading-relaxed text-xs sm:text-sm">
                 {highlight.content}
               </p>
             </CardContent>

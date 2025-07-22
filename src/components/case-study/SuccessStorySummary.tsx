@@ -9,11 +9,11 @@ interface SuccessStorySummaryProps {
 const SuccessStorySummary = ({ summary }: SuccessStorySummaryProps) => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Success Story Summary</CardTitle>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-lg sm:text-2xl">Success Story Summary</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-lg leading-relaxed text-gray-700">
+      <CardContent className="p-4 sm:p-6 pt-0">
+        <p className="text-base sm:text-lg leading-relaxed text-gray-700">
           {summary}
         </p>
       </CardContent>
