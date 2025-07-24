@@ -150,7 +150,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       console.log('Using provided initial map state:', { center: initialCenter, zoom: initialZoom });
     } else {
       initialCenter = [20, 20];
-      initialZoom = 2;
+      initialZoom = 1;
       console.log('Using default initial map state:', { center: initialCenter, zoom: initialZoom });
     }
     

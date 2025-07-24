@@ -39,7 +39,7 @@ export const useMapState = (
       
       map.current.flyTo({
         center: [20, 20],
-        zoom: 2,
+        zoom: 1,
         duration: 1500
       });
       
