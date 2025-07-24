@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Map, HelpCircle, X, Filter } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
+import Footer from '../components/Footer';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
 import StoryCard from '../components/StoryCard';
 import SectorSelectionModal from '../components/SectorSelectionModal';
@@ -725,6 +726,9 @@ const Landing = () => {
       <div id="get-in-touch-section" className="pt-8">
         <GetInTouchSection />
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
