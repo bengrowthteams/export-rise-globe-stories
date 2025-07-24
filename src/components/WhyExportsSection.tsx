@@ -147,14 +147,19 @@ const WhyExportsSection = () => {
                 <Map className="mr-2 sm:mr-3" size={20} />
                 Explore the Map
               </Button>
-              <div className="flex items-center justify-center mt-6 text-white/80 text-sm sm:text-base">
+              <a 
+                href="https://www.growth-teams.org/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center mt-6 text-white/80 text-sm sm:text-base hover:text-white transition-colors duration-200 cursor-pointer"
+              >
                 <span className="mr-2">A Project of</span>
                 <img 
                   src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
                   alt="Growth Teams" 
                   className="h-6 w-auto opacity-90"
                 />
-              </div>
+              </a>
             </div>
           </div>
         </div>
