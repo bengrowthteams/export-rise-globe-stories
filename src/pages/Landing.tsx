@@ -484,7 +484,7 @@ const Landing = () => {
                 <Map className="mr-2" size={20} />
                 Explore the Map
               </Button>
-              <div className="flex items-center mt-4 text-white/80 text-sm sm:text-base">
+              <div className="flex items-center mt-4 text-gray-700 text-sm sm:text-base bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg">
                 <span className="mr-2">A Project of</span>
                 <img 
                   src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
