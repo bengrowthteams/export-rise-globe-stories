@@ -8,36 +8,68 @@ interface SourcesBibliographyProps {
 }
 
 const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
-  // Parse sources into individual links and fetch titles
+  // Parse sources into individual links and extract page titles
   const parseSourceLinks = (sourcesText: string) => {
     const urlRegex = /(https?:\/\/[^\s,;]+)/g;
     const urls = sourcesText.match(urlRegex) || [];
     
     return urls.map((url, index) => {
-      // Extract domain for display as fallback
-      const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+      const urlObj = new URL(url.trim());
+      const domain = urlObj.hostname.replace(/^www\./, '');
+      const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
       
-      // Generate a more readable title based on the URL structure
       let displayTitle = domain;
       
-      // Common patterns for better titles
+      // Extract meaningful title from URL structure
+      if (pathParts.length > 0) {
+        // Get the last meaningful part of the path
+        const lastPart = pathParts[pathParts.length - 1];
+        
+        // Remove file extensions and clean up
+        const cleanPath = lastPart
+          .replace(/\.(html|htm|pdf|doc|docx)$/i, '')
+          .replace(/[-_]/g, ' ')
+          .replace(/\b\w/g, l => l.toUpperCase());
+        
+        if (cleanPath.length > 3) {
+          displayTitle = cleanPath;
+        }
+        
+        // Add context from earlier path parts if helpful
+        if (pathParts.length > 1) {
+          const contextPart = pathParts[pathParts.length - 2];
+          const cleanContext = contextPart
+            .replace(/[-_]/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+          
+          if (cleanContext.length > 2 && !displayTitle.includes(cleanContext)) {
+            displayTitle = `${cleanContext}: ${displayTitle}`;
+          }
+        }
+      }
+      
+      // Add domain context for better identification
       if (domain.includes('worldbank.org')) {
-        displayTitle = 'World Bank Group';
+        displayTitle = `${displayTitle} - World Bank`;
       } else if (domain.includes('unctad.org')) {
-        displayTitle = 'UNCTAD - United Nations Conference on Trade and Development';
+        displayTitle = `${displayTitle} - UNCTAD`;
       } else if (domain.includes('imf.org')) {
-        displayTitle = 'International Monetary Fund';
+        displayTitle = `${displayTitle} - IMF`;
       } else if (domain.includes('wto.org')) {
-        displayTitle = 'World Trade Organization';
+        displayTitle = `${displayTitle} - WTO`;
       } else if (domain.includes('oecd.org')) {
-        displayTitle = 'Organisation for Economic Co-operation and Development';
+        displayTitle = `${displayTitle} - OECD`;
       } else {
-        // Capitalize and format domain names
-        displayTitle = domain
+        // Add domain for less known sources
+        const domainName = domain
           .replace(/\.(com|org|net|gov|edu)$/, '')
           .split('.')
           .map(part => part.charAt(0).toUpperCase() + part.slice(1))
           .join(' ');
+        
+        if (!displayTitle.toLowerCase().includes(domainName.toLowerCase())) {
+          displayTitle = `${displayTitle} - ${domainName}`;
+        }
       }
       
       return {

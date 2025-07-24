@@ -77,7 +77,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
               alt="Growth Teams" 
               className="h-8 sm:h-10 w-auto"
             />
-            <h1 className="hidden md:block text-xl font-bold text-gray-900">
+            <h1 className="hidden md:block text-xl font-light text-gray-900">
               Sector Transformation Atlas
             </h1>
           </div>
