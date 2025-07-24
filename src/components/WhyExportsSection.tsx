@@ -134,7 +134,7 @@ const WhyExportsSection = () => {
                 Explore the breakthroughs
               </h3>
               <p className="text-sm sm:text-lg lg:text-xl text-green-50 leading-relaxed mb-6 sm:mb-10">
-                Scan the globe, pick a country/sector, see the story. Our interactive tool showcases 82 export 
+                Scan the globe, pick a country/sector, see the story. Growth Teams' interactive tool showcases 82 export 
                 take-offs since 1995, spotlighting the key firms, leaders, and policies behind each breakthrough. 
                 Use it to learn what worked, where, and how. It's a living map of how transformation happens–one 
                 country, one sector, one story at a time.
