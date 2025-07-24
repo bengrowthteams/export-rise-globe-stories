@@ -71,12 +71,15 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onExploreClick }) => {
     <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm border-b z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
               alt="Growth Teams" 
               className="h-8 sm:h-10 w-auto"
             />
+            <h1 className="hidden md:block text-xl font-bold text-gray-900">
+              Sector Transformation Atlas
+            </h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-6">
             <button 
