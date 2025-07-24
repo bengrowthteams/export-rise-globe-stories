@@ -447,6 +447,10 @@ const Landing = () => {
     setMapState(newMapState);
   };
   const handleTutorialClose = () => {
+    // Reset map position when tutorial finishes
+    if (worldMapRef.current) {
+      worldMapRef.current.resetToInitialPosition();
+    }
     setSelectedStory(null);
     closeTutorial();
   };
