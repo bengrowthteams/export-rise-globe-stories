@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl';
 
 export interface MapStateRef {
   resetToInitialPosition: () => void;
+  smoothResetToInitialPosition: () => void;
   flyToPosition: (center: [number, number], zoom: number) => void;
   getCurrentMapState: () => { center: [number, number]; zoom: number } | null;
 }
@@ -49,6 +50,23 @@ export const useMapState = (
     }
   }, [map, mapInitialized]);
 
+  const smoothResetToInitialPosition = useCallback(() => {
+    if (map.current && mapInitialized) {
+      console.log('Smoothly resetting map to initial position');
+      isFlying.current = true;
+      
+      map.current.easeTo({
+        center: [20, 20],
+        zoom: 1,
+        duration: 500
+      });
+      
+      setTimeout(() => {
+        isFlying.current = false;
+      }, 500);
+    }
+  }, [map, mapInitialized]);
+
   const flyToPosition = useCallback((center: [number, number], zoom: number) => {
     if (map.current && mapInitialized) {
       console.log('Flying to position:', center, 'zoom:', zoom);
@@ -75,6 +93,7 @@ export const useMapState = (
     handleMapStateChange,
     getCurrentMapState,
     resetToInitialPosition,
+    smoothResetToInitialPosition,
     flyToPosition
   };
 };

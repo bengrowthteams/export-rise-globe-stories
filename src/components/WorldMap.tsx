@@ -21,6 +21,7 @@ interface WorldMapProps {
 
 export interface WorldMapRef {
   resetToInitialPosition: () => void;
+  smoothResetToInitialPosition: () => void;
   flyToPosition: (center: [number, number], zoom: number) => void;
   getCurrentMapState: () => { center: [number, number]; zoom: number } | null;
 }
@@ -51,6 +52,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     handleMapStateChange,
     getCurrentMapState,
     resetToInitialPosition,
+    smoothResetToInitialPosition,
     flyToPosition
   } = useMapState(map, mapInitialized, onMapStateChange);
 
@@ -58,6 +60,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
   useImperativeHandle(ref, () => ({
     resetToInitialPosition,
+    smoothResetToInitialPosition,
     flyToPosition,
     getCurrentMapState
   }));
