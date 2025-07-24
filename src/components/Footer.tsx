@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
             <img 
               src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
               alt="Growth Teams" 
-              className="h-6 w-auto opacity-80"
+              className="h-10 w-auto opacity-80"
             />
           </div>
           
