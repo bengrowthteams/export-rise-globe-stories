@@ -179,7 +179,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           </button>
         </div>
         
-        <p className="text-gray-600 mb-6 leading-relaxed">
+        <p className={`text-gray-600 leading-relaxed ${currentStep === 1 || currentStep === 2 ? 'mb-4' : 'mb-6'}`}>
           {currentStepData.content}
         </p>
         
