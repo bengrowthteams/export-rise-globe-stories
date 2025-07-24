@@ -155,8 +155,8 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
       {/* Tutorial card */}
-      <div className={`absolute bg-white rounded-lg shadow-2xl max-w-md mx-4 sm:mx-0 transition-all duration-500 z-40 ${
-        currentStep === 1 || currentStep === 2 ? 'p-4 sm:p-5' : 'p-4 sm:p-6'
+      <div className={`absolute bg-white rounded-lg shadow-2xl mx-4 sm:mx-0 transition-all duration-500 z-40 ${
+        currentStep === 1 || currentStep === 2 ? 'max-w-sm p-3 sm:p-4' : 'max-w-md p-4 sm:p-6'
       } ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'bottom-4 left-4 right-4 sm:top-1/2 sm:left-8 sm:right-auto sm:transform sm:-translate-y-1/2' :
@@ -166,12 +166,12 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
         currentStepData.position === 'bottom-left' ? 'bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-auto' :
         'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
       }`}>
-        <div className="flex items-start justify-between mb-4">
+        <div className={`flex items-start justify-between ${currentStep === 1 || currentStep === 2 ? 'mb-3' : 'mb-4'}`}>
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
               {currentStep + 1}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">{currentStepData.title}</h3>
+            <h3 className={`font-semibold text-gray-900 ${currentStep === 1 || currentStep === 2 ? 'text-base' : 'text-lg'}`}>{currentStepData.title}</h3>
           </div>
           <button
             onClick={handleSkip}
@@ -181,7 +181,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           </button>
         </div>
         
-        <p className={`text-gray-600 leading-relaxed ${currentStep === 1 || currentStep === 2 ? 'mb-3' : 'mb-6'}`}>
+        <p className={`text-gray-600 ${currentStep === 1 || currentStep === 2 ? 'text-sm leading-snug mb-3' : 'leading-relaxed mb-6'}`}>
           {currentStepData.content}
         </p>
         

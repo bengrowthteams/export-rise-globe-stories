@@ -447,11 +447,9 @@ const Landing = () => {
     setMapState(newMapState);
   };
   const handleTutorialClose = () => {
-    // Reset map position when tutorial finishes
-    if (worldMapRef.current) {
-      worldMapRef.current.resetToInitialPosition();
-    }
+    // Clear any demo selections and let map return to natural state
     setSelectedStory(null);
+    setSelectedCountryStories(null);
     closeTutorial();
   };
   const handleClearPopupsCallback = useCallback((clearFn: () => void) => {
