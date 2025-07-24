@@ -479,11 +479,19 @@ const Landing = () => {
             
             <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed text-left sm:text-center">Explore the playbooks behind 82 export booms in emerging economies since 1995</p>
             
-            <div className="flex justify-start sm:justify-center">
+            <div className="flex flex-col items-start sm:items-center">
               <Button onClick={handleExploreMap} size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold min-w-[200px]">
                 <Map className="mr-2" size={20} />
                 Explore the Map
               </Button>
+              <div className="flex items-center mt-4 text-white/80 text-sm sm:text-base">
+                <span className="mr-2">A Project of</span>
+                <img 
+                  src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
+                  alt="Growth Teams" 
+                  className="h-6 w-auto opacity-90"
+                />
+              </div>
             </div>
           </div>
         </div>
