@@ -179,32 +179,33 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           </button>
         </div>
         
-        <p className="text-gray-600 leading-relaxed mb-6">
+        <p className="text-gray-600 leading-relaxed mb-4">
           {currentStepData.content}
         </p>
         
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-center">
-            <div className="flex space-x-1">
-              {steps.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentStep ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
+        {/* Compact footer with horizontal layout */}
+        <div className="flex items-center justify-between">
+          {/* Progress dots on the left */}
+          <div className="flex space-x-1">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentStep ? 'bg-blue-600' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
           
-          <div className="flex justify-end space-x-2">
+          {/* Action buttons on the right */}
+          <div className="flex space-x-2">
             {currentStep > 0 && (
               <Button
                 variant="outline"
                 onClick={handlePrevious}
-                className="text-gray-600"
+                className="text-gray-600 h-8 px-3 text-sm"
               >
-                <ArrowLeft size={16} className="mr-1" />
+                <ArrowLeft size={14} className="mr-1" />
                 Back
               </Button>
             )}
@@ -212,17 +213,17 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
               <Button
                 variant="outline"
                 onClick={handleSkip}
-                className="text-gray-600"
+                className="text-gray-600 h-8 px-3 text-sm"
               >
-                Skip Tour
+                Skip
               </Button>
             )}
             <Button
               onClick={handleNext}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 h-8 px-3 text-sm"
             >
-              {currentStep === steps.length - 1 ? 'Start Exploring' : 'Next'}
-              <ArrowRight size={16} className="ml-1" />
+              {currentStep === steps.length - 1 ? 'Start' : 'Next'}
+              <ArrowRight size={14} className="ml-1" />
             </Button>
           </div>
         </div>
