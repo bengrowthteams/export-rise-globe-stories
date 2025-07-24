@@ -59,21 +59,44 @@ export class FirecrawlService {
     }
 
     try {
-      // Try to fetch the HTML and extract title
-      const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-      const data = await response.json();
-      
-      if (data.contents) {
-        // Extract title from HTML
-        const titleMatch = data.contents.match(/<title[^>]*>([^<]+)<\/title>/i);
-        if (titleMatch && titleMatch[1]) {
-          const title = titleMatch[1].trim();
-          this.setCachedTitle(url, title);
-          return title;
+      // Try multiple CORS proxies
+      const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        `https://cors-anywhere.herokuapp.com/${url}`
+      ];
+
+      for (const proxyUrl of proxies) {
+        try {
+          const response = await fetch(proxyUrl, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+            },
+            signal: AbortSignal.timeout(5000) // 5 second timeout
+          });
+          
+          if (!response.ok) continue;
+          
+          const data = await response.json();
+          const htmlContent = data.contents || data.body || data;
+          
+          if (typeof htmlContent === 'string') {
+            // Extract title from HTML
+            const titleMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
+            if (titleMatch && titleMatch[1]) {
+              const title = titleMatch[1].trim().replace(/\s+/g, ' ');
+              this.setCachedTitle(url, title);
+              return title;
+            }
+          }
+        } catch (proxyError) {
+          console.warn(`Proxy ${proxyUrl} failed:`, proxyError);
+          continue;
         }
       }
     } catch (error) {
-      console.error('Error fetching page title:', error);
+      console.error('All proxies failed for URL:', url, error);
     }
 
     // Fallback to URL-based title generation

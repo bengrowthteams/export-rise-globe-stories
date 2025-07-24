@@ -42,11 +42,16 @@ const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
       const initialLinks = parseSourceLinks(sources);
       setSourceLinks(initialLinks);
 
-      // Fetch titles for each URL
-      const updatedLinks = await Promise.all(
+      // Fetch titles for each URL with timeout
+      const updatedLinks = await Promise.allSettled(
         initialLinks.map(async (link) => {
           try {
-            const title = await FirecrawlService.fetchPageTitle(link.fullUrl);
+            const title = await Promise.race([
+              FirecrawlService.fetchPageTitle(link.fullUrl),
+              new Promise<string>((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 10000)
+              )
+            ]);
             return {
               ...link,
               displayText: title,
@@ -54,16 +59,27 @@ const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
             };
           } catch (error) {
             console.error('Error fetching title for', link.fullUrl, error);
+            // Generate fallback title immediately
+            const domain = link.fullUrl.replace(/^https?:\/\//, '').split('/')[0];
             return {
               ...link,
-              displayText: link.fullUrl.replace(/^https?:\/\//, '').split('/')[0],
+              displayText: domain.replace(/^www\./, ''),
               loading: false
             };
           }
         })
       );
 
-      setSourceLinks(updatedLinks);
+      const finalLinks = updatedLinks.map(result => 
+        result.status === 'fulfilled' ? result.value : {
+          url: '',
+          displayText: 'Failed to load',
+          fullUrl: '',
+          loading: false
+        }
+      );
+
+      setSourceLinks(finalLinks);
       setIsLoading(false);
     };
 
