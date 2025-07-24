@@ -21,7 +21,7 @@ const AboutSection = () => {
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
-                The <b className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Sector Transformation Atlas</b> documents and maps about 100 export booms since 1995 that have reshaped economies around the world.
+                The <b className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Sector Transformation Atlas</b> documents and maps 82 export booms since 1995 that have reshaped economies around the world.
               </p>
               <p>
                 As economies have transformed over the past decades, lifting millions of people out of poverty, many countries have experienced episodes of rapid export growth in specific sectors. Often these cases and the stories behind them are not commonly known, even by international development experts.
