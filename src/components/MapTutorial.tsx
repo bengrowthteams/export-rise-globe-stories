@@ -155,7 +155,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
       {/* Tutorial card */}
-      <div className={`absolute bg-white rounded-lg shadow-2xl max-w-md mx-4 sm:mx-0 transition-all duration-500 z-40 p-4 sm:p-6 ${
+      <div className={`absolute bg-white rounded-lg shadow-2xl w-80 mx-4 sm:mx-0 transition-all duration-500 z-40 p-3 ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'bottom-4 left-1/2 transform -translate-x-1/2 sm:top-1/2 sm:left-8 sm:transform sm:-translate-y-1/2 sm:translate-x-0' :
         currentStepData.position === 'middle-left' ? 'bottom-4 left-1/2 transform -translate-x-1/2 sm:top-1/2 sm:left-8 sm:transform sm:-translate-y-1/2 sm:translate-x-0' :
@@ -165,22 +165,22 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
         currentStepData.position === 'right' ? 'bottom-4 left-1/2 transform -translate-x-1/2 sm:top-1/2 sm:right-8 sm:left-auto sm:transform sm:-translate-y-1/2 sm:translate-x-0' :
         'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
       }`}>
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
               {currentStep + 1}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">{currentStepData.title}</h3>
+            <h3 className="text-base font-semibold text-gray-900">{currentStepData.title}</h3>
           </div>
           <button
             onClick={handleSkip}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
         
-        <p className="text-gray-600 leading-relaxed mb-4">
+        <p className="text-gray-600 leading-snug mb-3 text-sm">
           {currentStepData.content}
         </p>
         
