@@ -32,13 +32,13 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
     },
     {
       title: "Explore Success Stories",
-      content: "Click green dots to explore country success stories. Orange indicators show multiple sectors.",
+      content: "Green dots mark countries with case studies. Countries with examples in multiple sectors show an orange indicator. Click any dot to explore their journey.",
       position: "left",
       highlight: "dots"
     },
     {
       title: "Search & Filter",
-      content: "Use the search bar and sector filter to find specific countries and industries.",
+      content: "Search for a specific country using the search bar in the top left. Use the sector filter below to focus on specific industries. Try filtering by 'Electronics' to see only electronics success stories.",
       position: "middle-left",
       highlight: "search"
     },
