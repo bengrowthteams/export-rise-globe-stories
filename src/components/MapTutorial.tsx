@@ -155,7 +155,7 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
       {/* Tutorial card */}
-      <div className={`absolute bg-white rounded-lg shadow-2xl w-80 mx-4 sm:mx-0 transition-all duration-500 z-40 p-3 ${
+      <div className={`absolute bg-white rounded-lg shadow-2xl w-80 h-44 mx-4 sm:mx-0 transition-all duration-500 z-40 p-3 flex flex-col ${
         currentStepData.position === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
         currentStepData.position === 'left' ? 'bottom-4 left-1/2 transform -translate-x-1/2 sm:top-1/2 sm:left-8 sm:transform sm:-translate-y-1/2 sm:translate-x-0' :
         currentStepData.position === 'middle-left' ? 'bottom-4 left-1/2 transform -translate-x-1/2 sm:top-1/2 sm:left-8 sm:transform sm:-translate-y-1/2 sm:translate-x-0' :
@@ -180,9 +180,11 @@ const MapTutorial: React.FC<MapTutorialProps> = ({
           </button>
         </div>
         
-        <p className="text-gray-600 leading-snug mb-3 text-sm">
-          {currentStepData.content}
-        </p>
+        <div className="flex-1 flex flex-col">
+          <p className="text-gray-600 leading-snug text-sm flex-1">
+            {currentStepData.content}
+          </p>
+        </div>
         
         {/* Compact footer with horizontal layout */}
         <div className="flex items-center justify-between">
