@@ -63,7 +63,7 @@ const AboutSection = () => {
         </section>
 
         {/* Methodology section */}
-        <section className="mb-16">
+        <section id="methodology-section" className="mb-16">
           <div className="flex items-center mb-6">
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-sm mr-4">
               <Search className="text-white" size={20} />
