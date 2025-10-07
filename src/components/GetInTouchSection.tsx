@@ -1,11 +1,22 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
+
+const contactSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required').max(100, 'First name must be less than 100 characters'),
+  lastName: z.string().trim().min(1, 'Last name is required').max(100, 'Last name must be less than 100 characters'),
+  email: z.string().trim().email('Invalid email address').max(255, 'Email must be less than 255 characters'),
+  reason: z.string().optional(),
+  message: z.string().trim().min(1, 'Message is required').max(1000, 'Message must be less than 1000 characters')
+});
 
 const GetInTouchSection = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,10 +29,59 @@ const GetInTouchSection = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
+    
+    try {
+      // Validate form data
+      contactSchema.parse(formData);
+      
+      setIsSubmitting(true);
+      
+      // Submit to Formspree
+      const response = await fetch('https://formspree.io/f/mgvnlvpp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+      
+      // Success - clear form and show toast
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        reason: '',
+        message: ''
+      });
+      
+      toast({
+        title: 'Message sent!',
+        description: 'Thank you for contacting us. We\'ll get back to you soon.',
+      });
+      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: 'Validation error',
+          description: error.errors[0].message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to send message. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -127,9 +187,10 @@ const GetInTouchSection = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 text-lg"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </Button>
           </form>
         </div>
