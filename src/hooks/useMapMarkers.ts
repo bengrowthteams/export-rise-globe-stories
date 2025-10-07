@@ -29,7 +29,7 @@ export const useMapMarkers = (
     story: SuccessStory | null, 
     countryStory: CountrySuccessStories | null, 
     isMultiSector: boolean, 
-    color: string = '#10b981'
+    color: string = '#000000'
   ) => {
     if (!map.current) return;
 
@@ -130,7 +130,7 @@ export const useMapMarkers = (
 
     // Add hover effects and popup
     markerElement.addEventListener('mouseenter', () => {
-      const darkerColor = color === '#10b981' ? '#059669' : color;
+      const darkerColor = color === '#000000' ? '#333333' : color;
       markerElement.style.backgroundColor = darkerColor;
       markerElement.style.boxShadow = isMultiSector 
         ? `0 4px 12px ${darkerColor}99` 
@@ -266,7 +266,7 @@ export const useMapMarkers = (
     filteredSingleStories.forEach((story) => {
       if (!story.coordinates || (story.coordinates.lat === 0 && story.coordinates.lng === 0)) return;
       
-      const markerColor = selectedSectors.length > 0 ? getSectorColor(story.sector) : '#10b981';
+      const markerColor = selectedSectors.length > 0 ? getSectorColor(story.sector) : '#000000';
       addMarker(story, null, false, markerColor);
     });
 
@@ -277,9 +277,9 @@ export const useMapMarkers = (
       let markerColor;
       
       if (selectedSectors.length > 0) {
-        markerColor = hasMultipleFilteredSectors ? '#10b981' : getSectorColor(countryStory.sectors[0].sector);
+        markerColor = hasMultipleFilteredSectors ? '#000000' : getSectorColor(countryStory.sectors[0].sector);
       } else {
-        markerColor = '#10b981';
+        markerColor = '#000000';
       }
       
       console.log(`Adding filtered marker for ${countryStory.country}: hasMultiple=${hasMultipleFilteredSectors}, sectors=${countryStory.sectors.length}, color=${markerColor}`);
