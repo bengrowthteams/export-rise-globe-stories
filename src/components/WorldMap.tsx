@@ -298,12 +298,12 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
             {selectedSectors.length === 0 ? (
               <>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+                  <div className="w-4 h-4 bg-black rounded-full border-2 border-white shadow-sm"></div>
                   <span>Single Sector</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
+                    <div className="w-4 h-4 bg-black rounded-full border-2 border-white shadow-sm"></div>
                     <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
                   </div>
                   <span>Multiple Sectors</span>
