@@ -51,11 +51,9 @@ const Landing = () => {
     triggerTutorialIfNeeded
   } = useTutorial();
 
-  // Set initial filter state based on device type
+  // Set initial filter state based on device type - desktop open, mobile closed
   React.useEffect(() => {
-    if (!isMobile) {
-      setShowSectorFilter(true);
-    }
+    setShowSectorFilter(!isMobile);
   }, [isMobile]);
 
   // Show mobile welcome popup
