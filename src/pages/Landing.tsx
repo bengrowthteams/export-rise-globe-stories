@@ -476,7 +476,7 @@ const Landing = () => {
 
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">
               Sector Transformation Atlas
             </h1>
             
@@ -528,7 +528,7 @@ const Landing = () => {
           </div>
 
           {/* Tutorial and Methodology Buttons - positioned to avoid overlap with search bar on mobile */}
-          <div className={`absolute z-20 ${isMobile ? 'bottom-20 right-4' : 'top-4 right-20'} flex gap-2`}>
+          <div className={`absolute z-20 ${isMobile ? 'bottom-24 right-4' : 'top-4 right-20'} flex gap-2`}>
             <div className="tutorial-help-button">
               <Button onClick={handleStartTutorial} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
                 <HelpCircle size={16} className="mr-1" />

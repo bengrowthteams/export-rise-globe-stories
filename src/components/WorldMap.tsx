@@ -168,12 +168,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       maxBounds: [[-180, -85], [180, 85]],
     });
 
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
+    // Position controls based on screen size
+    const navControl = new mapboxgl.NavigationControl({
+      visualizePitch: true,
+    });
+    map.current.addControl(navControl, window.innerWidth < 640 ? 'bottom-right' : 'top-right');
 
     map.current.on('movestart', () => {
       isFlying.current = true;
@@ -281,7 +280,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       )}
       
       {dataSource === 'supabase' && (
-        <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-3 py-2 rounded-lg text-sm">
+        <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm hidden sm:block">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
             {selectedSectors.length > 0 
@@ -293,36 +292,36 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       )}
 
       {(filteredCountryStories.length > 0 || selectedSectors.length > 0) && (
-        <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs shadow-sm">
-          <div className="flex items-center gap-4">
+        <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 z-10 bg-white border border-gray-200 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs shadow-sm max-w-[calc(100vw-1rem)] sm:max-w-none">
+          <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto">
             {selectedSectors.length === 0 ? (
               <>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <div className="w-4 h-4 bg-black rounded-full border-2 border-white shadow-sm"></div>
-                  <span>Single Sector</span>
+                  <span className="hidden sm:inline">Single Sector</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <div className="relative">
                     <div className="w-4 h-4 bg-black rounded-full border-2 border-white shadow-sm"></div>
                     <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-500 rounded-full border border-white"></div>
                   </div>
-                  <span>Multiple Sectors</span>
+                  <span className="hidden sm:inline">Multiple Sectors</span>
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-2">
-                <span>Filtered by:</span>
-                {selectedSectors.slice(0, 3).map(sector => (
-                  <div key={sector} className="flex items-center gap-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="flex-shrink-0">Filtered by:</span>
+                {selectedSectors.slice(0, 1).map(sector => (
+                  <div key={sector} className="flex items-center gap-1 flex-shrink-0">
                     <div 
                       className="w-3 h-3 rounded-full border border-white shadow-sm"
                       style={{ backgroundColor: getSectorColor(sector) }}
                     />
-                    <span className="text-xs">{sector}</span>
+                    <span className="text-xs hidden sm:inline">{sector}</span>
                   </div>
                 ))}
-                {selectedSectors.length > 3 && (
-                  <span className="text-gray-500">+{selectedSectors.length - 3} more</span>
+                {selectedSectors.length > 1 && (
+                  <span className="text-gray-500 flex-shrink-0">+{selectedSectors.length - 1} more</span>
                 )}
               </div>
             )}

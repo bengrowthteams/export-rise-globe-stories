@@ -12,8 +12,8 @@ const StoryPanel: React.FC<StoryPanelProps> = ({ story, onClose }) => {
   if (!story) return null;
 
   return (
-    <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-2xl z-10 overflow-y-auto">
-      <div className="p-6">
+    <div className="absolute right-0 top-0 h-full w-[95vw] sm:w-96 bg-white shadow-2xl z-10 overflow-y-auto overscroll-y-contain rounded-l-2xl sm:rounded-l-none">
+      <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">

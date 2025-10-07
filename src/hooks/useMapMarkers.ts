@@ -49,12 +49,17 @@ export const useMapMarkers = (
 
     console.log(`Adding marker for ${country} at:`, coordinates, 'with color:', color, 'isMultiSector:', isMultiSector, 'flag:', flag);
 
+    // Larger touch targets on mobile (44x44px minimum for accessibility)
+    const isMobile = window.innerWidth < 640;
+    const baseSize = isMobile ? (isMultiSector ? '32px' : '28px') : (isMultiSector ? '24px' : '20px');
+    const hoverSize = isMobile ? (isMultiSector ? '36px' : '32px') : (isMultiSector ? '28px' : '24px');
+    
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
     markerElement.setAttribute('data-story-id', story?.id || countryStory?.id || '');
     
-    markerElement.style.width = isMultiSector ? '24px' : '20px';
-    markerElement.style.height = isMultiSector ? '24px' : '20px';
+    markerElement.style.width = baseSize;
+    markerElement.style.height = baseSize;
     markerElement.style.backgroundColor = color;
     markerElement.style.border = isMultiSector ? '3px solid white' : '2px solid white';
     markerElement.style.borderRadius = '50%';
@@ -135,8 +140,8 @@ export const useMapMarkers = (
       markerElement.style.boxShadow = isMultiSector 
         ? `0 4px 12px ${darkerColor}99` 
         : `0 4px 12px ${darkerColor}80`;
-      markerElement.style.width = isMultiSector ? '28px' : '24px';
-      markerElement.style.height = isMultiSector ? '28px' : '24px';
+      markerElement.style.width = hoverSize;
+      markerElement.style.height = hoverSize;
     });
 
     markerElement.addEventListener('mouseleave', () => {
@@ -144,8 +149,8 @@ export const useMapMarkers = (
       markerElement.style.boxShadow = isMultiSector 
         ? `0 3px 10px ${color}80` 
         : `0 2px 8px ${color}66`;
-      markerElement.style.width = isMultiSector ? '24px' : '20px';
-      markerElement.style.height = isMultiSector ? '24px' : '20px';
+      markerElement.style.width = baseSize;
+      markerElement.style.height = baseSize;
     });
 
     const popup = new mapboxgl.Popup({
