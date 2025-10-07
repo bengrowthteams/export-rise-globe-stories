@@ -51,8 +51,8 @@ export const useMapMarkers = (
 
     // Larger touch targets on mobile (44x44px minimum for accessibility)
     const isMobile = window.innerWidth < 640;
-    const baseSize = isMobile ? (isMultiSector ? '22px' : '18px') : (isMultiSector ? '24px' : '20px');
-    const hoverSize = isMobile ? (isMultiSector ? '26px' : '22px') : (isMultiSector ? '28px' : '24px');
+    const baseSize = isMobile ? (isMultiSector ? '26px' : '22px') : (isMultiSector ? '24px' : '20px');
+    const hoverSize = isMobile ? (isMultiSector ? '30px' : '26px') : (isMultiSector ? '28px' : '24px');
     
     const markerElement = document.createElement('div');
     markerElement.className = 'mapbox-marker';
