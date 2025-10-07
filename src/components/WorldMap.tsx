@@ -26,7 +26,7 @@ export interface WorldMapRef {
   getCurrentMapState: () => { center: [number, number]; zoom: number } | null;
 }
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmVuYmFzZWJhbGwxIiwiYSI6ImNtYzlpN3FrczE1MW4ybW9lM3ZzY2lkbWkifQ.UTHfGBeNb7EyBbIEt99mqQ';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmVuYmFzZWJhbGwxIiwiYSI6ImNtZ2dtMWw1ejBvMnUyanM3emphNTZ1dnMifQ.Qs3qyZ2l-V0GyM7biMPwqg';
 
 const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({ 
   onCountrySelect, 
