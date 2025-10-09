@@ -474,9 +474,7 @@ const Landing = () => {
 
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">
-              Sector Transformation Atlas
-            </h1>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">Export Boom Atlas</h1>
             
             <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed text-left sm:text-center">Explore the playbooks behind 82 export booms in emerging economies since 1995</p>
             
@@ -485,18 +483,9 @@ const Landing = () => {
                 <Map className="mr-2" size={20} />
                 Explore the Map
               </Button>
-              <a 
-                href="https://www.growth-teams.org/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center mt-4 text-gray-700 text-sm sm:text-base bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors duration-200 cursor-pointer"
-              >
+              <a href="https://www.growth-teams.org/" target="_blank" rel="noopener noreferrer" className="flex items-center mt-4 text-gray-700 text-sm sm:text-base bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors duration-200 cursor-pointer">
                 <span className="mr-2">A Project of</span>
-                <img 
-                  src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" 
-                  alt="Growth Teams" 
-                  className="h-6 w-auto opacity-90"
-                />
+                <img src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" alt="Growth Teams" className="h-6 w-auto opacity-90" />
               </a>
             </div>
           </div>
@@ -534,17 +523,14 @@ const Landing = () => {
               </Button>
             </div>
             <div>
-              <Button 
-                onClick={() => {
-                  const methodologySection = document.getElementById('methodology-section');
-                  if (methodologySection) {
-                    methodologySection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                variant="outline" 
-                size="sm" 
-                className="bg-white/90 hover:bg-white"
-              >
+              <Button onClick={() => {
+              const methodologySection = document.getElementById('methodology-section');
+              if (methodologySection) {
+                methodologySection.scrollIntoView({
+                  behavior: 'smooth'
+                });
+              }
+            }} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
                 <BookOpen size={16} className="mr-1" />
                 Methodology
               </Button>
