@@ -35,10 +35,10 @@ const AboutSection = () => {
         {/* Who we are section */}
         <section className="mb-16">
           <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm mr-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Users className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Who We Are</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Who We Are</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
@@ -64,7 +64,7 @@ const AboutSection = () => {
         {/* Methodology section */}
         <section id="methodology-section" className="mb-16">
           <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-sm mr-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Search className="text-white" size={20} />
             </div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Methodology</h3>
@@ -129,7 +129,7 @@ const AboutSection = () => {
         {/* Usage, Citation, and Credits section */}
         <section className="mb-16">
           <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg shadow-sm mr-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <BookOpen className="text-white" size={20} />
             </div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Usage, Citation, and Credits</h3>
@@ -157,7 +157,7 @@ const AboutSection = () => {
         {/* Credits section */}
         <section className="mb-24">
           <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-sm mr-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Award className="text-white" size={20} />
             </div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Credits</h3>
@@ -197,7 +197,7 @@ const AboutSection = () => {
         {/* Further Reading section */}
         <section className="mb-16">
           <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg shadow-sm mr-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <FileText className="text-white" size={20} />
             </div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Further Reading</h3>
