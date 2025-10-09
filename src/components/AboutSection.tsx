@@ -5,7 +5,7 @@ const AboutSection = () => {
       <div className="max-w-4xl mx-auto">
         {/* Main About Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent mb-6">About</h2>
+          <h2 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">About</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
         </div>
 
@@ -67,15 +67,15 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-sm mr-4">
               <Search className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent">Methodology</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Methodology</h3>
           </div>
           
           <div className="space-y-8">
             {/* Inclusion Criteria */}
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3"></div>
-                <h4 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Inclusion Criteria</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Inclusion Criteria</h4>
               </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
@@ -98,8 +98,8 @@ const AboutSection = () => {
             {/* Research Approach */}
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mr-3"></div>
-                <h4 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Research Approach</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Research Approach</h4>
               </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
@@ -114,8 +114,8 @@ const AboutSection = () => {
             {/* Use of AI */}
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mr-3"></div>
-                <h4 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Use of AI</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Use of AI</h4>
               </div>
               <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
                 <p>
@@ -132,7 +132,7 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg shadow-sm mr-4">
               <BookOpen className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Usage, Citation, and Credits</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Usage, Citation, and Credits</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
@@ -160,34 +160,34 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg shadow-sm mr-4">
               <Award className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Credits</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Credits</h3>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-4">
-                <div className="w-3 h-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full mr-3"></div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Lead creators</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Lead creators</h4>
               </div>
               <p className="text-lg text-gray-700">Kartik Akileswaran, Jonathan Mazumdar, Chema Triki</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-4">
-                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Web development, writing, and case research</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Web development, writing, and case research</h4>
               </div>
               <p className="text-lg text-gray-700">Benjamin Oestericher</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-4">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3"></div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Data analysis and case research</h4>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Data analysis and case research</h4>
               </div>
               <p className="text-lg text-gray-700">Adriana Maria Gonzalez, Yosumin Qurbonbekova, Zhengfei Jiao, Yuwei Liu</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-4">
                 <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Data analysis</h4>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Data analysis</h4>
               </div>
               <p className="text-lg text-gray-700">Navya Sahay, Kara Wong</p>
             </div>
@@ -200,7 +200,7 @@ const AboutSection = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg shadow-sm mr-4">
               <FileText className="text-white" size={20} />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Further Reading</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">Further Reading</h3>
           </div>
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-4 text-lg text-gray-700 leading-relaxed">

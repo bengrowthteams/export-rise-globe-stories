@@ -89,7 +89,7 @@ const GetInTouchSection = () => {
       <div className="max-w-4xl mx-auto">
         {/* Main Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+          <h2 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">
             Get In Touch
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
