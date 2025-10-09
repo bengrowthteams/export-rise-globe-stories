@@ -22,9 +22,6 @@ const Footer: React.FC = () => {
             <p className="text-sm text-gray-600">
               © {new Date().getFullYear()} Growth Teams. All rights reserved.
             </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Empowering sector transformation through data-driven insights
-            </p>
           </div>
         </div>
       </div>
