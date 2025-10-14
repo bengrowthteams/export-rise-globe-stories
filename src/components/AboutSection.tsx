@@ -20,13 +20,13 @@ const AboutSection = () => {
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
-                The  documents and maps 82 export booms since 1995 that have reshaped economies around the world.
+                The <strong>Export Boom Atlas</strong> documents and maps 82 export booms since 1995 that have reshaped economies around the world.
               </p>
               <p>
                 As economies have transformed over the past decades, lifting millions of people out of poverty, many countries have experienced episodes of rapid export growth in specific sectors. Often these cases and the stories behind them are not commonly known, even by international development experts.
               </p>
               <p>
-                We created the Sector Transformation Atlas to document these export booms–what happened and the key factors that spurred growth. The map is designed for both policymakers and funders of economic development, to inspire by showing what is possible and to inform by distilling lessons from successes.
+                We created the Export Boom Atlas to document these export booms–what happened and the key factors that spurred growth. The map is designed for both policymakers and funders of economic development, to inspire by showing what is possible and to inform by distilling lessons from successes.
               </p>
             </div>
           </div>
@@ -43,7 +43,7 @@ const AboutSection = () => {
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
-                The Sector Transformation Atlas is a project of <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline font-semibold">Growth Teams</a>.
+                The Export Boom Atlas is a project of <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline font-semibold">Growth Teams</a>.
               </p>
               <p>
                 <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline font-semibold inline-flex items-center transition-all">
@@ -137,16 +137,16 @@ const AboutSection = () => {
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
               <p>
-                The Sector Transformation Atlas is a freely available public resource designed to advance the understanding of economic growth through structural transformation. We actively encourage use of the tool and database for research, analysis, and collaboration, with the simple request of proper attribution, crediting the Sector Transformation Atlas and Growth Teams.
+                The Export Boom Atlas is a freely available public resource designed to advance the understanding of economic growth through structural transformation. We actively encourage use of the tool and database for research, analysis, and collaboration, with the simple request of proper attribution, crediting the Export Boom Atlas and Growth Teams.
               </p>
               <p>
-                <span className="bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent font-semibold">Citation Guidelines.</span> When incorporating Sector Transformation Atlas content in your work, please use this citation format for the Sector Transformation Atlas tool:
+                <span className="bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent font-semibold">Citation Guidelines.</span> When incorporating Export Boom Atlas content in your work, please use this citation format for the Export Boom Atlas tool:
               </p>
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 shadow-sm">
                 <div className="flex items-start space-x-3">
                   <Quote className="text-green-500 mt-1 flex-shrink-0" size={20} />
                   <p className="font-mono text-base leading-relaxed bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">
-                    Growth Teams. (2025). Sector Transformation Atlas. [www.growth-teams.org]
+                    Growth Teams. (2025). Export Boom Atlas. [www.growth-teams.org]
                   </p>
                 </div>
               </div>
