@@ -92,14 +92,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
   }, [searchTerm, successStories, countryStories, loading]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: PointerEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +125,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
             behavior: 'smooth'
           });
         }
-      }, 100);
+      }, 250);
     }
     
     if (result.type === 'single' && result.story) {
@@ -194,6 +194,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Prevent mobile upward scroll on focus
+    const isMobile = window.matchMedia('(max-width: 639px)').matches;
+    if (isMobile) {
+      const savedY = window.scrollY;
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: savedY, behavior: 'auto' });
+      });
+    }
+
     if (searchTerm && !loading) {
       const searchResults: SearchResult[] = [];
 
@@ -243,7 +252,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
           onFocus={handleFocus}
           placeholder={loading ? "Loading..." : `Search ${totalCountries} countries...`}
           disabled={loading}
-          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm disabled:bg-gray-100"
+          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm disabled:bg-gray-100 text-base"
         />
         {searchTerm && !loading && (
           <button
@@ -260,6 +269,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
           {suggestions.map((result, index) => (
             <div
               key={`${result.country}-${result.type}`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSuggestionClick(result);
+              }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSuggestionClick(result);
+              }}
               onClick={() => handleSuggestionClick(result)}
               className={`px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${
                 index === selectedIndex ? 'bg-blue-50' : ''
