@@ -194,17 +194,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Prevent scroll on mobile when focusing
-    const isMobile = window.innerWidth < 640;
-    if (isMobile) {
-      e.preventDefault();
-      // Blur and refocus to prevent keyboard from scrolling the page
-      e.target.blur();
-      setTimeout(() => {
-        e.target.focus();
-      }, 0);
-    }
-    
     if (searchTerm && !loading) {
       const searchResults: SearchResult[] = [];
 

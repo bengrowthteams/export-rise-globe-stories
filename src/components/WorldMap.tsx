@@ -168,11 +168,11 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       maxBounds: [[-180, -85], [180, 85]],
     });
 
-    // Position controls based on screen size
+    // Position controls based on screen size - top-right on all devices
     const navControl = new mapboxgl.NavigationControl({
       visualizePitch: true,
     });
-    map.current.addControl(navControl, window.innerWidth < 640 ? 'bottom-right' : 'top-right');
+    map.current.addControl(navControl, 'top-right');
 
     map.current.on('movestart', () => {
       isFlying.current = true;

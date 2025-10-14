@@ -509,8 +509,8 @@ const Landing = () => {
               </div>}
           </div>
 
-          {/* Tutorial and Methodology Buttons - positioned to avoid overlap with search bar on mobile */}
-          <div className={`absolute z-20 ${isMobile ? 'top-4 right-2' : 'top-4 right-20'} flex gap-2`}>
+          {/* Tutorial and Methodology Buttons - positioned at bottom on mobile, top right on desktop */}
+          <div className={`absolute z-20 ${isMobile ? 'bottom-24 right-4' : 'top-4 right-20'} flex gap-2`}>
             <div className="tutorial-help-button">
               <Button onClick={handleStartTutorial} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
                 <HelpCircle size={16} className="mr-1" />
