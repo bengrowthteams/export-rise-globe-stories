@@ -423,14 +423,23 @@ const Landing = () => {
     setSelectedStory(story);
   };
   const handleStartTutorial = () => {
-    startTutorial();
-    // Prevent scroll when tutorial starts
-    setTimeout(() => {
+    // Scroll to map section so it fills the viewport
+    const mapSection = document.getElementById('map-section');
+    if (mapSection) {
+      const navHeight = 56; // height of the navigation bar
+      const elementPosition = mapSection.offsetTop;
+      const offsetPosition = elementPosition - navHeight;
+      
       window.scrollTo({
-        top: window.scrollY,
-        behavior: 'auto'
+        top: offsetPosition,
+        behavior: 'smooth'
       });
-    }, 0);
+    }
+    
+    // Start tutorial after scrolling
+    setTimeout(() => {
+      startTutorial();
+    }, 300);
   };
   const handleMapStateChange = (center: [number, number], zoom: number) => {
     const newMapState = {
