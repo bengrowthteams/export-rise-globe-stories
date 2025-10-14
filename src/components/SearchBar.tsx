@@ -110,6 +110,24 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     setSearchTerm(result.country);
     setShowSuggestions(false);
     
+    // Scroll to map section on mobile to show the selected country
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) {
+      setTimeout(() => {
+        const mapSection = document.getElementById('map-section');
+        if (mapSection) {
+          const navHeight = 56;
+          const elementPosition = mapSection.offsetTop;
+          const offsetPosition = elementPosition - navHeight;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
+    
     if (result.type === 'single' && result.story) {
       onCountrySelect(result.story);
     } else if (result.type === 'multi' && result.countryStories) {
@@ -175,7 +193,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCountrySelect }) => {
     inputRef.current?.focus();
   };
 
-  const handleFocus = () => {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Prevent scroll on mobile when focusing
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) {
+      e.preventDefault();
+      // Blur and refocus to prevent keyboard from scrolling the page
+      e.target.blur();
+      setTimeout(() => {
+        e.target.focus();
+      }, 0);
+    }
+    
     if (searchTerm && !loading) {
       const searchResults: SearchResult[] = [];
 

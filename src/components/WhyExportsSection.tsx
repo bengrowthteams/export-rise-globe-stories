@@ -71,7 +71,7 @@ const WhyExportsSection = () => {
           {/* The export edge */}
           <div className="mb-16 sm:mb-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center">
-              <div className="relative lg:order-first">
+              <div className="relative lg:order-first order-last">
                 <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-blue-400 to-green-400 rounded-2xl opacity-20 blur-xl"></div>
                 <img 
                   src="/lovable-uploads/c515d203-be93-46ac-9f21-8ef7def9a637.png" 
@@ -79,7 +79,7 @@ const WhyExportsSection = () => {
                   className="relative w-full h-48 sm:h-64 lg:h-80 object-cover rounded-2xl shadow-2xl border-2 sm:border-4 border-white"
                 />
               </div>
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-4 sm:space-y-6 order-first lg:order-last">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <Globe className="text-white" size={20} />

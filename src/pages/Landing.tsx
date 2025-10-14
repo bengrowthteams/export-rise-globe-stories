@@ -56,12 +56,7 @@ const Landing = () => {
     setShowSectorFilter(!isMobile);
   }, [isMobile]);
 
-  // Show mobile welcome popup
-  React.useEffect(() => {
-    if (isMobile && !localStorage.getItem('mobile-welcome-seen')) {
-      setShowMobileWelcome(true);
-    }
-  }, [isMobile]);
+  // Mobile welcome popup removed per user request
   React.useEffect(() => {
     const handleReturnFromCaseStudy = () => {
       console.log('Landing - Checking for return state');
@@ -515,7 +510,7 @@ const Landing = () => {
           </div>
 
           {/* Tutorial and Methodology Buttons - positioned to avoid overlap with search bar on mobile */}
-          <div className={`absolute z-20 ${isMobile ? 'bottom-24 right-4' : 'top-4 right-20'} flex gap-2`}>
+          <div className={`absolute z-20 ${isMobile ? 'top-4 right-2' : 'top-4 right-20'} flex gap-2`}>
             <div className="tutorial-help-button">
               <Button onClick={handleStartTutorial} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
                 <HelpCircle size={16} className="mr-1" />
@@ -557,25 +552,6 @@ const Landing = () => {
 
           {showTutorial && <MapTutorial onClose={handleTutorialClose} onDemoCountrySelect={handleTutorialDemo} demoStory={selectedStory} selectedSectors={selectedSectors} onSectorToggle={handleSectorToggle} />}
 
-          {/* Mobile Welcome Popup */}
-          {showMobileWelcome && <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-              <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Welcome!</h3>
-                  <button onClick={handleCloseMobileWelcome} className="text-gray-400 hover:text-gray-600 transition-colors">
-                    <X size={20} />
-                  </button>
-                </div>
-                
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Welcome to the Sector Transformation Atlas. This website is better viewed on a computer or tablet, but we welcome you to explore on your mobile device.
-                </p>
-                
-                <Button onClick={handleCloseMobileWelcome} className="w-full bg-green-600 hover:bg-green-700">
-                  Start Exploring
-                </Button>
-              </div>
-            </div>}
         </div>
       </div>
 
