@@ -95,13 +95,13 @@ const GetInTouchSection = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
           <div className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed space-y-4">
             <p>
-              Want to request the raw data for research purposes? See an error in a case study you'd like to correct? Notice a case you think is missing? Have a suggestion for how we can improve this tool? Interested in collaborating with us?
+              Have an idea for a missing case, spotted something we should fix, or want to share suggestions for improving the Atlas? We'd love to hear from you.
             </p>
             <p>
-              We are also continually looking for motivated colleagues to work with us, aligned funders interested in a new approach, and progressive policymakers and political leaders who want to "build the muscle" of their government to drive economic diversification and growth.
+              If you're a <strong>policy entrepreneur</strong> working to kickstart an export boom, reach out to learn how we can support your efforts. If you're a <strong>funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities. And if you're a <strong>researcher</strong> or <strong>practitioner</strong> with insights, data, or stories to share, we'd love to collaborate.
             </p>
             <p>
-              Get in touch with us to request data, submit a correction or suggestion, learn more about our work, to explore a new government engagement, or to get involved yourself.
+              We welcome feedback, new case ideas, and collaboration proposals, especially from those helping to drive export-led growth. Reach out below to contribute, collaborate, or help strengthen the Export Boom Atlas.
             </p>
           </div>
         </div>
