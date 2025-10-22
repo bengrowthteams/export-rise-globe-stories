@@ -3,8 +3,8 @@ export interface EditorsPick {
   country: string;
   sector: string;
   primaryKey: number;
-  rank1995: number;
-  rank2022: number;
+  exportValue1995: number;
+  exportValue2022: number;
   successStory: string;
 }
 
@@ -12,73 +12,73 @@ export const editorsPicks: EditorsPick[] = [
   {
     country: 'Cambodia',
     sector: 'Textiles',
-    primaryKey: 3,
-    rank1995: 111,
-    rank2022: 19,
-    successStory: 'Garment sector grew to represent nearly a third of GDP, employing over 900,000 people'
+    primaryKey: 7,
+    exportValue1995: 0.39,
+    exportValue2022: 4.4,
+    successStory: 'Textile sector now represents over 20% of GDP, creating 300,000+ jobs primarily for women in garment manufacturing'
   },
   {
     country: 'Morocco',
     sector: 'Vehicles',
     primaryKey: 63,
-    rank1995: 75,
-    rank2022: 31,
-    successStory: 'Grew from $29M to $7B, now largest vehicle exporter to EU'
+    exportValue1995: 0.029,
+    exportValue2022: 7.36,
+    successStory: 'Automotive sector transformed to represent 22% of GDP and a third of total exports, creating over 200,000 jobs'
   },
   {
     country: 'Vietnam',
     sector: 'Electronics',
-    primaryKey: 76,
-    rank1995: 57,
-    rank2022: 14,
-    successStory: 'Electronics now represent 34% of total exports and employ over 1.8 million'
+    primaryKey: 94,
+    exportValue1995: 1.5,
+    exportValue2022: 38.76,
+    successStory: 'Services sector expanded 26-fold, becoming a major driver of economic growth and employment'
   },
   {
     country: 'Costa Rica',
     sector: 'Machinery',
     primaryKey: 73,
-    rank1995: 63,
-    rank2022: 41,
-    successStory: 'Medical device sector grew to $6B+, making up 42% of total exports'
+    exportValue1995: 0.097,
+    exportValue2022: 6.36,
+    successStory: 'Medical device sector grew to 42% of total exports, employing 56,000 workers and becoming 5th largest supplier to US'
   },
   {
     country: 'Poland',
     sector: 'Agriculture',
     primaryKey: 13,
-    rank1995: 36,
-    rank2022: 11,
-    successStory: 'Growing 15-fold since 1995'
+    exportValue1995: 4.02,
+    exportValue2022: 61.18,
+    successStory: 'Became 3rd largest poultry exporter and EU\'s largest chicken producer, accounting for 9.4% of total employment'
   },
   {
     country: 'Indonesia',
     sector: 'Metals',
     primaryKey: 39,
-    rank1995: 32,
-    rank2022: 9,
-    successStory: 'Leads global ferroalloy exports, 9th largest metal exporter'
+    exportValue1995: 2.14,
+    exportValue2022: 41.22,
+    successStory: 'Metal exports surged 19-fold, establishing Indonesia as a leading global ferroalloy exporter'
   },
   {
     country: 'India',
     sector: 'Chemicals',
     primaryKey: 47,
-    rank1995: 29,
-    rank2022: 14,
-    successStory: 'Pharmaceutical industry grew nearly 20-fold, employs 2.7M people'
+    exportValue1995: 3.42,
+    exportValue2022: 69.54,
+    successStory: 'Pharmaceutical industry grew 20-fold to rank 3rd globally by volume, employing 2.7M+ people and contributing 9% of exports'
   },
   {
     country: 'Egypt',
     sector: 'Agriculture',
     primaryKey: 21,
-    rank1995: 87,
-    rank2022: 54,
-    successStory: 'Growing over 15-fold, accounts for a fifth of employment'
+    exportValue1995: 0.44,
+    exportValue2022: 7.82,
+    successStory: 'Agricultural exports grew 18-fold, now representing 20% of employment and 18% of total exports led by citrus'
   },
   {
     country: 'Romania',
     sector: 'Services',
-    primaryKey: 87,
-    rank1995: 42,
-    rank2022: 17,
-    successStory: 'Grew from $800M to nearly $55B'
+    primaryKey: 94,
+    exportValue1995: 1.5,
+    exportValue2022: 38.76,
+    successStory: 'Services sector expanded 26-fold, becoming a major driver of economic growth and employment'
   }
 ];

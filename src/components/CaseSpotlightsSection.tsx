@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 import { editorsPicks } from '@/data/editorsPicks';
 import { Button } from './ui/button';
@@ -53,46 +53,29 @@ export const CaseSpotlightsSection = () => {
     };
   }, [emblaApi, onSelect]);
 
-  // Auto-play functionality
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const autoplay = setInterval(() => {
-      if (emblaApi.canScrollNext()) {
-        emblaApi.scrollNext();
-      } else {
-        emblaApi.scrollTo(0);
-      }
-    }, 5000);
-
-    return () => clearInterval(autoplay);
-  }, [emblaApi]);
 
   return (
-    <section className="py-16 sm:py-20 bg-gradient-to-b from-background via-muted/30 to-background">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-white to-green-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="w-6 h-6 text-amber-500" />
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-              Case Spotlights
-            </h2>
-            <Sparkles className="w-6 h-6 text-amber-500" />
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explore our editor's picks: remarkable export success stories from around the world
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">
+            Case Spotlights
+          </h2>
+          <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
+          <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto">
+            Start by exploring our Editor's Picks of notable export boom stories around the world
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative group">
+        <div className="relative">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex gap-6">
               {editorsPicks.map((pick, index) => (
                 <div
                   key={`${pick.country}-${pick.sector}-${index}`}
-                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] xl:flex-[0_0_calc(25%-18px)]"
+                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
                 >
                   <SpotlightCard {...pick} />
                 </div>
@@ -106,10 +89,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/90 backdrop-blur-sm shadow-lg disabled:opacity-0 z-10"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white shadow-lg hover:shadow-xl disabled:opacity-30 z-10 border-gray-300 hover:bg-gray-50"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-6 h-6 text-gray-700" />
           </Button>
 
           <Button
@@ -117,10 +100,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/90 backdrop-blur-sm shadow-lg disabled:opacity-0 z-10"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white shadow-lg hover:shadow-xl disabled:opacity-30 z-10 border-gray-300 hover:bg-gray-50"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-6 h-6 text-gray-700" />
           </Button>
         </div>
 

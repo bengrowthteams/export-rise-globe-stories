@@ -1,4 +1,4 @@
-import { Star, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCountryFlag } from '@/data/countryFlags';
 import { getSectorColor } from '@/data/sectorColors';
@@ -8,8 +8,8 @@ interface SpotlightCardProps {
   country: string;
   sector: string;
   primaryKey: number;
-  rank1995: number;
-  rank2022: number;
+  exportValue1995: number;
+  exportValue2022: number;
   successStory: string;
 }
 
@@ -17,12 +17,12 @@ export const SpotlightCard = ({
   country,
   sector,
   primaryKey,
-  rank1995,
-  rank2022,
+  exportValue1995,
+  exportValue2022,
   successStory
 }: SpotlightCardProps) => {
   const navigate = useNavigate();
-  const rankingGain = rank1995 - rank2022;
+  const growthMultiplier = Math.round(exportValue2022 / exportValue1995);
   const sectorColor = getSectorColor(sector);
   const countryFlag = getCountryFlag(country);
 
@@ -30,50 +30,57 @@ export const SpotlightCard = ({
     navigate(`/enhanced-case-study/${primaryKey}`);
   };
 
-  return (
-    <div className="relative bg-card border border-border rounded-xl p-5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex flex-col h-[280px] group">
-      {/* Editor's Pick Badge */}
-      <div className="absolute -top-3 -right-3 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full p-2 shadow-lg animate-pulse">
-        <Star className="w-4 h-4 text-white fill-white" />
-      </div>
+  const formatValue = (value: number) => {
+    if (value >= 1) {
+      return `$${value.toFixed(1)}B`;
+    }
+    return `$${(value * 1000).toFixed(0)}M`;
+  };
 
+  return (
+    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-[320px] group">
       {/* Country Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-3xl">{countryFlag}</span>
-        <h3 className="text-xl font-bold text-foreground">{country}</h3>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-4xl">{countryFlag}</span>
+        <h3 className="text-2xl font-bold text-gray-900">{country}</h3>
       </div>
 
       {/* Sector Badge */}
-      <div className="mb-3">
+      <div className="mb-4">
         <span 
-          className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
+          className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold text-white"
           style={{ backgroundColor: sectorColor }}
         >
           {sector}
         </span>
       </div>
 
-      {/* Ranking Gain */}
-      <div className="flex items-center gap-2 mb-3 text-emerald-600">
-        <TrendingUp className="w-5 h-5" />
-        <div className="font-bold">
-          <span className="text-muted-foreground">#{rank1995}</span>
-          <span className="mx-1">→</span>
-          <span className="text-lg">#{rank2022}</span>
-          <span className="ml-2 text-sm">+{rankingGain}</span>
+      {/* Export Value Growth */}
+      <div className="mb-4 p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl border border-green-100">
+        <div className="flex items-center gap-2 mb-2">
+          <TrendingUp className="w-5 h-5 text-green-600" />
+          <span className="text-sm font-semibold text-gray-700">Export Value Growth</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold text-gray-600">{formatValue(exportValue1995)}</span>
+          <span className="text-gray-400">→</span>
+          <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">{formatValue(exportValue2022)}</span>
+        </div>
+        <div className="mt-1 text-sm font-semibold text-green-600">
+          {growthMultiplier}x growth
         </div>
       </div>
 
       {/* Success Story */}
-      <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-grow">
+      <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-grow leading-relaxed">
         {successStory}
       </p>
 
       {/* CTA Button */}
       <Button 
         onClick={handleViewCaseStudy}
-        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold transition-all duration-300"
-        size="sm"
+        className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+        size="default"
       >
         View Case Study
       </Button>
