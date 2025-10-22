@@ -10,6 +10,8 @@ interface PerformanceDashboardProps {
   currentExports2022: number;
   globalShare1995: number;
   globalShare2022: number;
+  sectorExportsGDP1995: number;
+  sectorExportsGDP2022: number;
 }
 
 const PerformanceDashboard = ({
@@ -18,7 +20,9 @@ const PerformanceDashboard = ({
   initialExports1995,
   currentExports2022,
   globalShare1995,
-  globalShare2022
+  globalShare2022,
+  sectorExportsGDP1995,
+  sectorExportsGDP2022
 }: PerformanceDashboardProps) => {
   
   const formatCurrency = (amount: number): string => {
@@ -35,6 +39,7 @@ const PerformanceDashboard = ({
   const rankChange = rank1995 - rank2022;
   const exportGrowthAnnual = (Math.pow(currentExports2022 / initialExports1995, 1/27) - 1) * 100;
   const shareChange = globalShare2022 - globalShare1995;
+  const gdpChange = sectorExportsGDP2022 - sectorExportsGDP1995;
 
   return (
     <div className="mb-6">
@@ -73,6 +78,14 @@ const PerformanceDashboard = ({
                 <TableCell className="text-sm">{globalShare2022.toFixed(2)}%</TableCell>
                 <TableCell className={`text-sm font-semibold ${shareChange > 0 ? "text-green-600" : "text-red-600"}`}>
                   {shareChange > 0 ? '+' : ''}{shareChange.toFixed(2)}pp
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium text-sm">Sector Exports as % of GDP</TableCell>
+                <TableCell className="text-sm">{sectorExportsGDP1995.toFixed(2)}%</TableCell>
+                <TableCell className="text-sm">{sectorExportsGDP2022.toFixed(2)}%</TableCell>
+                <TableCell className={`text-sm font-semibold ${gdpChange > 0 ? "text-green-600" : "text-red-600"}`}>
+                  {gdpChange > 0 ? '+' : ''}{gdpChange.toFixed(2)}pp
                 </TableCell>
               </TableRow>
             </TableBody>

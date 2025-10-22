@@ -18,6 +18,8 @@ export interface CaseStudyData {
   currentExports2022: number;
   globalShare1995: number;
   globalShare2022: number;
+  sectorExportsGDP1995: number;
+  sectorExportsGDP2022: number;
   outcome: string;
   publicSectorPolicy: string;
   publicSectorActor: string;
@@ -92,6 +94,8 @@ export const fetchCaseStudyById = async (id: string): Promise<CaseStudyData | nu
       currentExports2022: row['Current Exports - 2022 (USD)'] || 0,
       globalShare1995: row['Global Share 1995 - %'] || 0,
       globalShare2022: row['Global Share 2022 - %'] || 0,
+      sectorExportsGDP1995: row['Sector Exports as % of GDP (1995)'] || 0,
+      sectorExportsGDP2022: row['Sector Exports as % of GDP (2022)'] || 0,
       outcome: row.Outcome || 'Outcome information not available.',
       publicSectorPolicy: row['Public Sector Policy'] || 'Public sector policy information not available.',
       publicSectorActor: row['Public Sector Actor'] || 'Public sector actor information not available.',

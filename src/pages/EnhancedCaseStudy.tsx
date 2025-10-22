@@ -148,6 +148,8 @@ const EnhancedCaseStudy = () => {
           currentExports2022={caseStudyData.currentExports2022}
           globalShare1995={caseStudyData.globalShare1995}
           globalShare2022={caseStudyData.globalShare2022}
+          sectorExportsGDP1995={caseStudyData.sectorExportsGDP1995}
+          sectorExportsGDP2022={caseStudyData.sectorExportsGDP2022}
         />
 
         <SourcesBibliography
