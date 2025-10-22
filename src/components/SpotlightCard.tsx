@@ -73,7 +73,7 @@ export const SpotlightCard = ({
       </div>
 
       {/* Success Story */}
-      <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-grow leading-relaxed">
+      <p className="text-base text-gray-600 line-clamp-3 mb-4 flex-grow leading-relaxed">
         {successStory}
       </p>
 
