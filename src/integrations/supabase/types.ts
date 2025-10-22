@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -36,6 +36,8 @@ export type Database = {
           "Rank (2022)": number | null
           "Ranks Change (absolute)": number | null
           Sector: string | null
+          "Sector Exports as % of GDP (1995)": number | null
+          "Sector Exports as % of GDP (2022)": number | null
           Sources: string | null
           "Success Story (1 sentence summary)": string | null
           "Successful product": string | null
@@ -61,6 +63,8 @@ export type Database = {
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
+          "Sector Exports as % of GDP (1995)"?: number | null
+          "Sector Exports as % of GDP (2022)"?: number | null
           Sources?: string | null
           "Success Story (1 sentence summary)"?: string | null
           "Successful product"?: string | null
@@ -86,6 +90,8 @@ export type Database = {
           "Rank (2022)"?: number | null
           "Ranks Change (absolute)"?: number | null
           Sector?: string | null
+          "Sector Exports as % of GDP (1995)"?: number | null
+          "Sector Exports as % of GDP (2022)"?: number | null
           Sources?: string | null
           "Success Story (1 sentence summary)"?: string | null
           "Successful product"?: string | null
@@ -94,46 +100,19 @@ export type Database = {
       }
       Merge: {
         Row: {
-          "External Actor Contribution": string | null
-          "External Factors - One Bullet Summary": string | null
-          "External Market Factors": string | null
-          Outcome: string | null
           "Primary key": number
-          "Private Sector - One Bullet Summary": string | null
-          "Private Sector Industry Growth": string | null
-          "Private Sector Pioneering Firm": string | null
-          "Public Sector - One Bullet Summary": string | null
-          "Public Sector Actor": string | null
-          "Public Sector Policy": string | null
-          Sources: string | null
+          "Sector Exports as % of GDP (1995)": number | null
+          "Sector Exports as % of GDP (2022)": number | null
         }
         Insert: {
-          "External Actor Contribution"?: string | null
-          "External Factors - One Bullet Summary"?: string | null
-          "External Market Factors"?: string | null
-          Outcome?: string | null
           "Primary key": number
-          "Private Sector - One Bullet Summary"?: string | null
-          "Private Sector Industry Growth"?: string | null
-          "Private Sector Pioneering Firm"?: string | null
-          "Public Sector - One Bullet Summary"?: string | null
-          "Public Sector Actor"?: string | null
-          "Public Sector Policy"?: string | null
-          Sources?: string | null
+          "Sector Exports as % of GDP (1995)"?: number | null
+          "Sector Exports as % of GDP (2022)"?: number | null
         }
         Update: {
-          "External Actor Contribution"?: string | null
-          "External Factors - One Bullet Summary"?: string | null
-          "External Market Factors"?: string | null
-          Outcome?: string | null
           "Primary key"?: number
-          "Private Sector - One Bullet Summary"?: string | null
-          "Private Sector Industry Growth"?: string | null
-          "Private Sector Pioneering Firm"?: string | null
-          "Public Sector - One Bullet Summary"?: string | null
-          "Public Sector Actor"?: string | null
-          "Public Sector Policy"?: string | null
-          Sources?: string | null
+          "Sector Exports as % of GDP (1995)"?: number | null
+          "Sector Exports as % of GDP (2022)"?: number | null
         }
         Relationships: []
       }
