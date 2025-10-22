@@ -7,6 +7,7 @@ interface ReturnState {
   sector: string;
   timestamp: number;
   hasActiveFilters?: boolean;
+  returnToSection?: 'spotlights' | 'map';
 }
 
 class ReturnStateService {
@@ -18,11 +19,13 @@ class ReturnStateService {
     selectedSector?: any;
     country: string;
     sector: string;
+    returnToSection?: 'spotlights' | 'map';
   }): void {
     const returnState: ReturnState = {
       ...state,
       timestamp: Date.now(),
-      hasActiveFilters: state.selectedSectors.length > 0
+      hasActiveFilters: state.selectedSectors.length > 0,
+      returnToSection: state.returnToSection
     };
     
     console.log('ReturnStateService - Saving return state with filters:', {

@@ -41,16 +41,29 @@ const EnhancedCaseStudyHeader = ({
     console.log('Enhanced Case Study Header - Retrieved return state:', returnState);
     
     if (returnState) {
-      navigate('/', { 
-        state: {
-          ...returnState,
-          shouldRestoreView: true,
-          fromCaseStudy: true,
-          shouldRestoreStoryCard: true,
-          targetCountry: returnState.country,
-          targetSector: returnState.sector
-        }
-      });
+      // Check if we should return to spotlights section
+      if (returnState.returnToSection === 'spotlights') {
+        navigate('/', { replace: true });
+        // Scroll to spotlights section after navigation
+        setTimeout(() => {
+          const spotlightsSection = document.getElementById('case-spotlights');
+          if (spotlightsSection) {
+            spotlightsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      } else {
+        // Return to map view with filters
+        navigate('/', { 
+          state: {
+            ...returnState,
+            shouldRestoreView: true,
+            fromCaseStudy: true,
+            shouldRestoreStoryCard: true,
+            targetCountry: returnState.country,
+            targetSector: returnState.sector
+          }
+        });
+      }
     } else {
       navigate('/');
     }

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { getCountryFlag } from '@/data/countryFlags';
 import { getSectorColor } from '@/data/sectorColors';
 import { useNavigate } from 'react-router-dom';
+import ReturnStateService from '@/services/returnStateService';
 
 interface SpotlightCardProps {
   country: string;
@@ -27,6 +28,12 @@ export const SpotlightCard = ({
   const countryFlag = getCountryFlag(country);
 
   const handleViewCaseStudy = () => {
+    ReturnStateService.saveReturnState({
+      selectedSectors: [],
+      country,
+      sector,
+      returnToSection: 'spotlights'
+    });
     navigate(`/enhanced-case-study/${primaryKey}`);
   };
 
@@ -38,7 +45,7 @@ export const SpotlightCard = ({
   };
 
   return (
-    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-[320px] group">
+    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-[320px] group">
       {/* Country Header */}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-4xl">{countryFlag}</span>

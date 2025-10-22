@@ -55,7 +55,7 @@ export const CaseSpotlightsSection = () => {
 
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-green-50">
+    <section id="case-spotlights" className="py-20 bg-gradient-to-b from-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -63,7 +63,7 @@ export const CaseSpotlightsSection = () => {
             Case Spotlights
           </h2>
           <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
-          <p className="text-lg sm:text-xl font-semibold text-gray-800 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800 max-w-4xl mx-auto px-4">
             Start by exploring our Editor's Picks of notable export boom stories around the world
           </p>
         </div>
@@ -89,10 +89,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white shadow-lg hover:shadow-xl disabled:opacity-30 z-10 border-gray-300 hover:bg-gray-50"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
+            <ChevronLeft className="w-7 h-7 text-blue-600" />
           </Button>
 
           <Button
@@ -100,10 +100,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white shadow-lg hover:shadow-xl disabled:opacity-30 z-10 border-gray-300 hover:bg-gray-50"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
+            <ChevronRight className="w-7 h-7 text-blue-600" />
           </Button>
         </div>
 
