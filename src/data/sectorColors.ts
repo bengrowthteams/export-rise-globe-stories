@@ -2,7 +2,7 @@
 export const sectorColors: Record<string, string> = {
   'Services': '#B73E69', // Dark rose
   'Agriculture': '#88D6AA', // Light mint green
-  'Textiles': '#374151', // Dark gray
+  'Textiles': '#6b7280', // Medium gray
   'Stone': '#D7A86E', // Warm tan
   'Stones': '#D7A86E', // Warm tan (alternate name)
   'Minerals': '#B7836E', // Earthy brown
