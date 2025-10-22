@@ -8,14 +8,14 @@ export const useTutorial = () => {
   const hasAutoTriggered = useRef(false);
 
   useEffect(() => {
-    // Check if user has seen tutorial before
+    // Tutorial will not auto-trigger, only manual activation
     const tutorialSeen = localStorage.getItem('map-tutorial-seen');
     const hasSeenBefore = tutorialSeen === 'true';
     
     console.log('Tutorial state - hasSeenBefore:', hasSeenBefore);
     
-    setHasSeenTutorial(hasSeenBefore);
-    setShouldAutoTrigger(!hasSeenBefore);
+    setHasSeenTutorial(true); // Always set to true to prevent auto-trigger
+    setShouldAutoTrigger(false); // Disable auto-trigger
   }, []);
 
   const startTutorial = () => {

@@ -89,7 +89,7 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 sm:top-1/2 sm:-translate-y-1/2 top-[40%] bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-7 h-7 text-blue-600" />
@@ -100,7 +100,7 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 sm:top-1/2 sm:-translate-y-1/2 top-[40%] bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
             aria-label="Next slide"
           >
             <ChevronRight className="w-7 h-7 text-blue-600" />

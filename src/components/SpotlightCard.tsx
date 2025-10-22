@@ -45,7 +45,7 @@ export const SpotlightCard = ({
   };
 
   return (
-    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-[360px] group">
+    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-[340px] group">
       {/* Country Header */}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-4xl">{countryFlag}</span>

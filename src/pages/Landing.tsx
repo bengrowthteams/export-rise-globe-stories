@@ -526,7 +526,7 @@ const Landing = () => {
           <div className={`absolute z-20 ${isMobile ? 'bottom-24 right-4' : 'top-4 right-20'} flex gap-2`}>
             <div className="tutorial-help-button">
               <Button onClick={handleStartTutorial} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
-                <HelpCircle size={16} className="mr-1" />
+                {!isMobile && <HelpCircle size={16} className="mr-1" />}
                 Tutorial
               </Button>
             </div>
@@ -539,7 +539,7 @@ const Landing = () => {
                 });
               }
             }} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
-                <BookOpen size={16} className="mr-1" />
+                {!isMobile && <BookOpen size={16} className="mr-1" />}
                 Methodology
               </Button>
             </div>
@@ -552,7 +552,7 @@ const Landing = () => {
                 });
               }
             }} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
-                <Star size={16} className="mr-1" />
+                {!isMobile && <Star size={16} className="mr-1" />}
                 Editor's Picks
               </Button>
             </div>
