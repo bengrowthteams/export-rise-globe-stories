@@ -63,7 +63,7 @@ export const CaseSpotlightsSection = () => {
             Case Spotlights
           </h2>
           <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
-          <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl font-semibold text-gray-800 max-w-3xl mx-auto">
             Start by exploring our Editor's Picks of notable export boom stories around the world
           </p>
         </div>

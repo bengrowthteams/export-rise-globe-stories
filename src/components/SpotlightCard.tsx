@@ -56,18 +56,12 @@ export const SpotlightCard = ({
       </div>
 
       {/* Export Value Growth */}
-      <div className="mb-4 p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl border border-green-100">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-semibold text-gray-700">Export Value Growth</span>
-        </div>
+      <div className="mb-4 flex items-center gap-2">
+        <TrendingUp className="w-4 h-4 text-green-600" />
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-gray-600">{formatValue(exportValue1995)}</span>
+          <span className="text-base font-semibold text-gray-600">{formatValue(exportValue1995)}</span>
           <span className="text-gray-400">→</span>
-          <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">{formatValue(exportValue2022)}</span>
-        </div>
-        <div className="mt-1 text-sm font-semibold text-green-600">
-          {growthMultiplier}x growth
+          <span className="text-lg font-bold text-green-600">{formatValue(exportValue2022)}</span>
         </div>
       </div>
 
@@ -79,7 +73,7 @@ export const SpotlightCard = ({
       {/* CTA Button */}
       <Button 
         onClick={handleViewCaseStudy}
-        className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-300"
         size="default"
       >
         View Case Study
