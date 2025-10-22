@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
-import { fetchSuccessStories, fetchCountryStories, clearSuccessStoriesCache } from '../services/countryDataService';
+import { fetchSuccessStories, fetchCountryStories } from '../services/countryDataService';
 import { successStories as fallbackStories } from '../data/successStories';
 import { getSectorColor } from '../data/sectorColors';
 import { useMapState } from '../hooks/useMapState';
@@ -44,7 +44,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
   const [countryStories, setCountryStories] = useState<CountrySuccessStories[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dataSource, setDataSource] = useState<'supabase' | 'fallback'>('supabase');
+  const [dataSource, setDataSource] = useState<'cached' | 'static' | 'supabase' | 'fallback'>('cached');
   const dataLoadingRef = useRef(false);
 
   const {
@@ -84,9 +84,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         dataLoadingRef.current = true;
         setLoading(true);
         setError(null);
-        console.log('Starting to load success stories...');
-        
-        clearSuccessStoriesCache();
+        console.log('Starting to load success stories from cache/static data...');
         
         const [stories, multiSectorStories] = await Promise.all([
           fetchSuccessStories(),
@@ -107,7 +105,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         } else {
           setSuccessStories(stories);
           setCountryStories(multiSectorStories);
-          setDataSource('supabase');
+          setDataSource('cached');
           if (onStoriesLoaded) {
             onStoriesLoaded(stories, multiSectorStories);
           }
@@ -227,7 +225,7 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <p className="text-gray-600">Loading country data...</p>
-        <p className="text-xs text-gray-500 mt-2">Attempting to connect to Supabase</p>
+        <p className="text-xs text-gray-500 mt-2">Loading from cache...</p>
       </div>
     );
   }
@@ -280,13 +278,13 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
         </div>
       )}
       
-      {dataSource === 'supabase' && (
-        <div className="absolute top-4 left-4 z-10 bg-green-100 border border-green-400 text-green-800 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm hidden sm:block">
+      {(dataSource === 'cached' || dataSource === 'static' || dataSource === 'supabase') && (
+        <div className="absolute top-4 left-4 z-10 bg-blue-100 border border-blue-400 text-blue-800 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm hidden sm:block">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
             {selectedSectors.length > 0 
               ? `Filtered: ${totalCountries} of ${originalTotal} countries` 
-              : `2D Map - Live data (${totalCountries} countries)`
+              : `2D Map - Cached data (${totalCountries} countries)`
             }
           </div>
         </div>
