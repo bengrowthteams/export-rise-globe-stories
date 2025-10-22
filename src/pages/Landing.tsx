@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Map, HelpCircle, X, Filter, BookOpen } from 'lucide-react';
+import { Map, HelpCircle, X, Filter, BookOpen, Star } from 'lucide-react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import WorldMap, { WorldMapRef } from '../components/WorldMap';
@@ -522,7 +522,7 @@ const Landing = () => {
               </div>}
           </div>
 
-          {/* Tutorial and Methodology Buttons - positioned at bottom on mobile, top right on desktop */}
+          {/* Tutorial, Methodology, and Editor's Picks Buttons - positioned at bottom on mobile, top right on desktop */}
           <div className={`absolute z-20 ${isMobile ? 'bottom-24 right-4' : 'top-4 right-20'} flex gap-2`}>
             <div className="tutorial-help-button">
               <Button onClick={handleStartTutorial} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
@@ -541,6 +541,19 @@ const Landing = () => {
             }} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
                 <BookOpen size={16} className="mr-1" />
                 Methodology
+              </Button>
+            </div>
+            <div>
+              <Button onClick={() => {
+              const spotlightsSection = document.getElementById('case-spotlights');
+              if (spotlightsSection) {
+                spotlightsSection.scrollIntoView({
+                  behavior: 'smooth'
+                });
+              }
+            }} variant="outline" size="sm" className="bg-white/90 hover:bg-white">
+                <Star size={16} className="mr-1" />
+                Editor's Picks
               </Button>
             </div>
           </div>
