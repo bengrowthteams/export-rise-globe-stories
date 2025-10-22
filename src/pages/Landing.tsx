@@ -13,6 +13,7 @@ import SearchBar from '../components/SearchBar';
 import MapTutorial from '../components/MapTutorial';
 import AboutSection from '../components/AboutSection';
 import WhyExportsSection from '../components/WhyExportsSection';
+import { CaseSpotlightsSection } from '../components/CaseSpotlightsSection';
 import GetInTouchSection from '../components/GetInTouchSection';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
@@ -498,6 +499,9 @@ const Landing = () => {
 
       {/* Why Exports Section */}
       <WhyExportsSection />
+
+      {/* Case Spotlights Carousel */}
+      <CaseSpotlightsSection />
 
       {/* Map Section */}
       <div id="map-section" ref={mapSectionRef} className="h-[calc(100vh-3.5rem)] bg-gray-50">
