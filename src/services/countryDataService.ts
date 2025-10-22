@@ -4,6 +4,7 @@ import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories } from '../types/CountrySuccessStories';
 import { transformCountryData } from '../utils/dataTransformers';
 import { testDatabaseAccess } from '../utils/databaseUtils';
+import staticData from '../data/staticCountryData.json';
 
 interface CountryDataRow {
   'Primary key': number;
@@ -22,15 +23,106 @@ interface CountryDataRow {
 let cachedSuccessStories: SuccessStory[] | null = null;
 let cachedCountryStories: CountrySuccessStories[] | null = null;
 
+// Cache configuration
+const CACHE_VERSION = '1.0.0';
+const CACHE_KEY_STORIES = 'country-data-stories-v1';
+const CACHE_KEY_COUNTRY_STORIES = 'country-data-country-stories-v1';
+const CACHE_KEY_VERSION = 'country-data-version';
+const CACHE_KEY_TIMESTAMP = 'country-data-timestamp';
+const CACHE_EXPIRY_DAYS = 30;
+
+// Helper functions for localStorage caching
+const isCacheValid = (): boolean => {
+  try {
+    const version = localStorage.getItem(CACHE_KEY_VERSION);
+    const timestamp = localStorage.getItem(CACHE_KEY_TIMESTAMP);
+    
+    if (version !== CACHE_VERSION) {
+      return false;
+    }
+    
+    if (timestamp) {
+      const cacheDate = new Date(timestamp);
+      const now = new Date();
+      const daysDiff = (now.getTime() - cacheDate.getTime()) / (1000 * 60 * 60 * 24);
+      
+      if (daysDiff > CACHE_EXPIRY_DAYS) {
+        return false;
+      }
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error checking cache validity:', error);
+    return false;
+  }
+};
+
+const getCachedData = (): { stories: SuccessStory[] | null; countryStories: CountrySuccessStories[] | null } => {
+  try {
+    if (!isCacheValid()) {
+      return { stories: null, countryStories: null };
+    }
+    
+    const storiesStr = localStorage.getItem(CACHE_KEY_STORIES);
+    const countryStoriesStr = localStorage.getItem(CACHE_KEY_COUNTRY_STORIES);
+    
+    return {
+      stories: storiesStr ? JSON.parse(storiesStr) : null,
+      countryStories: countryStoriesStr ? JSON.parse(countryStoriesStr) : null,
+    };
+  } catch (error) {
+    console.error('Error reading from cache:', error);
+    return { stories: null, countryStories: null };
+  }
+};
+
+const setCachedData = (stories: SuccessStory[], countryStories: CountrySuccessStories[]) => {
+  try {
+    localStorage.setItem(CACHE_KEY_STORIES, JSON.stringify(stories));
+    localStorage.setItem(CACHE_KEY_COUNTRY_STORIES, JSON.stringify(countryStories));
+    localStorage.setItem(CACHE_KEY_VERSION, CACHE_VERSION);
+    localStorage.setItem(CACHE_KEY_TIMESTAMP, new Date().toISOString());
+  } catch (error) {
+    console.error('Error writing to cache:', error);
+  }
+};
+
+const clearCache = () => {
+  try {
+    localStorage.removeItem(CACHE_KEY_STORIES);
+    localStorage.removeItem(CACHE_KEY_COUNTRY_STORIES);
+    localStorage.removeItem(CACHE_KEY_VERSION);
+    localStorage.removeItem(CACHE_KEY_TIMESTAMP);
+  } catch (error) {
+    console.error('Error clearing cache:', error);
+  }
+};
+
 export const fetchSuccessStories = async (): Promise<SuccessStory[]> => {
-  // Clear cache for fresh data
-  cachedSuccessStories = null;
-  cachedCountryStories = null;
-  
-  // Return cached data if available
+  // Return in-memory cache if available
   if (cachedSuccessStories) {
-    console.log('Returning cached success stories:', cachedSuccessStories.length);
+    console.log('Returning in-memory cached success stories:', cachedSuccessStories.length);
     return cachedSuccessStories;
+  }
+  
+  // Try localStorage cache
+  const { stories, countryStories } = getCachedData();
+  if (stories && countryStories) {
+    console.log('Returning localStorage cached success stories:', stories.length);
+    cachedSuccessStories = stories;
+    cachedCountryStories = countryStories;
+    return stories;
+  }
+  
+  // Try static data
+  if (staticData.rawData && staticData.rawData.length > 0) {
+    console.log('Loading from static data:', staticData.rawData.length);
+    const { legacyStories, countryStories: transformedCountryStories } = transformCountryData(staticData.rawData);
+    cachedSuccessStories = legacyStories;
+    cachedCountryStories = transformedCountryStories;
+    setCachedData(legacyStories, transformedCountryStories);
+    return legacyStories;
   }
 
   try {
@@ -106,7 +198,35 @@ export const fetchCountryStories = async (): Promise<CountrySuccessStories[]> =>
 
 // Clear cache function for future use
 export const clearSuccessStoriesCache = () => {
-  console.log('Clearing success stories cache');
+  console.log('Clearing all success stories cache');
   cachedSuccessStories = null;
   cachedCountryStories = null;
+  clearCache();
+};
+
+// Force refresh from Supabase
+export const forceRefreshFromSupabase = async (): Promise<SuccessStory[]> => {
+  clearSuccessStoriesCache();
+  cachedSuccessStories = null;
+  cachedCountryStories = null;
+  
+  try {
+    const { data, error } = await supabase
+      .from('Country Data')
+      .select('*')
+      .order('Country');
+
+    if (error) throw error;
+    if (!data || data.length === 0) return [];
+
+    const { legacyStories, countryStories } = transformCountryData(data);
+    cachedSuccessStories = legacyStories;
+    cachedCountryStories = countryStories;
+    setCachedData(legacyStories, countryStories);
+    
+    return legacyStories;
+  } catch (error) {
+    console.error('Force refresh failed:', error);
+    return [];
+  }
 };
