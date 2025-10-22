@@ -71,11 +71,11 @@ export const CaseSpotlightsSection = () => {
         {/* Carousel Container */}
         <div className="relative">
           <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
+            <div className="flex">
               {editorsPicks.map((pick, index) => (
                 <div
                   key={`${pick.country}-${pick.sector}-${index}`}
-                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
+                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-3"
                 >
                   <SpotlightCard {...pick} />
                 </div>
