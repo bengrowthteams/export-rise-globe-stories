@@ -8,6 +8,7 @@ import Landing from "./pages/Landing";
 import CaseStudy from "./pages/CaseStudy";
 import EnhancedCaseStudy from "./pages/EnhancedCaseStudy";
 import NotFound from "./pages/NotFound";
+import DataExport from "./pages/DataExport";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/case-study/:id" element={<CaseStudy />} />
           <Route path="/enhanced-case-study/:id" element={<EnhancedCaseStudy />} />
+          <Route path="/data-export" element={<DataExport />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
