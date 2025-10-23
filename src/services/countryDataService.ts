@@ -24,7 +24,7 @@ let cachedSuccessStories: SuccessStory[] | null = null;
 let cachedCountryStories: CountrySuccessStories[] | null = null;
 
 // Cache configuration
-const CACHE_VERSION = '1.0.0';
+const CACHE_VERSION = '1.0.1';
 const CACHE_KEY_STORIES = 'country-data-stories-v1';
 const CACHE_KEY_COUNTRY_STORIES = 'country-data-country-stories-v1';
 const CACHE_KEY_VERSION = 'country-data-version';
