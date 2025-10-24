@@ -52,7 +52,7 @@ const AboutSection = () => {
                 </a>{' '}helps government reformers in developing countries to spot and remove barriers to economic growth. Our mission is to create formal jobs in high-growth industries, providing a pathway to prosperity. We bridge the gap between analysis and action by combining evidence and expertise on growth and structural transformation, and modern management practices and implementation support.
               </p>
               <p>
-                Established as a non-profit organization in 2022, we have launched engagements in Rwanda, Tanzania, Malawi, and India. Our team brings extensive experience advising governments in Africa and India on investment, job creation, and economic transformation, and our advisory board includes experts such as Stefan Dercon, Lant Pritchett, Kunal Sen, Pallavi Roy, and Lindsay Whitfield. Learn more at{' '}
+                Established as a non-profit organization in 2022, we have launched engagements in Rwanda, Tanzania, Malawi, and India. Our team has extensive experience advising governments in Africa and India on investment, job creation, and economic transformation, and our advisory board includes experts such as Stefan Dercon, Lant Pritchett, Kunal Sen, Pallavi Roy, and Lindsay Whitfield. Learn more at{' '}
                 <a href="https://www.growth-teams.org" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline transition-all">
                   www.growth-teams.org
                 </a>.
@@ -89,9 +89,9 @@ const AboutSection = () => {
                   </ul>
                 </div>
                 <p>
-                  This criteria emphasizes cases with both significant export growth (improvement over the time period) and international competitiveness (final ranking). We use data from 1995 to 2022 given data availability and consistent product categories over this time period. This approach yielded 100 cases across 9 sectors: Agriculture (9), Chemicals (10), Electronics (10), Machinery (7), Metals (8), Stones (17), Services (14), Textiles (12), and Vehicles (13). Each case consists of a country-sector pair. We used the Harmonized System (HS) 1992 for sector classification.
+                  These criteria emphasize cases with both significant export growth (improvement over the time period) and international competitiveness (final ranking). We use data from 1995 to 2022 given data availability and consistent product categories over this time period. This approach yielded 100 cases across 9 sectors: Agriculture (9), Chemicals (10), Electronics (10), Machinery (7), Metals (8), Stones (17), Services (14), Textiles (12), and Vehicles (13). Each case consists of a country-sector pair. We used the Harmonized System (HS) 1992 for sector classification.
                 </p>
-                <p>For the final visualization, we excluded countries that the World Bank classified as high-income in 1995 to focus our dataset exclusively on development in low and middle income economies. This adjustment excluded 18 cases, leaving 82 in total.</p>
+                <p>For the final visualization, we excluded countries that the World Bank classified as high-income in 1995 to focus our dataset exclusively on development in low- and middle-income economies. This adjustment removed 18 cases, leaving 82 in total.</p>
               </div>
             </div>
 
