@@ -88,13 +88,16 @@ const GetInTouchSection = () => {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
           <div className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed space-y-4">
-            <p>Have an idea for a missing case, spotted something we should fix, or want to suggest improvements? We'd love to hear from you.</p>
-            <p>
-              If you're a <strong>policymaker</strong> working to kickstart an export boom, reach out to learn how we can support your efforts. If you're a <strong>funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities. If you're a <strong>researcher</strong> or <strong>practitioner</strong> with insights, data, or stories to share, we'd love to collaborate.
-            </p>
-            <p>
-              We welcome feedback, new case ideas, and collaboration proposals, especially from those helping to drive export-led growth. Reach out below to contribute, collaborate, or help strengthen the Export Boom Atlas.
-            </p>
+            <p>Have an idea for a missing case or spotted something we should correct?
+We'd love to hear from you.
+
+If you're a policymaker working to kickstart an export boom, reach out to learn how we can support your efforts. 
+
+If you're a funder committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities. 
+
+If you're a researcher or practitioner with evidence on an overlooked export boom–data, case studies, or stories–we'd welcome your input to help us expand the Atlas.</p>
+            
+            <p>Together, we can strengthen the Export Boom Atlas as a living resource for those driving export-led growth around the world. Reach out below.</p>
           </div>
         </div>
 
