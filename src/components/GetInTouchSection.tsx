@@ -99,7 +99,7 @@ const GetInTouchSection = () => {
               If you're a <strong>researcher</strong> or <strong>practitioner</strong> with evidence on an overlooked boom—data, case studies, or stories—we welcome your input to help us expand the Atlas.
             </p>
             <p>
-              Together, we can strengthen the <strong>Export Boom Atlas</strong> as a living resource for those driving export-led growth around the world.We welcome feedback, new case ideas, and collaboration proposals, especially from those helping to drive export-led growth.
+              Together, we can strengthen the <strong>Export Boom Atlas</strong> as a living resource for those driving export-led growth around the world.
             </p>
           </div>
         </div>
