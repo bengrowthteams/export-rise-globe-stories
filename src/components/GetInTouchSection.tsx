@@ -88,12 +88,18 @@ const GetInTouchSection = () => {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
           <div className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed space-y-4">
-            <p>Have an idea for a missing case, spotted something we should fix, or want to suggest improvements? We'd love to hear from you.</p>
+            <p>Have an idea for a missing export boom or spotted something we should correct? We'd love to hear from you.</p>
             <p>
-              If you're a <strong>policymaker</strong> working to kickstart an export boom, reach out to learn how we can support your efforts. If you're a <strong>funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities. If you're a <strong>researcher</strong> or <strong>practitioner</strong> with insights, data, or stories to share, we'd love to collaborate.
+              If you're a <strong>policymaker</strong> working to kickstart an export boom, reach out to learn how we can support your efforts. 
             </p>
             <p>
-              We welcome feedback, new case ideas, and collaboration proposals, especially from those helping to drive export-led growth. Reach out below to contribute, collaborate, or help strengthen the Export Boom Atlas.
+              If you're a <strong>funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities.
+            </p>
+            <p>
+              If you're a <strong>researcher</strong> or <strong>practitioner</strong> with evidence on an overlooked boom—data, case studies, or stories—we welcome your input to help us expand the Atlas.
+            </p>
+            <p>
+              Together, we can strengthen the <strong>Export Boom Atlas</strong> as a living resource for those driving export-led growth around the world.We welcome feedback, new case ideas, and collaboration proposals, especially from those helping to drive export-led growth.
             </p>
           </div>
         </div>
