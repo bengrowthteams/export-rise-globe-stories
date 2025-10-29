@@ -31,7 +31,7 @@ export const editorsPicks: EditorsPick[] = [
     primaryKey: 77,
     exportValue1995: 0.029,
     exportValue2022: 138.44,
-    successStory: 'Now the 6th-largest electronics exporter in the world, with annual exports topping $130 billion and over half-a-million workers employed'
+    successStory: 'Now the 6th-largest electronics exporter, with annual exports topping $130 billion and over half-a-million workers employed'
   },
   {
     country: 'Costa Rica',
