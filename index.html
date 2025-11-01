@@ -20,6 +20,16 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Restore deep link captured by 404.html before React Router mounts
+      (function() {
+        var redirect = sessionStorage.getItem('redirect');
+        if (redirect) {
+          sessionStorage.removeItem('redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
