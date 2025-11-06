@@ -69,7 +69,9 @@ export const SpotlightCard = ({
           <span className="text-base font-semibold text-gray-600">{formatValue(exportValue1995)}</span>
           <span className="text-gray-400">→</span>
           <span className="text-lg font-bold text-green-600">{formatValue(exportValue2022)}</span>
-          <span className="text-sm font-semibold text-gray-500">({growthMultiplier}x)</span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+            {growthMultiplier}x
+          </span>
         </div>
       </div>
 
