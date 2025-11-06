@@ -63,12 +63,18 @@ export const SpotlightCard = ({
       </div>
 
       {/* Export Value Growth */}
-      <div className="mb-4 flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-green-600" />
-        <div className="flex items-center gap-2">
-          <span className="text-base font-semibold text-gray-600">{formatValue(exportValue1995)}</span>
-          <span className="text-gray-400">→</span>
-          <span className="text-lg font-bold text-green-600">{formatValue(exportValue2022)}</span>
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <TrendingUp className="w-4 h-4 text-green-600" />
+          <div className="flex items-center gap-2">
+            <span className="text-base font-semibold text-gray-600">{formatValue(exportValue1995)}</span>
+            <span className="text-gray-400">→</span>
+            <span className="text-lg font-bold text-green-600">{formatValue(exportValue2022)}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 pl-6">
+          <span className="text-2xl font-bold text-green-600">{growthMultiplier}x</span>
+          <span className="text-sm text-gray-500">growth</span>
         </div>
       </div>
 
