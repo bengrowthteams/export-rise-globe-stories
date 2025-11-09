@@ -1,16 +1,16 @@
 // Color mapping for different sectors
 export const sectorColors: Record<string, string> = {
-  'Services': '#B73E69', // Dark rose
-  'Agriculture': '#88D6AA', // Light mint green
-  'Textiles': '#6b7280', // Medium gray
-  'Stone': '#D7A86E', // Warm tan
-  'Stones': '#D7A86E', // Warm tan (alternate name)
+  'Services': '#A5456C', // rgb(165, 69, 108)
+  'Agriculture': '#94D8A6', // rgb(148, 216, 166)
+  'Textiles': '#385F7A', // rgb(56, 95, 122)
+  'Stone': '#D4B684', // rgb(212, 182, 132)
+  'Stones': '#D4B684', // rgb(212, 182, 132)
   'Minerals': '#B7836E', // Earthy brown
-  'Metals': '#D0746B', // Dusty red
-  'Chemicals': '#C38AD7', // Lavender purple
-  'Vehicles': '#8C77D4', // Medium purple
-  'Machinery': '#6E91C7', // Muted blue
-  'Electronics': '#77D3D6', // Bright cyan
+  'Metals': '#CD807E', // rgb(205, 128, 126)
+  'Chemicals': '#BB7FD4', // rgb(187, 127, 212)
+  'Vehicles': '#8A7CD2', // rgb(138, 124, 210)
+  'Machinery': '#83A1D5', // rgb(131, 161, 213)
+  'Electronics': '#94D8D9', // rgb(148, 216, 217)
   // Keep existing colors for other sectors
   'Manufacturing': '#f97316', // orange-500
   'Automotive': '#06b6d4', // cyan-500
