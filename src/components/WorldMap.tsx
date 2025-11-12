@@ -164,6 +164,10 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
       pitch: 0,
       bearing: 0,
       maxBounds: [[-180, -85], [180, 85]],
+      maxTileCacheSize: 500,
+      fadeDuration: 100,
+      renderWorldCopies: true,
+      preserveDrawingBuffer: false,
     });
 
     // Position controls based on screen size - top-right on mobile, bottom-right on desktop
@@ -265,7 +269,8 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
     <div className="relative w-full h-full">
       <div 
         ref={mapContainer} 
-        className="absolute inset-0 rounded-lg shadow-lg" 
+        className="absolute inset-0 rounded-lg shadow-lg"
+        style={{ backgroundColor: '#b3d1e6' }}
       />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-background/5 rounded-lg" />
       
