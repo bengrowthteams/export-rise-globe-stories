@@ -113,6 +113,7 @@ export const countryFlags: Record<string, string> = {
   'Comoros': '🇰🇲',
   'Congo': '🇨🇬',
   'Republic of Congo': '🇨🇬',
+  'Republic of the Congo': '🇨🇬',
   'Congo Republic': '🇨🇬',
   'Congo, Republic of': '🇨🇬',
   'Congo (Republic of)': '🇨🇬',
