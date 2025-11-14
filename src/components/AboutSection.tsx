@@ -173,7 +173,7 @@ const AboutSection = () => {
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <div className="flex items-center mb-4">
                 <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-3"></div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Web development, writing, and case research</h4>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">Editorial & Creative Director</h4>
               </div>
               <p className="text-lg text-gray-700">Benjamin Oestericher</p>
             </div>
