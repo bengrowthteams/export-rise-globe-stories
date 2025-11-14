@@ -72,6 +72,18 @@ const EnhancedCaseStudy = () => {
     loadCaseStudy();
   }, [id]);
 
+  // Update browser title when case study data loads
+  useEffect(() => {
+    if (caseStudyData) {
+      document.title = `${caseStudyData.country} ${caseStudyData.sector} Export Case Study`;
+    }
+    
+    // Reset title on unmount
+    return () => {
+      document.title = 'Export Boom Atlas by Growth Teams';
+    };
+  }, [caseStudyData]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
