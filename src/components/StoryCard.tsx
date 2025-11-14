@@ -7,6 +7,9 @@ import { SuccessStory } from '../types/SuccessStory';
 import { Button } from '@/components/ui/button';
 import ReturnStateService from '../services/returnStateService';
 
+// Cases that should show "Coming Soon" instead of the button
+const COMING_SOON_CASES = [29, 36, 37, 38, 44, 45, 46, 64, 96, 98, 99];
+
 interface StoryCardProps {
   story: SuccessStory | null;
   countryStories?: CountrySuccessStories | null;
@@ -237,14 +240,20 @@ const LegacyStoryCard: React.FC<{
       {/* Fixed Button at Bottom - Always show if primaryKey exists */}
       {story.primaryKey && (
         <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0 sticky bottom-0">
-          <Button 
-            onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
-            size="lg"
-          >
-            View Full Success Story
-            <ArrowRight className="ml-2" size={18} />
-          </Button>
+          {COMING_SOON_CASES.includes(story.primaryKey) ? (
+            <div className="text-center py-3 text-muted-foreground text-base">
+              Full Success Story Coming Soon
+            </div>
+          ) : (
+            <Button 
+              onClick={handleViewCaseStudy}
+              className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
+              size="lg"
+            >
+              View Full Success Story
+              <ArrowRight className="ml-2" size={18} />
+            </Button>
+          )}
         </div>
       )}
     </div>
@@ -438,14 +447,20 @@ const MultiSectorStoryCard: React.FC<{
       {/* Fixed Button at Bottom - Always show if primaryKey exists */}
       {selectedSector.primaryKey && (
         <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0 sticky bottom-0">
-          <Button 
-            onClick={handleViewCaseStudy}
-            className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
-            size="lg"
-          >
-            View Full Success Story
-            <ArrowRight className="ml-2" size={18} />
-          </Button>
+          {COMING_SOON_CASES.includes(selectedSector.primaryKey) ? (
+            <div className="text-center py-3 text-muted-foreground text-base">
+              Full Success Story Coming Soon
+            </div>
+          ) : (
+            <Button 
+              onClick={handleViewCaseStudy}
+              className="w-full text-white bg-blue-600 hover:bg-blue-700 transition-colors text-base"
+              size="lg"
+            >
+              View Full Success Story
+              <ArrowRight className="ml-2" size={18} />
+            </Button>
+          )}
         </div>
       )}
     </div>
