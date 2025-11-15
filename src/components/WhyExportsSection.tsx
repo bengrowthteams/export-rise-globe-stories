@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Map, TrendingUp, Globe, Zap } from 'lucide-react';
 import { useScrollTrigger } from '@/hooks/useScrollTrigger';
 import tomatoWorkers from '@/assets/tomato-workers.jpg';
+import electronicsCircuitBoards from '@/assets/electronics-circuit-boards.jpg';
 const WhyExportsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const {
@@ -98,7 +99,7 @@ const WhyExportsSection = () => {
               </div>
               <div className="relative">
                 <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-2xl opacity-20 blur-xl"></div>
-                <img src="/lovable-uploads/05b38d20-8ee5-48fe-b170-df7a629e7a8f.png" alt="Industrial textile production facility with organized workflow" className="relative w-full h-48 sm:h-64 lg:h-80 object-cover rounded-2xl shadow-2xl border-2 sm:border-4 border-white" />
+                <img src={electronicsCircuitBoards} alt="Electronic circuit boards showing advanced technology components" className="relative w-full h-48 sm:h-64 lg:h-80 object-cover rounded-2xl shadow-2xl border-2 sm:border-4 border-white" />
               </div>
             </div>
           </div>
