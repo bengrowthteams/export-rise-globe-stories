@@ -100,19 +100,49 @@ export type Database = {
       }
       Merge: {
         Row: {
+          "External Actor Contribution": string | null
+          "External Factors - One Bullet Summary": string | null
+          "External Market Factors": string | null
+          Outcome: string | null
           "Primary key": number
-          "Sector Exports as % of GDP (1995)": number | null
-          "Sector Exports as % of GDP (2022)": number | null
+          "Private Sector - One Bullet Summary": string | null
+          "Private Sector Industry Growth": string | null
+          "Private Sector Pioneering Firm": string | null
+          "Public Sector - One Bullet Summary": string | null
+          "Public Sector Actor": string | null
+          "Public Sector Policy": string | null
+          Sources: string | null
+          "Success Story (1 sentence summary)": string | null
         }
         Insert: {
-          "Primary key": number
-          "Sector Exports as % of GDP (1995)"?: number | null
-          "Sector Exports as % of GDP (2022)"?: number | null
+          "External Actor Contribution"?: string | null
+          "External Factors - One Bullet Summary"?: string | null
+          "External Market Factors"?: string | null
+          Outcome?: string | null
+          "Primary key"?: number
+          "Private Sector - One Bullet Summary"?: string | null
+          "Private Sector Industry Growth"?: string | null
+          "Private Sector Pioneering Firm"?: string | null
+          "Public Sector - One Bullet Summary"?: string | null
+          "Public Sector Actor"?: string | null
+          "Public Sector Policy"?: string | null
+          Sources?: string | null
+          "Success Story (1 sentence summary)"?: string | null
         }
         Update: {
+          "External Actor Contribution"?: string | null
+          "External Factors - One Bullet Summary"?: string | null
+          "External Market Factors"?: string | null
+          Outcome?: string | null
           "Primary key"?: number
-          "Sector Exports as % of GDP (1995)"?: number | null
-          "Sector Exports as % of GDP (2022)"?: number | null
+          "Private Sector - One Bullet Summary"?: string | null
+          "Private Sector Industry Growth"?: string | null
+          "Private Sector Pioneering Firm"?: string | null
+          "Public Sector - One Bullet Summary"?: string | null
+          "Public Sector Actor"?: string | null
+          "Public Sector Policy"?: string | null
+          Sources?: string | null
+          "Success Story (1 sentence summary)"?: string | null
         }
         Relationships: []
       }
