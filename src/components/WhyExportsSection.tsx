@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Map, TrendingUp, Globe, Zap } from 'lucide-react';
 import { useScrollTrigger } from '@/hooks/useScrollTrigger';
+import tomatoWorkers from '@/assets/tomato-workers.jpg';
 const WhyExportsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const {
@@ -51,7 +52,7 @@ const WhyExportsSection = () => {
               </div>
               <div className="relative">
                 <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl opacity-20 blur-xl"></div>
-                <img src="/lovable-uploads/7f7ef23d-aeab-43c4-aa15-85f7967835c5.png" alt="Modern food processing facility with workers on production lines" className="relative w-full h-48 sm:h-64 lg:h-80 object-cover rounded-2xl shadow-2xl border-2 sm:border-4 border-white" />
+                <img src={tomatoWorkers} alt="Workers sorting tomatoes in food processing facility" className="relative w-full h-48 sm:h-64 lg:h-80 object-cover rounded-2xl shadow-2xl border-2 sm:border-4 border-white" />
               </div>
             </div>
           </div>
