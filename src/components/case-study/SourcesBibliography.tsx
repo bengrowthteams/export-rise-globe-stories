@@ -84,9 +84,9 @@ const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
 
   return (
     <div className="mb-8">
-      <Card className="bg-gray-50 border-gray-200">
+      <Card className="bg-gray-900 border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-gray-700">
+          <CardTitle className="flex items-center space-x-2 text-gray-300">
             <BookOpen size={24} />
             <span>Dive in Deeper</span>
           </CardTitle>
@@ -94,16 +94,16 @@ const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
         <CardContent>
           {sourceLinks.length > 0 ? (
             <div className="space-y-3">
-              <p className="text-gray-600 mb-4">Data and analysis based on the following sources:</p>
+              <p className="text-gray-400 mb-4">Data and analysis based on the following sources:</p>
               <ul className="space-y-2">
                 {sourceLinks.map((source, index) => (
                   <li key={index} className="flex items-center space-x-2">
-                    <ExternalLink size={16} className="text-blue-600 flex-shrink-0" />
+                    <ExternalLink size={16} className="text-emerald-400 flex-shrink-0" />
                     <a
                       href={source.fullUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 hover:underline break-words"
+                      className="text-emerald-400 hover:text-emerald-300 hover:underline break-words"
                     >
                       {source.displayText}
                     </a>
@@ -112,9 +112,9 @@ const SourcesBibliography = ({ sources }: SourcesBibliographyProps) => {
               </ul>
             </div>
           ) : (
-            <div className="text-gray-600">
+            <div className="text-gray-400">
               <p className="mb-2">Raw source information:</p>
-              <p className="text-sm bg-white p-3 rounded border italic">
+              <p className="text-sm bg-gray-800 p-3 rounded border border-white/10 italic">
                 {sources}
               </p>
             </div>

@@ -55,21 +55,24 @@ export const CaseSpotlightsSection = () => {
 
 
   return (
-    <section id="case-spotlights" className="py-20 bg-gradient-to-b from-white to-green-50">
+    <section id="case-spotlights" className="py-20 bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">
+        <div className="text-center mb-14">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-950 border border-emerald-900 rounded-full px-4 py-1.5 mb-4">
+            Editor's Picks
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
             Case Spotlights
           </h2>
-          <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
-          <p className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800 max-w-4xl mx-auto px-4">
-            Start by exploring our Editor's Picks of notable export boom stories around the world
+          <div className="w-12 h-1 bg-gradient-to-r from-emerald-500 to-blue-500 mx-auto rounded-full mb-5"></div>
+          <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto">
+            Start by exploring notable export boom stories from around the world
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative">
+        <div className="relative px-6">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
               {editorsPicks.map((pick, index) => (
@@ -89,10 +92,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 sm:top-1/2 sm:-translate-y-1/2 top-[40%] bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
+            className="absolute -left-2 top-1/2 -translate-y-1/2 bg-gray-800 shadow-lg hover:shadow-xl disabled:opacity-20 z-10 border border-white/10 hover:border-emerald-500/50 hover:bg-gray-700 transition-all duration-200 w-10 h-10 rounded-full"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-7 h-7 text-blue-600" />
+            <ChevronLeft className="w-5 h-5 text-gray-300" />
           </Button>
 
           <Button
@@ -100,10 +103,10 @@ export const CaseSpotlightsSection = () => {
             size="icon"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 sm:top-1/2 sm:-translate-y-1/2 top-[40%] bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 z-10 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600 transition-all duration-300 w-12 h-12"
+            className="absolute -right-2 top-1/2 -translate-y-1/2 bg-gray-800 shadow-lg hover:shadow-xl disabled:opacity-20 z-10 border border-white/10 hover:border-emerald-500/50 hover:bg-gray-700 transition-all duration-200 w-10 h-10 rounded-full"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-7 h-7 text-blue-600" />
+            <ChevronRight className="w-5 h-5 text-gray-300" />
           </Button>
         </div>
 
@@ -113,10 +116,10 @@ export const CaseSpotlightsSection = () => {
             <button
               key={index}
               onClick={() => scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`h-2 rounded-full transition-all duration-300 ${
                 index === selectedIndex
-                  ? 'bg-primary w-8'
-                  : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                  ? 'bg-green-600 w-8'
+                  : 'bg-gray-200 hover:bg-gray-300 w-2'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

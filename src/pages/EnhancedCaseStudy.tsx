@@ -86,10 +86,10 @@ const EnhancedCaseStudy = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="animate-spin mx-auto mb-4" size={32} />
-          <p className="text-gray-600">Loading case study...</p>
+          <Loader2 className="animate-spin mx-auto mb-4 text-emerald-400" size={32} />
+          <p className="text-gray-400">Loading case study...</p>
         </div>
       </div>
     );
@@ -97,13 +97,13 @@ const EnhancedCaseStudy = () => {
 
   if (error || !caseStudyData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-red-600">Case Study Not Available</h1>
-          <p className="text-gray-600 mb-6">{error || 'Case study data not found'}</p>
-          <button 
+          <h1 className="text-2xl font-bold mb-4 text-red-400">Case Study Not Available</h1>
+          <p className="text-gray-400 mb-6">{error || 'Case study data not found'}</p>
+          <button
             onClick={() => navigate('/')}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors"
           >
             Back to Map
           </button>
@@ -113,7 +113,7 @@ const EnhancedCaseStudy = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-950">
       <EnhancedCaseStudyHeader
         flag={caseStudyData.flag}
         country={caseStudyData.country}

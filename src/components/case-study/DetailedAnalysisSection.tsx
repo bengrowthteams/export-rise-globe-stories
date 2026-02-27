@@ -37,7 +37,7 @@ const DetailedAnalysisSection = ({
             if (!point.trim()) return null;
             return (
               <div key={index} className="flex items-start mb-2">
-                <span className="text-gray-600 mr-2 mt-1">●</span>
+                <span className="text-gray-400 mr-2 mt-1">●</span>
                 <span className="flex-1">{point.trim()}</span>
               </div>
             );
@@ -52,9 +52,9 @@ const DetailedAnalysisSection = ({
   const sections = [
     {
       title: 'Public Sector Role',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-950/40',
+      borderColor: 'border-blue-800/50',
       icon: Building2,
       subsections: [
         {
@@ -71,9 +71,9 @@ const DetailedAnalysisSection = ({
     },
     {
       title: 'Private Sector Role',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
+      color: 'text-orange-400',
+      bgColor: 'bg-orange-950/40',
+      borderColor: 'border-orange-800/50',
       icon: Factory,
       subsections: [
         {
@@ -90,9 +90,9 @@ const DetailedAnalysisSection = ({
     },
     {
       title: 'External Factors Role',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
+      color: 'text-emerald-400',
+      bgColor: 'bg-emerald-950/40',
+      borderColor: 'border-emerald-800/50',
       icon: Globe,
       subsections: [
         {
@@ -111,8 +111,8 @@ const DetailedAnalysisSection = ({
 
   return (
     <div className="mb-8">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">Understanding the Story</h2>
-      
+      <h2 className="text-2xl font-semibold text-white mb-6">Understanding the Story</h2>
+
       <div className="space-y-8">
         {sections.map((section, sectionIndex) => (
           <Card key={sectionIndex} className={`${section.bgColor} ${section.borderColor} border-2`}>
@@ -125,12 +125,12 @@ const DetailedAnalysisSection = ({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {section.subsections.map((subsection, subIndex) => (
-                  <div key={subIndex} className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-white/50">
+                  <div key={subIndex} className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-6 border border-white/10">
                     <div className={`flex items-center mb-3 ${section.color}`}>
                       <subsection.icon size={20} className="mr-2" />
                       <h4 className="text-lg font-semibold">{subsection.title}</h4>
                     </div>
-                    <div className="text-gray-700 leading-relaxed">
+                    <div className="text-gray-300 leading-relaxed">
                       {formatBulletPoints(subsection.content)}
                     </div>
                   </div>

@@ -15,6 +15,7 @@ import AboutSection from '../components/AboutSection';
 import WhyExportsSection from '../components/WhyExportsSection';
 import { CaseSpotlightsSection } from '../components/CaseSpotlightsSection';
 import GetInTouchSection from '../components/GetInTouchSection';
+import ParticleBackground from '../components/ParticleBackground';
 import { SuccessStory } from '../types/SuccessStory';
 import { CountrySuccessStories, SectorStory } from '../types/CountrySuccessStories';
 import { useTutorial } from '../hooks/useTutorial';
@@ -471,29 +472,64 @@ const Landing = () => {
       
       {/* Hero Section */}
       <div className="min-h-screen relative overflow-hidden pt-14">
+        {/* Background image */}
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: `url('/lovable-uploads/38f2e418-48dc-4da2-b98f-237902a9bcfa.png')`
-      }}>
-          <div className="absolute inset-0 bg-black/40" />
+          backgroundImage: `url('/lovable-uploads/38f2e418-48dc-4da2-b98f-237902a9bcfa.png')`
+        }}>
+          {/* Heavy dark overlay to match dark site vibe */}
+          <div className="absolute inset-0 bg-black/65" />
+          {/* Directional vignette for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
-          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight text-left sm:text-center">Export Boom Atlas</h1>
-            
-            <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed text-left sm:text-center">Explore the playbooks behind 82 export booms in emerging economies since 1995</p>
-            
-            <div className="flex flex-col items-start sm:items-center">
-              <Button onClick={handleExploreMap} size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold min-w-[200px]">
+        {/* Animated layer: orbs + particles on top of the image */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/3 left-1/4 w-[480px] h-[480px] rounded-full bg-emerald-500/12 blur-[110px] hero-orb-1" />
+          <div className="absolute bottom-1/4 right-1/4 w-[380px] h-[380px] rounded-full bg-blue-500/10 blur-[90px] hero-orb-2" />
+          <div className="absolute top-1/2 right-1/3 w-[280px] h-[280px] rounded-full bg-teal-400/8 blur-[70px] hero-orb-3" />
+          <ParticleBackground />
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
+          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 text-left sm:text-center">
+
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.08]">
+              Export Boom Atlas
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Explore the playbooks behind 82 export booms in emerging economies since 1995
+            </p>
+
+            <div className="flex flex-col items-start sm:items-center gap-4">
+              <Button
+                onClick={handleExploreMap}
+                size="lg"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 text-lg font-semibold min-w-[200px] shadow-xl shadow-emerald-900/40 transition-all duration-200 hover:-translate-y-0.5 border border-emerald-500/30"
+              >
                 <Map className="mr-2" size={20} />
                 Explore the Map
               </Button>
-              <a href="https://www.growth-teams.org/" target="_blank" rel="noopener noreferrer" className="flex items-center mt-4 text-gray-700 text-sm sm:text-base bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors duration-200 cursor-pointer">
-                <span className="mr-2">A Project of</span>
-                <img src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" alt="Growth Teams" className="h-6 w-auto opacity-90" />
+              <a
+                href="https://www.growth-teams.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-sm sm:text-base bg-white/8 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-lg hover:bg-white/12 transition-all duration-200 cursor-pointer"
+              >
+                <span className="mr-2 text-gray-400">A Project of</span>
+                <img src="/lovable-uploads/6660cc2f-78f5-40c9-9279-abe45f6d3098.png" alt="Growth Teams" className="h-6 w-auto opacity-60 brightness-0 invert" />
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 scroll-indicator">
+          <span className="text-xs tracking-widest uppercase font-medium">Scroll</span>
+          <svg width="16" height="24" viewBox="0 0 16 24" fill="none" className="opacity-70">
+            <rect x="1" y="1" width="14" height="22" rx="7" stroke="currentColor" strokeWidth="1.5"/>
+            <circle cx="8" cy="7" r="2.5" fill="currentColor"/>
+          </svg>
         </div>
       </div>
 
@@ -584,8 +620,8 @@ const Landing = () => {
       {/* About Section */}
       <AboutSection />
 
-      {/* Get In Touch Section - reduced top padding to decrease space from About */}
-      <div id="get-in-touch-section" className="pt-8">
+      {/* Get In Touch Section */}
+      <div id="get-in-touch-section">
         <GetInTouchSection />
       </div>
 

@@ -19,31 +19,31 @@ const KeyHighlightsSection = ({
       icon: Building2,
       title: 'Public Sector Role',
       content: publicSectorSummary,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-950/40',
+      borderColor: 'border-blue-800/50'
     },
     {
       icon: Factory,
       title: 'Private Sector Role',
       content: privateSectorSummary,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200'
+      color: 'text-orange-400',
+      bgColor: 'bg-orange-950/40',
+      borderColor: 'border-orange-800/50'
     },
     {
       icon: Globe,
       title: 'External Factors',
       content: externalFactorsSummary,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      color: 'text-emerald-400',
+      bgColor: 'bg-emerald-950/40',
+      borderColor: 'border-emerald-800/50'
     }
   ];
 
   return (
     <div className="mb-6">
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">Key Highlights</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4">Key Highlights</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         {highlights.map((highlight, index) => (
           <Card key={index} className={`${highlight.bgColor} ${highlight.borderColor} border-2`}>
@@ -54,7 +54,7 @@ const KeyHighlightsSection = ({
                   {highlight.title}
                 </h3>
               </div>
-              <p className="text-gray-700 leading-relaxed text-xs sm:text-sm">
+              <p className="text-gray-300 leading-relaxed text-xs sm:text-sm">
                 {highlight.content}
               </p>
             </CardContent>

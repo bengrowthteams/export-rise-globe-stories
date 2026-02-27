@@ -79,33 +79,36 @@ const GetInTouchSection = () => {
       setIsSubmitting(false);
     }
   };
-  return <div className="bg-gradient-to-br from-gray-50 via-white to-green-50/30 py-24 px-4">
+  return <div className="bg-gray-950 py-24 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Main Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-green-400 bg-green-950 border border-green-900 rounded-full px-4 py-1.5 mb-4">
+            Connect With Us
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
             Get In Touch
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
-          <div className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed space-y-4">
+          <div className="w-12 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full mb-6"></div>
+          <div className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed space-y-4">
             <p>Have an idea for a missing export boom or spotted something we should correct? We'd love to hear from you.</p>
             <p>
-              If you're a <strong>policymaker</strong> working to kickstart an export boom, reach out to learn how we can support your efforts. 
+              If you're a <strong className="text-white">policymaker</strong> working to kickstart an export boom, reach out to learn how we can support your efforts.
             </p>
             <p>
-              If you're a <strong>funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities.
+              If you're a <strong className="text-white">funder</strong> committed to advancing economic prosperity in developing countries, get in touch to explore partnership opportunities.
             </p>
             <p>
-              If you're a <strong>researcher</strong> or <strong>practitioner</strong> with evidence on an overlooked boom—data, case studies, or stories—we welcome your input to help us expand the Atlas.
+              If you're a <strong className="text-white">researcher</strong> or <strong className="text-white">practitioner</strong> with evidence on an overlooked boom—data, case studies, or stories—we welcome your input to help us expand the Atlas.
             </p>
             <p>
-              Together, we can strengthen the <strong>Export Boom Atlas</strong> as a living resource for those driving export-led growth around the world.
+              Together, we can strengthen the <strong className="text-white">Export Boom Atlas</strong> as a living resource for those driving export-led growth around the world.
             </p>
           </div>
         </div>
 
         {/* Contact Form */}
-        <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+        <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-2xl border border-white/10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -154,7 +157,7 @@ const GetInTouchSection = () => {
               <Textarea id="message" required rows={6} value={formData.message} onChange={e => handleInputChange('message', e.target.value)} className="w-full" placeholder="Tell us about your inquiry..." />
             </div>
 
-            <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <Button type="submit" disabled={isSubmitting} className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </Button>
           </form>

@@ -17,11 +17,11 @@ const CompactOutcomesDashboard = ({
 }: CompactOutcomesDashboardProps) => {
   return (
     <div className="mb-6">
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">Outcomes</h2>
-      <Card>
+      <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4">Outcomes</h2>
+      <Card className="bg-gray-900 border-white/10">
         <CardContent className="space-y-4 p-4 sm:p-6">
           <div className="prose max-w-none">
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
               {outcome}
             </p>
           </div>

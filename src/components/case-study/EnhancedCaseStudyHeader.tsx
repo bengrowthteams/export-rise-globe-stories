@@ -86,11 +86,11 @@ const EnhancedCaseStudyHeader = ({
   return (
     <>
       {/* Sticky Return Button */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-950/95 backdrop-blur-sm border-b border-white/10 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-2">
-          <Button 
+          <Button
             onClick={handleReturnToMap}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm font-medium"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 text-sm font-medium border border-emerald-500/30"
             size="sm"
           >
             <ArrowLeft className="mr-2" size={16} />
@@ -100,54 +100,54 @@ const EnhancedCaseStudyHeader = ({
       </div>
 
       {/* Main Header Content */}
-      <div className="relative overflow-hidden pt-16" style={{ background: `linear-gradient(135deg, ${sectorColor}15 0%, ${sectorColor}25 100%)` }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-white/90 to-transparent"></div>
+      <div className="relative overflow-hidden pt-16" style={{ background: `linear-gradient(135deg, ${sectorColor}18 0%, ${sectorColor}08 100%)` }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-950/90 to-gray-950/60"></div>
         <div className="relative max-w-6xl mx-auto px-6 py-6">
           <div className="flex items-start space-x-6">
             <div className="text-8xl drop-shadow-lg">{flag}</div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {country} <span className="text-gray-600">/</span> {sector}
+              <h1 className="text-3xl font-bold text-white mb-4">
+                {country} <span className="text-gray-500">/</span> {sector}
               </h1>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-white/50 mb-4">
-                <p className="text-base text-gray-700">
+              <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-4 border border-white/10 mb-4">
+                <p className="text-base text-gray-300">
                   <span className="font-semibold" style={{ color: sectorColor }}>Successful Product:</span> {successfulProduct}
                 </p>
               </div>
-              
+
               {/* Performance Stats - Inline */}
               <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <Award className="text-orange-600" size={16} />
+                <div className="flex items-center space-x-2 bg-gray-900/60 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/8">
+                  <Award className="text-orange-400" size={16} />
                   <div>
-                    <span className="font-medium text-orange-700">2022 Rank:</span>
-                    <span className="ml-1 font-bold text-orange-900">#{rank2022}</span>
+                    <span className="font-medium text-orange-300">2022 Rank:</span>
+                    <span className="ml-1 font-bold text-orange-200">#{rank2022}</span>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <TrendingUp className="text-green-600" size={16} />
+
+                <div className="flex items-center space-x-2 bg-gray-900/60 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/8">
+                  <TrendingUp className="text-emerald-400" size={16} />
                   <div>
-                    <span className="font-medium text-green-700">Rank Change ('95-'22):</span>
-                    <span className="ml-1 font-bold text-green-900">
+                    <span className="font-medium text-emerald-300">Rank Change ('95-'22):</span>
+                    <span className="ml-1 font-bold text-emerald-200">
                       {rankChange > 0 ? '+' : ''}{rankChange}
                     </span>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <DollarSign className="text-purple-600" size={16} />
+
+                <div className="flex items-center space-x-2 bg-gray-900/60 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/8">
+                  <DollarSign className="text-purple-400" size={16} />
                   <div>
-                    <span className="font-medium text-purple-700">Current Exports:</span>
-                    <span className="ml-1 font-bold text-purple-900">{formatCurrency(currentExports2022)}</span>
+                    <span className="font-medium text-purple-300">Current Exports:</span>
+                    <span className="ml-1 font-bold text-purple-200">{formatCurrency(currentExports2022)}</span>
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <BarChart3 className="text-blue-600" size={16} />
+
+                <div className="flex items-center space-x-2 bg-gray-900/60 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/8">
+                  <BarChart3 className="text-blue-400" size={16} />
                   <div>
-                    <span className="font-medium text-blue-700">Growth ('95-'22):</span>
-                    <span className="ml-1 font-bold text-blue-900">{exportGrowthMultiple}x</span>
+                    <span className="font-medium text-blue-300">Growth ('95-'22):</span>
+                    <span className="ml-1 font-bold text-blue-200">{exportGrowthMultiple}x</span>
                   </div>
                 </div>
               </div>
