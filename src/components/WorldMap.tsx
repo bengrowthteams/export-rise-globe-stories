@@ -184,6 +184,25 @@ const WorldMap = forwardRef<WorldMapRef, WorldMapProps>(({
 
     map.current.on('style.load', () => {
       console.log('Map style loaded, adding markers...');
+
+      // Apply Morocco worldview — removes Western Sahara disputed borders/label
+      const WORLDVIEW = "MA";
+      const adminLayers = [
+        'admin-0-boundary',
+        'admin-1-boundary',
+        'admin-0-boundary-disputed',
+        'admin-1-boundary-bg',
+        'admin-0-boundary-bg',
+        'country-label'
+      ];
+      adminLayers.forEach((layer) => {
+        if (map.current && map.current.getLayer(layer)) {
+          map.current.setFilter(layer, [
+            "match", ["get", "worldview"], ["all", WORLDVIEW], true, false
+          ]);
+        }
+      });
+
       updateMarkers(successStories, countryStories, selectedSectors);
       setMapInitialized(true);
     });
